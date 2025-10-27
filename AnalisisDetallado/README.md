@@ -23,3 +23,6 @@ Cada documento analiza una pregunta específica derivada de la [Propuesta Inicia
 
 6.  [**Análisis de Requisitos de Acceso sin Conexión (Offline)**](./06_Analisis_Acceso_Offline.md)
     *   *Evalúa el impacto de implementar funcionalidades offline en el MVP y recomienda una estrategia por fases.*
+
+7.  [**Detalle del Enfoque de Persistencia Híbrido**](./Detalle_Enfoque_Hibrido/README.md)
+    *   *Expande el análisis de base de datos con diagramas, flujos y documentación por componente para iniciar la implementación.*
