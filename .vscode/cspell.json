@@ -1,0 +1,34 @@
+{
+  "version": "0.2",
+  "language": "en,es",
+  "dictionaries": ["en_US", "es_ES"],
+  "words": [
+    "EduGo",
+    "Analisys",
+    "PropuestaInicial",
+    "jhoanmedina"
+  ],
+  "ignoreRegExpList": [
+    "\\/\\w*_[\\w_]*\\w*\\/",    
+    "\\/[a-z]+[A-Z][a-zA-Z]*\\/",
+    "\\/\\b[A-Z0-9_]{2,}\\b\\/"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "markdown",
+      "dictionaries": ["es_ES"]
+    },
+    {
+      "languageId": "plaintext",
+      "dictionaries": ["es_ES"]
+    },
+    {
+      "languageId": "javascript",
+      "dictionaries": ["en_US"]
+    },
+    {
+      "languageId": "typescript",
+      "dictionaries": ["en_US"]
+    }
+  ]
+}

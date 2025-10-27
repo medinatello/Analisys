@@ -1,0 +1,35 @@
+{
+  "cSpell.language": "en,es",
+  "cSpell.dictionaries": ["en_US", "es_ES"],
+
+  // Forzar español en documentos y plaintext
+  "[markdown]": {
+    "cSpell.language": "es"
+  },
+  "[plaintext]": {
+    "cSpell.language": "es"
+  },
+
+  // Forzar inglés en código
+  "[javascript]": {
+    "cSpell.language": "en"
+  },
+  "[typescript]": {
+    "cSpell.language": "en"
+  },
+
+  // Palabras de usuario del workspace
+  "cSpell.userWords": [
+    "EduGo",
+    "Analisys",
+    "PropuestaInicial",
+    "jhoanmedina"
+  ],
+
+  // Ignorar patrones comunes de variables/identificadores
+  "cSpell.ignoreRegExpList": [
+    "/\\\\w*_[\\\\w_]*\\\\w*/",     
+    "/[a-z]+[A-Z][a-zA-Z]*/", 
+    "/\\b[A-Z0-9_]{2,}\\b/"
+  ]
+}
