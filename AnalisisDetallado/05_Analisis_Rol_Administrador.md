@@ -30,9 +30,9 @@ A continuación se detallan las capacidades del administrador, contrastadas con 
 | Ver material de otros | No | Sí (Solo para soporte) | Para depurar problemas si un material no se visualiza o procesa correctamente. |
 | Eliminar material | De su propiedad | Sí (Cualquier material) | Para eliminar contenido inapropiado o que viole políticas. |
 | | | | |
-| **Gestión de Grupos** | | | |
-| Crear/gestionar sus grupos | Sí | Sí (Ver/gestionar todos) | Para soporte, si un docente tiene problemas con un grupo. |
-| Mover alumnos entre grupos | No | Sí | Para resolver casos excepcionales. |
+| **Gestión de Unidades Académicas** | | | |
+| Crear/gestionar unidades dentro de su institución | Limitado (según rol en la unidad) | Sí (Alcance global o por colegio) | Permite corregir jerarquías (años, sesiones, academias). |
+| Mover usuarios entre unidades / ajustar roles | No | Sí | Para resolver casos excepcionales o altas/bajas masivas. |
 
 ## 4. Implementación en el MVP
 

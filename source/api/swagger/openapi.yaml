@@ -1,0 +1,941 @@
+openapi: 3.0.3
+info:
+  title: EduGo API
+  description: |
+    API REST para el sistema de gestión académica EduGo.
+
+    ## Autenticación
+    La mayoría de los endpoints requieren autenticación mediante JWT.
+    Incluye el token en el header: `Authorization: Bearer {token}`
+
+    ## Roles
+    - **admin**: Acceso completo al sistema
+    - **teacher**: Gestión de materiales y unidades propias
+    - **student**: Lectura de materiales asignados
+    - **guardian**: Visualización del progreso de estudiantes relacionados
+  version: 1.0.0
+  contact:
+    name: EduGo Team
+    email: api@edugo.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor de desarrollo
+  - url: https://api.edugo.com
+    description: Servidor de producción
+
+tags:
+  - name: Autenticación
+    description: Endpoints de autenticación y gestión de tokens
+  - name: Usuarios
+    description: Gestión de usuarios del sistema
+  - name: Unidades Académicas
+    description: Gestión de la jerarquía académica
+  - name: Materiales
+    description: Gestión de materiales educativos
+  - name: Evaluaciones
+    description: Gestión de evaluaciones y quizzes
+
+paths:
+  /v1/auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión
+      description: Autentica un usuario y devuelve un token JWT
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: docente@edugo.com
+              password: password123
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Petición inválida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /v1/users:
+    post:
+      tags:
+        - Usuarios
+      summary: Crear usuario
+      description: Crea un nuevo usuario en el sistema (solo administradores)
+      operationId: createUser
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /v1/units:
+    get:
+      tags:
+        - Unidades Académicas
+      summary: Listar unidades académicas
+      description: Obtiene la jerarquía de unidades académicas
+      operationId: listUnits
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: school_id
+          in: query
+          description: Filtrar por ID de colegio
+          schema:
+            type: string
+            format: uuid
+        - name: type
+          in: query
+          description: Filtrar por tipo de unidad
+          schema:
+            type: string
+            enum: [school, academic_year, section, club, academy_level]
+        - name: page
+          in: query
+          description: Número de página
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Elementos por página
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Lista de unidades académicas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Unidades Académicas
+      summary: Crear unidad académica
+      description: Crea una nueva unidad académica (admin o docente owner)
+      operationId: createUnit
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUnitRequest'
+      responses:
+        '201':
+          description: Unidad creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /v1/units/{unitId}:
+    patch:
+      tags:
+        - Unidades Académicas
+      summary: Actualizar unidad académica
+      description: Actualiza los datos de una unidad académica
+      operationId: updateUnit
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          description: ID de la unidad académica
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUnitRequest'
+      responses:
+        '200':
+          description: Unidad actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/units/{unitId}/members:
+    post:
+      tags:
+        - Unidades Académicas
+      summary: Asignar miembro a unidad
+      description: Asigna un usuario a una unidad académica con un rol específico
+      operationId: addUnitMember
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          description: ID de la unidad académica
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemberRequest'
+      responses:
+        '201':
+          description: Miembro asignado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/materials:
+    get:
+      tags:
+        - Materiales
+      summary: Listar materiales educativos
+      description: Obtiene la lista de materiales educativos
+      operationId: listMaterials
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: subject_id
+          in: query
+          description: Filtrar por materia
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          description: Filtrar por estado
+          schema:
+            type: string
+            enum: [draft, published, archived]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de materiales
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaterialsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Materiales
+      summary: Crear material educativo
+      description: Crea un nuevo material educativo (solo docentes)
+      operationId: createMaterial
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMaterialRequest'
+      responses:
+        '201':
+          description: Material creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaterialResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /v1/materials/{materialId}:
+    get:
+      tags:
+        - Materiales
+      summary: Obtener detalle de material
+      description: Obtiene el detalle completo de un material incluyendo URL firmada
+      operationId: getMaterial
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: materialId
+          in: path
+          required: true
+          description: ID del material
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Detalle del material
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaterialDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    patch:
+      tags:
+        - Materiales
+      summary: Actualizar material
+      description: Actualiza los metadatos de un material
+      operationId: updateMaterial
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMaterialRequest'
+      responses:
+        '200':
+          description: Material actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaterialResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/materials/{materialId}/summary:
+    get:
+      tags:
+        - Materiales
+      summary: Obtener resumen del material
+      description: Obtiene el resumen generado por IA del material
+      operationId: getMaterialSummary
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Resumen del material
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/materials/{materialId}/assessment:
+    get:
+      tags:
+        - Evaluaciones
+      summary: Obtener evaluación del material
+      description: Obtiene la evaluación asociada al material
+      operationId: getMaterialAssessment
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Evaluación del material
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/materials/{materialId}/assessment/attempts:
+    post:
+      tags:
+        - Evaluaciones
+      summary: Registrar intento de evaluación
+      description: Registra un nuevo intento de evaluación por parte del estudiante
+      operationId: createAssessmentAttempt
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: materialId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAttemptRequest'
+      responses:
+        '201':
+          description: Intento registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttemptResponse'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtenido del endpoint de login
+
+  responses:
+    UnauthorizedError:
+      description: Token de autenticación faltante o inválido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Token de autenticación requerido"
+            code: "UNAUTHORIZED"
+
+    ForbiddenError:
+      description: No tienes permisos para realizar esta acción
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Permisos insuficientes"
+            code: "FORBIDDEN"
+
+    NotFoundError:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Recurso no encontrado"
+            code: "NOT_FOUND"
+
+  schemas:
+    # Request Schemas
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: docente@edugo.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: password123
+
+    CreateUserRequest:
+      type: object
+      required:
+        - email
+        - password
+        - system_role
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+        system_role:
+          type: string
+          enum: [teacher, student, admin, guardian]
+        full_name:
+          type: string
+
+    CreateUnitRequest:
+      type: object
+      required:
+        - school_id
+        - unit_type
+        - name
+      properties:
+        school_id:
+          type: string
+          format: uuid
+        parent_unit_id:
+          type: string
+          format: uuid
+          nullable: true
+        unit_type:
+          type: string
+          enum: [school, academic_year, section, club, academy_level]
+        name:
+          type: string
+        code:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+
+    UpdateUnitRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+
+    AddMemberRequest:
+      type: object
+      required:
+        - user_id
+        - unit_role
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        unit_role:
+          type: string
+          enum: [owner, teacher, assistant, student, guardian]
+
+    CreateMaterialRequest:
+      type: object
+      required:
+        - subject_id
+        - title
+      properties:
+        subject_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        s3_url:
+          type: string
+          format: uri
+
+    UpdateMaterialRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [draft, published, archived]
+
+    CreateAttemptRequest:
+      type: object
+      required:
+        - answers
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required:
+              - question_id
+              - answer
+            properties:
+              question_id:
+                type: string
+                format: uuid
+              answer:
+                type: string
+
+    # Response Schemas
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: '#/components/schemas/UserResponse'
+        expires_at:
+          type: string
+          format: date-time
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        system_role:
+          type: string
+          enum: [teacher, student, admin, guardian]
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    UnitResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        school_id:
+          type: string
+          format: uuid
+        parent_unit_id:
+          type: string
+          format: uuid
+          nullable: true
+        unit_type:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        metadata:
+          type: object
+        created_at:
+          type: string
+          format: date-time
+
+    UnitsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnitResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    MaterialResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        author_id:
+          type: string
+          format: uuid
+        subject_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    MaterialDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/MaterialResponse'
+        - type: object
+          properties:
+            signed_url:
+              type: string
+              format: uri
+              description: URL firmada temporal para descargar el archivo
+            url_expires_at:
+              type: string
+              format: date-time
+
+    MaterialsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/MaterialResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SummaryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        material_id:
+          type: string
+          format: uuid
+        version:
+          type: integer
+        sections:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              content:
+                type: string
+              level:
+                type: string
+                enum: [basic, intermediate, advanced]
+        glossary:
+          type: array
+          items:
+            type: object
+            properties:
+              term:
+                type: string
+              definition:
+                type: string
+        reflection_questions:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+
+    AssessmentResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        material_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        questions:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              text:
+                type: string
+              type:
+                type: string
+                enum: [multiple_choice, true_false, open_ended]
+              options:
+                type: array
+                items:
+                  type: string
+              difficulty:
+                type: string
+                enum: [easy, medium, hard]
+        total_points:
+          type: number
+        estimated_duration_minutes:
+          type: integer
+
+    AttemptResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        assessment_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        score:
+          type: number
+          nullable: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        started_at:
+          type: string
+          format: date-time
+
+    MembershipResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        unit_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        unit_role:
+          type: string
+        status:
+          type: string
+        assigned_at:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 20
+        total:
+          type: integer
+          example: 100
+        total_pages:
+          type: integer
+          example: 5
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - code
+      properties:
+        error:
+          type: string
+          description: Mensaje de error legible
+        code:
+          type: string
+          description: Código de error
+        details:
+          type: object
+          description: Detalles adicionales del error
+          additionalProperties: true
