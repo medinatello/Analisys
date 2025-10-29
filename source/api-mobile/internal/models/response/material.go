@@ -65,30 +65,82 @@ type UploadCompleteResponse struct {
 	Message    string `json:"message" example:"Material queued for processing"`
 } // @name UploadCompleteResponse
 
-// MaterialSummaryResponse representa la respuesta con el resumen del material
+// SummarySection representa una sección del resumen
+type SummarySection struct {
+	Title                string `json:"title" example:"Contexto Histórico"`
+	Content              string `json:"content" example:"Pascal fue desarrollado..."`
+	Difficulty           string `json:"difficulty" example:"basic" enums:"basic,medium,advanced"`
+	EstimatedTimeMinutes int    `json:"estimated_time_minutes,omitempty" example:"5"`
+	Order                int    `json:"order" example:"1"`
+} // @name SummarySection
+
+// GlossaryTerm representa un término del glosario
+type GlossaryTerm struct {
+	Term       string `json:"term" example:"Compilador"`
+	Definition string `json:"definition" example:"Programa que traduce código fuente a código máquina"`
+	Order      int    `json:"order" example:"1"`
+} // @name GlossaryTerm
+
+// ProcessingMetadata contiene metadata del procesamiento NLP
+type ProcessingMetadata struct {
+	NLPProvider           string `json:"nlp_provider,omitempty" example:"openai"`
+	Model                 string `json:"model,omitempty" example:"gpt-4"`
+	TokensUsed            int    `json:"tokens_used,omitempty" example:"3500"`
+	ProcessingTimeSeconds int    `json:"processing_time_seconds,omitempty" example:"45"`
+	Language              string `json:"language,omitempty" example:"es"`
+	PromptVersion         string `json:"prompt_version,omitempty" example:"v1.2"`
+} // @name ProcessingMetadata
+
+// MaterialSummaryResponse representa la respuesta con el resumen del material (estructura completa)
 type MaterialSummaryResponse struct {
-	Summary string `json:"summary" example:"Este material introduce los conceptos básicos de Pascal..."`
+	Sections            []SummarySection   `json:"sections"`
+	Glossary            []GlossaryTerm     `json:"glossary,omitempty"`
+	ReflectionQuestions []string           `json:"reflection_questions,omitempty" example:"¿Cómo aplicarías este concepto?,¿Qué diferencias encuentras?"`
+	ProcessingMetadata  ProcessingMetadata `json:"processing_metadata,omitempty"`
 } // @name MaterialSummaryResponse
 
-// AssessmentResponse representa la respuesta con el quiz del material
+// QuestionOption representa una opción de respuesta
+type QuestionOption struct {
+	ID   string `json:"id" example:"a"`
+	Text string `json:"text" example:"Un programa que traduce código"`
+} // @name QuestionOption
+
+// AssessmentResponse representa la respuesta con el quiz del material (estructura completa)
 type AssessmentResponse struct {
-	Questions []Question `json:"questions"`
+	Title            string     `json:"title" example:"Cuestionario: Introducción a Pascal"`
+	Description      string     `json:"description,omitempty" example:"Evaluación de conceptos básicos"`
+	Questions        []Question `json:"questions"`
+	TotalQuestions   int        `json:"total_questions" example:"5"`
+	TotalPoints      int        `json:"total_points" example:"100"`
+	PassingScore     int        `json:"passing_score" example:"70"`
+	TimeLimitMinutes int        `json:"time_limit_minutes,omitempty" example:"15"`
 } // @name AssessmentResponse
 
-// Question representa una pregunta del quiz
+// Question representa una pregunta del quiz (estructura completa)
 type Question struct {
-	ID       string   `json:"id" example:"q-uuid-1"`
-	Question string   `json:"question" example:"¿Qué es Pascal?"`
-	Type     string   `json:"type" example:"multiple_choice"`
-	Options  []string `json:"options" example:"option_a,option_b,option_c,option_d"`
+	ID         string           `json:"id" example:"q1"`
+	Text       string           `json:"text" example:"¿Qué es un compilador?"`
+	Type       string           `json:"type" example:"multiple_choice" enums:"multiple_choice,true_false,short_answer"`
+	Difficulty string           `json:"difficulty,omitempty" example:"basic" enums:"basic,medium,advanced"`
+	Points     int              `json:"points" example:"20"`
+	Order      int              `json:"order" example:"1"`
+	Options    []QuestionOption `json:"options"`
 } // @name Question
 
-// AttemptResultResponse representa la respuesta al registrar un intento
+// QuestionFeedback representa el feedback detallado de una pregunta
+type QuestionFeedback struct {
+	QuestionID      string `json:"question_id" example:"q1"`
+	IsCorrect       bool   `json:"is_correct" example:"true"`
+	YourAnswer      string `json:"your_answer" example:"a"`
+	FeedbackMessage string `json:"feedback_message" example:"¡Correcto! Un compilador traduce código fuente a código máquina."`
+} // @name QuestionFeedback
+
+// AttemptResultResponse representa la respuesta al registrar un intento (con feedback detallado)
 type AttemptResultResponse struct {
-	Score       float64  `json:"score" example:"85.5"`
-	TotalPoints float64  `json:"total_points" example:"100"`
-	Passed      bool     `json:"passed" example:"true"`
-	Feedback    []string `json:"feedback" example:"Pregunta 1: Correcta,Pregunta 2: Incorrecta"`
+	Score            float64            `json:"score" example:"85.5"`
+	TotalPoints      float64            `json:"total_points" example:"100"`
+	Passed           bool               `json:"passed" example:"true"`
+	DetailedFeedback []QuestionFeedback `json:"detailed_feedback"`
 } // @name AttemptResultResponse
 
 // SuccessResponse representa una respuesta genérica de éxito
