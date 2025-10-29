@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	_ "github.com/edugo/api-mobile/internal/models/request" // Usado en comentarios de Swagger
 	"github.com/edugo/api-mobile/internal/models/response"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -25,8 +26,8 @@ import (
 // @Router /materials [get]
 func GetMaterials(c *gin.Context) {
 	// Obtener parámetros de query
-	unitID := c.Query("unit_id")
-	subjectID := c.Query("subject_id")
+	_ = c.Query("unit_id")    // unitID - usado para filtrar en producción
+	_ = c.Query("subject_id") // subjectID - usado para filtrar en producción
 	status := c.DefaultQuery("status", "all")
 
 	// TODO: Implementar lógica real con PostgreSQL
