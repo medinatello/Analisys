@@ -1,0 +1,257 @@
+basePath: /v1
+definitions:
+  CreateSchoolResponse:
+    properties:
+      school_id:
+        example: school-uuid-123
+        type: string
+    type: object
+  CreateSubjectResponse:
+    properties:
+      subject_id:
+        example: subject-uuid-123
+        type: string
+    type: object
+  CreateUnitResponse:
+    properties:
+      unit_id:
+        example: unit-uuid-123
+        type: string
+    type: object
+  CreateUserRequest:
+    properties:
+      email:
+        example: usuario@example.com
+        type: string
+      name:
+        example: Juan Pérez
+        type: string
+      password:
+        example: password123
+        type: string
+      role:
+        example: teacher
+        type: string
+      school_id:
+        example: school-uuid-123
+        type: string
+    type: object
+  CreateUserResponse:
+    properties:
+      message:
+        example: Usuario creado
+        type: string
+      user_id:
+        example: user-uuid-123
+        type: string
+    type: object
+  GlobalStatsResponse:
+    properties:
+      active_users_30d:
+        example: 980
+        type: integer
+      total_materials:
+        example: 450
+        type: integer
+      total_users:
+        example: 1250
+        type: integer
+    type: object
+  SuccessResponse:
+    properties:
+      message:
+        example: Operación exitosa
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: API para operaciones CRUD y administrativas en EduGo
+  title: EduGo API Administración
+  version: "1.0"
+paths:
+  /materials/{id}:
+    delete:
+      parameters:
+      - description: ID del material
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Eliminar material
+      tags:
+      - Materials
+  /schools:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/CreateSchoolResponse'
+      security:
+      - BearerAuth: []
+      summary: Crear escuela
+      tags:
+      - Schools
+  /stats/global:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/GlobalStatsResponse'
+      security:
+      - BearerAuth: []
+      summary: Estadísticas globales
+      tags:
+      - Stats
+  /subjects:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/CreateSubjectResponse'
+      security:
+      - BearerAuth: []
+      summary: Crear materia
+      tags:
+      - Subjects
+  /units:
+    post:
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/CreateUnitResponse'
+      security:
+      - BearerAuth: []
+      summary: Crear unidad académica
+      tags:
+      - Units
+  /units/{id}:
+    patch:
+      parameters:
+      - description: ID de la unidad
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Actualizar unidad
+      tags:
+      - Units
+  /units/{id}/members:
+    post:
+      parameters:
+      - description: ID de la unidad
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Asignar membresía
+      tags:
+      - Units
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Crear nuevo usuario con rol y perfil
+      parameters:
+      - description: Datos del usuario
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/CreateUserResponse'
+      security:
+      - BearerAuth: []
+      summary: Crear usuario
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Eliminar usuario
+      tags:
+      - Users
+    patch:
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+      security:
+      - BearerAuth: []
+      summary: Actualizar usuario
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
