@@ -229,7 +229,7 @@ CREATE OR REPLACE FUNCTION prevent_circular_hierarchy() ...
 **Endpoints**:
 - `POST /v1/units/:id/members` - Asignar usuario a unidad con rol
 - `DELETE /v1/units/:id/members/:userId` - Remover usuario de unidad
-- `POST /v1/guardian-relations` - Crear vínculo tutor-estudiante
+- `POST /v1/guardian-relations` - Crear vínculo tutor-estudiante **(Post-MVP - No implementado)**
 
 **Por qué aquí**:
 - **Frecuencia baja**: Principalmente al inicio de año/semestre
@@ -245,7 +245,7 @@ CREATE OR REPLACE FUNCTION prevent_circular_hierarchy() ...
 
 **Endpoints**:
 - `POST /v1/subjects` - Crear materia en catálogo
-- `PATCH /v1/subjects/:id` - Actualizar materia
+- `PATCH /v1/subjects/:id` - Actualizar materia **(Post-MVP - No implementado)**
 - `DELETE /v1/subjects/:id` - Eliminar materia (Post-MVP)
 
 **Por qué aquí**:
