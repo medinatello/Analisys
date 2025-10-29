@@ -202,31 +202,53 @@ func GetMaterialSummary(c *gin.Context) {
 	// TODO: Consultar PostgreSQL para obtener mongo_document_id
 	// TODO: Consultar MongoDB para obtener resumen completo
 
-	// Mock response
-	c.JSON(http.StatusOK, gin.H{
-		"material_id": materialID,
-		"version":     1,
-		"sections": []gin.H{
+	// Mock response con estructura completa
+	mockResponse := response.MaterialSummaryResponse{
+		Sections: []response.SummarySection{
 			{
-				"title":                   "Contexto Histórico",
-				"content":                 "Pascal fue desarrollado por Niklaus Wirth en 1970...",
-				"difficulty":              "basic",
-				"estimated_time_minutes":  5,
-				"order":                   1,
+				Title:                "Contexto Histórico",
+				Content:              "Pascal fue desarrollado por Niklaus Wirth en 1970 como lenguaje de enseñanza. Su diseño enfatiza la programación estructurada y la claridad del código.",
+				Difficulty:           "basic",
+				EstimatedTimeMinutes: 5,
+				Order:                1,
+			},
+			{
+				Title:                "Características Principales",
+				Content:              "Pascal introduce tipificación fuerte, procedimientos y funciones bien definidos, y estructuras de control claras. Es un lenguaje compilado que genera código eficiente.",
+				Difficulty:           "medium",
+				EstimatedTimeMinutes: 8,
+				Order:                2,
 			},
 		},
-		"glossary": []gin.H{
+		Glossary: []response.GlossaryTerm{
 			{
-				"term":       "Compilador",
-				"definition": "Programa que traduce código fuente a código máquina",
-				"order":      1,
+				Term:       "Compilador",
+				Definition: "Programa que traduce código fuente a código máquina ejecutable por la computadora.",
+				Order:      1,
+			},
+			{
+				Term:       "Tipificación Fuerte",
+				Definition: "Sistema de tipos que previene operaciones entre tipos incompatibles, detectando errores en tiempo de compilación.",
+				Order:      2,
 			},
 		},
-		"reflection_questions": []string{
-			"¿Qué ventajas aportó Pascal sobre lenguajes anteriores?",
-			"¿Por qué es importante la tipificación fuerte?",
+		ReflectionQuestions: []string{
+			"¿Qué ventajas aportó Pascal sobre lenguajes anteriores como FORTRAN o COBOL?",
+			"¿Por qué es importante la tipificación fuerte en un lenguaje de programación?",
+			"¿Cómo ayuda Pascal a aprender buenos hábitos de programación?",
 		},
-	})
+		ProcessingMetadata: response.ProcessingMetadata{
+			NLPProvider:           "openai",
+			Model:                 "gpt-4",
+			TokensUsed:            3500,
+			ProcessingTimeSeconds: 45,
+			Language:              "es",
+			PromptVersion:         "v1.2",
+		},
+	}
+
+	_ = materialID // Suprimir warning
+	c.JSON(http.StatusOK, mockResponse)
 }
 
 // GetAssessment godoc
@@ -245,27 +267,92 @@ func GetAssessment(c *gin.Context) {
 	materialID := c.Param("id")
 
 	// TODO: Consultar PostgreSQL para obtener mongo_document_id
-	// TODO: Consultar MongoDB y REMOVER respuestas correctas
+	// TODO: Consultar MongoDB con proyección que EXCLUYA correct_answer y feedback
 
-	// Mock response (SIN correct_answer)
-	c.JSON(http.StatusOK, gin.H{
-		"assessment_id":          "assessment-uuid-1",
-		"material_id":            materialID,
-		"title":                  "Cuestionario: Introducción a Pascal",
-		"total_questions":        3,
-		"estimated_time_minutes": 10,
-		"questions": []gin.H{
+	// Mock response (SIN correct_answer ni feedback) - estructura completa
+	mockResponse := response.AssessmentResponse{
+		Title:            "Cuestionario: Introducción a Pascal",
+		Description:      "Evaluación de conceptos básicos sobre el lenguaje Pascal y sus características principales.",
+		TotalQuestions:   5,
+		TotalPoints:      100,
+		PassingScore:     70,
+		TimeLimitMinutes: 15,
+		Questions: []response.Question{
 			{
-				"id":   "q1",
-				"text": "¿Qué es un compilador?",
-				"type": "multiple_choice",
-				"options": []gin.H{
-					{"id": "a", "text": "Un programa que traduce código fuente a código máquina"},
-					{"id": "b", "text": "Un tipo de variable en Pascal"},
+				ID:         "q1",
+				Text:       "¿Qué es un compilador?",
+				Type:       "multiple_choice",
+				Difficulty: "basic",
+				Points:     20,
+				Order:      1,
+				Options: []response.QuestionOption{
+					{ID: "a", Text: "Un programa que traduce código fuente a código máquina"},
+					{ID: "b", Text: "Un tipo de variable en Pascal"},
+					{ID: "c", Text: "Un editor de texto especializado"},
+					{ID: "d", Text: "Una estructura de control de flujo"},
+				},
+			},
+			{
+				ID:         "q2",
+				Text:       "¿Cuál es una característica principal de Pascal?",
+				Type:       "multiple_choice",
+				Difficulty: "medium",
+				Points:     20,
+				Order:      2,
+				Options: []response.QuestionOption{
+					{ID: "a", Text: "Tipificación débil"},
+					{ID: "b", Text: "Tipificación fuerte"},
+					{ID: "c", Text: "No tiene tipos de datos"},
+					{ID: "d", Text: "Solo soporta números enteros"},
+				},
+			},
+			{
+				ID:         "q3",
+				Text:       "Pascal fue diseñado principalmente para:",
+				Type:       "multiple_choice",
+				Difficulty: "basic",
+				Points:     20,
+				Order:      3,
+				Options: []response.QuestionOption{
+					{ID: "a", Text: "Desarrollo de videojuegos"},
+					{ID: "b", Text: "Enseñanza de programación estructurada"},
+					{ID: "c", Text: "Programación de sistemas operativos"},
+					{ID: "d", Text: "Desarrollo web"},
+				},
+			},
+			{
+				ID:         "q4",
+				Text:       "¿Quién creó el lenguaje Pascal?",
+				Type:       "multiple_choice",
+				Difficulty: "basic",
+				Points:     20,
+				Order:      4,
+				Options: []response.QuestionOption{
+					{ID: "a", Text: "Dennis Ritchie"},
+					{ID: "b", Text: "Niklaus Wirth"},
+					{ID: "c", Text: "Bjarne Stroustrup"},
+					{ID: "d", Text: "James Gosling"},
+				},
+			},
+			{
+				ID:         "q5",
+				Text:       "La tipificación fuerte en Pascal ayuda a:",
+				Type:       "multiple_choice",
+				Difficulty: "medium",
+				Points:     20,
+				Order:      5,
+				Options: []response.QuestionOption{
+					{ID: "a", Text: "Ejecutar programas más rápido"},
+					{ID: "b", Text: "Detectar errores en tiempo de compilación"},
+					{ID: "c", Text: "Reducir el tamaño del código"},
+					{ID: "d", Text: "Permitir cualquier tipo de operación"},
 				},
 			},
 		},
-	})
+	}
+
+	_ = materialID // Suprimir warning
+	c.JSON(http.StatusOK, mockResponse)
 }
 
 // RecordAttempt godoc
@@ -283,28 +370,53 @@ func GetAssessment(c *gin.Context) {
 // @Router /materials/{id}/assessment/attempts [post]
 func RecordAttempt(c *gin.Context) {
 	// TODO: Parsear request body
-	// TODO: Obtener preguntas CON respuestas correctas de MongoDB
-	// TODO: Validar cada respuesta
-	// TODO: Calcular puntaje
-	// TODO: Persistir en assessment_attempt + assessment_attempt_answer
-	// TODO: Publicar evento assessment_attempt_recorded
+	// TODO: Obtener preguntas CON respuestas correctas y feedback de MongoDB
+	// TODO: Validar cada respuesta comparando con correct_answer
+	// TODO: Generar DetailedFeedback usando feedback.correct o feedback.incorrect
+	// TODO: Calcular puntaje sumando points de respuestas correctas
+	// TODO: Persistir en quiz_attempt + quiz_attempt_answer
+	// TODO: Publicar evento assessment_attempt_recorded a RabbitMQ
 
-	// Mock response con feedback
-	c.JSON(http.StatusOK, gin.H{
-		"attempt_id":      uuid.New().String(),
-		"score":           80,
-		"max_score":       100,
-		"correct_answers": 4,
-		"total_questions": 5,
-		"passed":          true,
-		"feedback": []gin.H{
+	// Mock response con feedback detallado personalizado
+	mockResponse := response.AttemptResultResponse{
+		Score:       80.0,
+		TotalPoints: 100.0,
+		Passed:      true,
+		DetailedFeedback: []response.QuestionFeedback{
 			{
-				"question_id": "q1",
-				"is_correct":  true,
-				"message":     "¡Correcto! Un compilador traduce código fuente a código máquina.",
+				QuestionID:      "q1",
+				IsCorrect:       true,
+				YourAnswer:      "a",
+				FeedbackMessage: "¡Correcto! Un compilador traduce código fuente a código máquina. Esto permite que el programa se ejecute de forma eficiente en el procesador.",
+			},
+			{
+				QuestionID:      "q2",
+				IsCorrect:       true,
+				YourAnswer:      "b",
+				FeedbackMessage: "¡Correcto! La tipificación fuerte es una de las características principales de Pascal, diseñada para detectar errores en tiempo de compilación.",
+			},
+			{
+				QuestionID:      "q3",
+				IsCorrect:       true,
+				YourAnswer:      "b",
+				FeedbackMessage: "¡Correcto! Pascal fue diseñado específicamente para enseñar programación estructurada de forma clara y didáctica.",
+			},
+			{
+				QuestionID:      "q4",
+				IsCorrect:       true,
+				YourAnswer:      "b",
+				FeedbackMessage: "¡Correcto! Niklaus Wirth creó Pascal en 1970, nombrándolo en honor al matemático Blaise Pascal.",
+			},
+			{
+				QuestionID:      "q5",
+				IsCorrect:       false,
+				YourAnswer:      "a",
+				FeedbackMessage: "Incorrecto. La tipificación fuerte ayuda principalmente a detectar errores en tiempo de compilación, no a ejecutar más rápido. Revisa el concepto de verificación de tipos.",
 			},
 		},
-	})
+	}
+
+	c.JSON(http.StatusOK, mockResponse)
 }
 
 // UpdateProgress godoc
