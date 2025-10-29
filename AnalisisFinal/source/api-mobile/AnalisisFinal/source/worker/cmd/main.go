@@ -22,7 +22,7 @@ func main() {
 	log.Println("🔄 EduGo Worker iniciando...")
 
 	// Conectar a RabbitMQ
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://admin:fOrus.1305.@localhost:5672/")
 	if err != nil {
 		log.Fatal("Error conectando a RabbitMQ:", err)
 	}
