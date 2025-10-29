@@ -1,0 +1,52 @@
+# Ignorar archivos innecesarios en build de Docker
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Documentación
+*.md
+docs/
+
+# Archivos de entorno
+.env
+.env.*
+
+# Archivos temporales
+*.tmp
+*.log
+*.swp
+*.swo
+*~
+
+# Dependencias (se descargarán en build)
+vendor/
+
+# Binarios
+*.exe
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# MacOS
+.DS_Store
+
+# Datos de prueba (ya están en los scripts)
+*.sql
+*.js
+source/scripts/
+
+# Otros proyectos
+AnalisisFinal/

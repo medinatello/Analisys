@@ -1,0 +1,157 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: edugo-postgres
+    environment:
+      POSTGRES_DB: edugo
+      POSTGRES_USER: edugo_user
+      POSTGRES_PASSWORD: edugo_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./source/scripts/postgresql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edugo_user -d edugo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - edugo-network
+
+  # Base de datos MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: edugo-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: edugo_admin
+      MONGO_INITDB_ROOT_PASSWORD: edugo_pass
+      MONGO_INITDB_DATABASE: edugo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./source/scripts/mongodb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/edugo --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - edugo-network
+
+  # RabbitMQ para Worker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: edugo-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: edugo_user
+      RABBITMQ_DEFAULT_PASS: edugo_pass
+    ports:
+      - "5672:5672"   # Puerto AMQP
+      - "15672:15672" # Puerto Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - edugo-network
+
+  # API Mobile (puerto 8080)
+  api-mobile:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-mobile
+    container_name: edugo-api-mobile
+    environment:
+      PORT: 8080
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: edugo
+      POSTGRES_USER: edugo_user
+      POSTGRES_PASSWORD: edugo_pass
+      MONGODB_URI: mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin
+      RABBITMQ_URL: amqp://edugo_user:edugo_pass@rabbitmq:5672/
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - edugo-network
+
+  # API Administración (puerto 8081)
+  api-administracion:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-administracion
+    container_name: edugo-api-admin
+    environment:
+      PORT: 8081
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: edugo
+      POSTGRES_USER: edugo_user
+      POSTGRES_PASSWORD: edugo_pass
+      MONGODB_URI: mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - edugo-network
+
+  # Worker de Procesamiento
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: edugo-worker
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: edugo
+      POSTGRES_USER: edugo_user
+      POSTGRES_PASSWORD: edugo_pass
+      MONGODB_URI: mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin
+      RABBITMQ_URL: amqp://edugo_user:edugo_pass@rabbitmq:5672/
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - edugo-network
+
+# Volúmenes para persistencia de datos
+volumes:
+  postgres_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+
+# Red para comunicación entre servicios
+networks:
+  edugo-network:
+    driver: bridge
