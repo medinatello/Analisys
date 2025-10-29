@@ -61,4 +61,4 @@ graph TB
 - Mobile (8080): Alta frecuencia, uso diario
 - Admin (8081): Baja frecuencia, CRUD maestro
 
-Ver archivo [DISTRIBUCION_PROCESOS.md](../../DISTRIBUCION_PROCESOS.md) para detalles.
+Ver archivo [DISTRIBUCION_PROCESOS.md](../DISTRIBUCION_PROCESOS.md) para detalles.
