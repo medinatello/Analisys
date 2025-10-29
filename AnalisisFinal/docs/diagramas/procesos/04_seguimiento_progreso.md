@@ -11,6 +11,7 @@ Proceso mediante el cual un docente consulta el progreso de sus estudiantes en m
 ## Diagrama de Flujo
 
 ```mermaid
+
 flowchart TD
     Start([Docente abre
         panel de materiales]) --> ViewMyMaterials[App muestra materiales
@@ -50,8 +51,8 @@ flowchart TD
         - Estudiantes activos]
     ShowSummary --> End3([Fin])
 
-    ViewOptions -->|Lista Estudiantes| ShowStudentList[Mostrar tabla:
-        Nombre | Progreso | Puntaje | Última actividad]
+    ViewOptions -->|Lista Estudiantes| ShowStudentList["Mostrar tabla:
+        Nombre | Progreso | Puntaje | Última actividad"]
     ShowStudentList --> SelectStudent{Docente selecciona
         estudiante}
 
@@ -76,6 +77,7 @@ flowchart TD
     style End5 fill:#e8f5e9
     style End6 fill:#e8f5e9
     style ErrorPerms fill:#ffcdd2
+
 ```
 
 ## Fases del Proceso

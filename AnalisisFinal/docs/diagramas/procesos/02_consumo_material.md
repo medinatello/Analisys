@@ -14,100 +14,66 @@ Proceso mediante el cual un estudiante busca, descarga y lee materiales educativ
 
 ```mermaid
 flowchart TD
-    Start([Estudiante abre la app]) --> SelectUnit[Estudiante selecciona
-        unidad académica]
-    SelectUnit --> RequestMaterials[App llama
-        GET /v1/materials?unit_id=X]
+    Start([Estudiante abre la app]) --> SelectUnit["Estudiante selecciona\n        unidad académica"]
+    SelectUnit --> RequestMaterials["App llama\n        GET /v1/materials?unit_id=X"]
 
-    RequestMaterials --> ValidateToken{API valida
-        JWT token}
-    ValidateToken -->|Token inválido| ErrorAuth[Error 401:
-        Re-autenticar]
+    RequestMaterials --> ValidateToken{"API valida\n        JWT token"}
+    ValidateToken -->|"Token inválido"| ErrorAuth["Error 401:\n        Re-autenticar"]
     ErrorAuth --> End1([Fin])
 
-    ValidateToken -->|Token válido| CheckMembership{¿Estudiante
-        en unidad?}
-    CheckMembership -->|No| ErrorNoMembership[Error 403:
-        No perteneces a esta unidad]
+    ValidateToken -->|"Token válido"| CheckMembership{"¿Estudiante\n        en unidad?"}
+    CheckMembership -->|No| ErrorNoMembership["Error 403:\n        No perteneces a esta unidad"]
     ErrorNoMembership --> End2([Fin])
 
-    CheckMembership -->|Sí| QueryMaterials[API consulta PostgreSQL:
-        materiales + progreso]
-    QueryMaterials --> ReturnList[API retorna lista
-        con metadatos y estado]
+    CheckMembership -->|"Sí"| QueryMaterials["API consulta PostgreSQL:\n        materiales + progreso"]
+    QueryMaterials --> ReturnList["API retorna lista\n        con metadatos y estado"]
 
-    ReturnList --> DisplayList[App muestra lista
-        con badges: nuevo/en progreso/completado]
-    DisplayList --> SelectMaterial{Estudiante
-        selecciona material}
+    ReturnList --> DisplayList["App muestra lista\n        con badges: nuevo/en progreso/completado"]
+    DisplayList --> SelectMaterial{"Estudiante\n        selecciona material"}
 
     SelectMaterial -->|No| End3([Fin])
-    SelectMaterial -->|Sí| RequestDetail[App llama
-        GET /v1/materials/:id]
+    SelectMaterial -->|"Sí"| RequestDetail["App llama\n        GET /v1/materials/:id"]
 
-    RequestDetail --> ValidatePermsMaterial{API valida permisos
-        para este material}
-    ValidatePermsMaterial -->|Sin permisos| ErrorNoPerms[Error 403]
+    RequestDetail --> ValidatePermsMaterial{"API valida permisos\n        para este material"}
+    ValidatePermsMaterial -->|"Sin permisos"| ErrorNoPerms["Error 403"]
     ErrorNoPerms --> End4([Fin])
 
-    ValidatePermsMaterial -->|Con permisos| GetDetail[API obtiene metadatos
-        de PostgreSQL]
-    GetDetail --> GeneratePDFURL[API genera URL firmada
-        S3 para descarga PDF]
-    GeneratePDFURL --> CheckSummary{¿Resumen
-        disponible?}
+    ValidatePermsMaterial -->|"Con permisos"| GetDetail["API obtiene metadatos\n        de PostgreSQL"]
+    GetDetail --> GeneratePDFURL["API genera URL firmada\n        S3 para descarga PDF"]
+    GeneratePDFURL --> CheckSummary{"¿Resumen\n        disponible?"}
 
-    CheckSummary -->|No| ReturnDetailNoSummary[API retorna detalle
-        sin resumen]
-    ReturnDetailNoSummary --> DisplayDetailNoSummary[App muestra:
-        Solo PDF disponible]
+    CheckSummary -->|No| ReturnDetailNoSummary["API retorna detalle\n        sin resumen"]
+    ReturnDetailNoSummary --> DisplayDetailNoSummary["App muestra:\n        Solo PDF disponible"]
 
-    CheckSummary -->|Sí| ReturnDetailWithSummary[API retorna detalle
-        con has_summary=true]
-    ReturnDetailWithSummary --> DisplayDetail[App muestra opciones:
-        Ver PDF | Ver Resumen | Quiz]
+    CheckSummary -->|"Sí"| ReturnDetailWithSummary["API retorna detalle\n        con has_summary=true"]
+    ReturnDetailWithSummary --> DisplayDetail["App muestra opciones:\n        Ver PDF | Ver Resumen | Quiz"]
 
-    DisplayDetail --> StudentChoice{Estudiante
-        elige opción}
+    DisplayDetail --> StudentChoice{"Estudiante\n        elige opción"}
 
-    StudentChoice -->|Ver PDF| DownloadPDF[App descarga PDF
-        desde S3 URL firmada]
-    DownloadPDF --> OpenPDFReader[App abre lector PDF
-        nativo por plataforma]
-    OpenPDFReader --> ReadPDF[Estudiante lee PDF]
+    StudentChoice -->|"Ver PDF"| DownloadPDF["App descarga PDF\n        desde S3 URL firmada"]
+    DownloadPDF --> OpenPDFReader["App abre lector PDF\n        nativo por plataforma"]
+    OpenPDFReader --> ReadPDF["Estudiante lee PDF"]
 
-    ReadPDF --> TrackProgress[App registra progreso
-        cada 30 segundos]
-    TrackProgress --> SendProgress[PATCH /v1/materials/:id/progress
-        {progress: X, time_spent: Y}]
-    SendProgress --> UpdateReadingLog[API actualiza
-        reading_log en PostgreSQL]
-    UpdateReadingLog --> ContinueReading{¿Seguir
-        leyendo?}
+    ReadPDF --> TrackProgress["App registra progreso\n        cada 30 segundos"]
+    TrackProgress --> SendProgress["PATCH /v1/materials/:id/progress\n        {progress: X, time_spent: Y}"]
+    SendProgress --> UpdateReadingLog["API actualiza\n        reading_log en PostgreSQL"]
+    UpdateReadingLog --> ContinueReading{"¿Seguir\n        leyendo?"}
 
-    ContinueReading -->|Sí| ReadPDF
+    ContinueReading -->|"Sí"| ReadPDF
     ContinueReading -->|No| End5([Fin])
 
-    StudentChoice -->|Ver Resumen| RequestSummary[App llama
-        GET /v1/materials/:id/summary]
-    RequestSummary --> FetchSummary[API obtiene resumen
-        desde MongoDB]
-    FetchSummary --> ReturnSummary[API retorna resumen
-        completo]
+    StudentChoice -->|"Ver Resumen"| RequestSummary["App llama\n        GET /v1/materials/:id/summary"]
+    RequestSummary --> FetchSummary["API obtiene resumen\n        desde MongoDB"]
+    FetchSummary --> ReturnSummary["API retorna resumen\n        completo"]
 
-    ReturnSummary --> DisplaySummary[App muestra resumen:
-        Secciones | Glosario | Preguntas]
-    DisplaySummary --> ReadSummary[Estudiante lee resumen
-        interactivo]
+    ReturnSummary --> DisplaySummary["App muestra resumen:\n        Secciones | Glosario | Preguntas"]
+    DisplaySummary --> ReadSummary["Estudiante lee resumen\n        interactivo"]
 
-    ReadSummary --> MarkAsRead[Estudiante marca
-        como leído]
-    MarkAsRead --> UpdateProgressSummary[PATCH /v1/materials/:id/progress
-        {progress: 100}]
+    ReadSummary --> MarkAsRead["Estudiante marca\n        como leído"]
+    MarkAsRead --> UpdateProgressSummary["PATCH /v1/materials/:id/progress\n        {progress: 100}"]
     UpdateProgressSummary --> End6([Fin])
 
-    StudentChoice -->|Ver Quiz| GoToQuiz[Ver proceso:
-        03_evaluacion.md]
+    StudentChoice -->|"Ver Quiz"| GoToQuiz["Ver proceso:\n        03_evaluacion.md"]
     GoToQuiz --> End7([Fin])
 
     DisplayDetailNoSummary --> DownloadPDF
