@@ -32,24 +32,24 @@ func main() {
 	v1.Use(AdminAuthRequired())
 	{
 		// Users CRUD
-		v1.POST("/users", CreateUser)              // POST /v1/users
-		v1.PATCH("/users/:id", UpdateUser)         // PATCH /v1/users/:id
-		v1.DELETE("/users/:id", DeleteUser)        // DELETE /v1/users/:id
+		v1.POST("/users", CreateUser)       // POST /v1/users
+		v1.PATCH("/users/:id", UpdateUser)  // PATCH /v1/users/:id
+		v1.DELETE("/users/:id", DeleteUser) // DELETE /v1/users/:id
 
 		// Units (Jerarquía Académica)
-		v1.POST("/schools", CreateSchool)          // POST /v1/schools
-		v1.POST("/units", CreateUnit)              // POST /v1/units
-		v1.PATCH("/units/:id", UpdateUnit)         // PATCH /v1/units/:id
+		v1.POST("/schools", CreateSchool)               // POST /v1/schools
+		v1.POST("/units", CreateUnit)                   // POST /v1/units
+		v1.PATCH("/units/:id", UpdateUnit)              // PATCH /v1/units/:id
 		v1.POST("/units/:id/members", AssignMembership) // POST /v1/units/:id/members
 
 		// Subjects
-		v1.POST("/subjects", CreateSubject)        // POST /v1/subjects
+		v1.POST("/subjects", CreateSubject) // POST /v1/subjects
 
 		// Materials Admin
 		v1.DELETE("/materials/:id", DeleteMaterial) // DELETE /v1/materials/:id
 
 		// Stats
-		v1.GET("/stats/global", GetGlobalStats)     // GET /v1/stats/global
+		v1.GET("/stats/global", GetGlobalStats) // GET /v1/stats/global
 	}
 
 	log.Println("🔧 API Administración running on :8081")
@@ -70,11 +70,11 @@ func AdminAuthRequired() gin.HandlerFunc {
 
 // CreateUserRequest representa la petición para crear usuario
 type CreateUserRequest struct {
-	Email     string `json:"email" example:"usuario@example.com"`
-	Password  string `json:"password" example:"password123"`
-	Name      string `json:"name" example:"Juan Pérez"`
-	Role      string `json:"role" example:"teacher"`
-	SchoolID  string `json:"school_id" example:"school-uuid-123"`
+	Email    string `json:"email" example:"usuario@example.com"`
+	Password string `json:"password" example:"password123"`
+	Name     string `json:"name" example:"Juan Pérez"`
+	Role     string `json:"role" example:"teacher"`
+	SchoolID string `json:"school_id" example:"school-uuid-123"`
 } // @name CreateUserRequest
 
 // CreateUserResponse representa la respuesta al crear usuario
@@ -105,9 +105,9 @@ type CreateSubjectResponse struct {
 
 // GlobalStatsResponse representa las estadísticas globales
 type GlobalStatsResponse struct {
-	TotalUsers      int `json:"total_users" example:"1250"`
-	TotalMaterials  int `json:"total_materials" example:"450"`
-	ActiveUsers30d  int `json:"active_users_30d" example:"980"`
+	TotalUsers     int `json:"total_users" example:"1250"`
+	TotalMaterials int `json:"total_materials" example:"450"`
+	ActiveUsers30d int `json:"active_users_30d" example:"980"`
 } // @name GlobalStatsResponse
 
 // Mock handlers con Swagger annotations
@@ -228,8 +228,8 @@ func DeleteMaterial(c *gin.Context) {
 // @Router /stats/global [get]
 func GetGlobalStats(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"total_users": 1250,
-		"total_materials": 450,
+		"total_users":      1250,
+		"total_materials":  450,
 		"active_users_30d": 980,
 	})
 }

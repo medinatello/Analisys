@@ -4,15 +4,15 @@ import "time"
 
 // MaterialSummaryDocument representa un documento de resumen en MongoDB
 type MaterialSummaryDocument struct {
-	MaterialID          string              `bson:"material_id"`
-	Version             int                 `bson:"version"`
-	Status              string              `bson:"status"` // pending | processing | completed | failed
-	Sections            []SummarySection    `bson:"sections"`
-	Glossary            []GlossaryTerm      `bson:"glossary,omitempty"`
-	ReflectionQuestions []string            `bson:"reflection_questions,omitempty"`
-	ProcessingMetadata  ProcessingMetadata  `bson:"processing_metadata,omitempty"`
-	CreatedAt           time.Time           `bson:"created_at"`
-	UpdatedAt           time.Time           `bson:"updated_at,omitempty"`
+	MaterialID          string             `bson:"material_id"`
+	Version             int                `bson:"version"`
+	Status              string             `bson:"status"` // pending | processing | completed | failed
+	Sections            []SummarySection   `bson:"sections"`
+	Glossary            []GlossaryTerm     `bson:"glossary,omitempty"`
+	ReflectionQuestions []string           `bson:"reflection_questions,omitempty"`
+	ProcessingMetadata  ProcessingMetadata `bson:"processing_metadata,omitempty"`
+	CreatedAt           time.Time          `bson:"created_at"`
+	UpdatedAt           time.Time          `bson:"updated_at,omitempty"`
 }
 
 // SummarySection representa una sección del resumen en MongoDB
@@ -59,15 +59,15 @@ type MaterialAssessmentDocument struct {
 
 // QuestionDocument representa una pregunta en MongoDB
 type QuestionDocument struct {
-	ID             string              `bson:"id"`
-	Text           string              `bson:"text"`
-	Type           string              `bson:"type"` // multiple_choice | true_false | short_answer
-	Difficulty     string              `bson:"difficulty,omitempty"` // basic | medium | advanced
-	Points         int                 `bson:"points"`
-	Order          int                 `bson:"order"`
-	Options        []QuestionOption    `bson:"options"`
-	CorrectAnswer  string              `bson:"correct_answer"`
-	Feedback       QuestionFeedbackDoc `bson:"feedback,omitempty"`
+	ID            string              `bson:"id"`
+	Text          string              `bson:"text"`
+	Type          string              `bson:"type"`                 // multiple_choice | true_false | short_answer
+	Difficulty    string              `bson:"difficulty,omitempty"` // basic | medium | advanced
+	Points        int                 `bson:"points"`
+	Order         int                 `bson:"order"`
+	Options       []QuestionOption    `bson:"options"`
+	CorrectAnswer string              `bson:"correct_answer"`
+	Feedback      QuestionFeedbackDoc `bson:"feedback,omitempty"`
 }
 
 // QuestionOption representa una opción de respuesta en MongoDB

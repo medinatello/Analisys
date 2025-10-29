@@ -172,8 +172,8 @@ func UploadComplete(c *gin.Context) {
 	// TODO: Publicar evento material_uploaded a RabbitMQ
 
 	c.JSON(http.StatusAccepted, gin.H{
-		"status":                "processing",
-		"message":               "Material en procesamiento. Te notificaremos cuando el resumen esté listo.",
+		"status":                 "processing",
+		"message":                "Material en procesamiento. Te notificaremos cuando el resumen esté listo.",
 		"estimated_time_minutes": 3,
 		"material": gin.H{
 			"id":         materialID,
@@ -467,13 +467,13 @@ func GetMaterialStats(c *gin.Context) {
 			"title": "Introducción a Pascal",
 		},
 		"summary": gin.H{
-			"total_students":  25,
-			"not_started":     5,
-			"in_progress":     12,
-			"completed":       8,
+			"total_students":   25,
+			"not_started":      5,
+			"in_progress":      12,
+			"completed":        8,
 			"average_progress": 62.4,
-			"average_score":   75.5,
-			"completion_rate": 32.0,
+			"average_score":    75.5,
+			"completion_rate":  32.0,
 		},
 		"students": []gin.H{
 			{

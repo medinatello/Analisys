@@ -61,7 +61,7 @@ func main() {
 			ContentType:  "application/json",
 			Body:         body,
 			DeliveryMode: amqp.Persistent, // Mensaje persistente
-			Priority:     10,               // Prioridad alta
+			Priority:     10,              // Prioridad alta
 		})
 	if err != nil {
 		log.Fatal("Error publicando mensaje:", err)

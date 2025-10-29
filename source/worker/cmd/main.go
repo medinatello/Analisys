@@ -51,10 +51,10 @@ func main() {
 	// Declarar cola de alta prioridad
 	q, err := ch.QueueDeclare(
 		"material_processing_high", // name
-		true,                        // durable
-		false,                       // delete when unused
-		false,                       // exclusive
-		false,                       // no-wait
+		true,                       // durable
+		false,                      // delete when unused
+		false,                      // exclusive
+		false,                      // no-wait
 		amqp.Table{
 			"x-max-priority":         10,
 			"x-dead-letter-exchange": "edugo_dlq",
@@ -66,9 +66,9 @@ func main() {
 
 	// Bind cola al exchange
 	err = ch.QueueBind(
-		q.Name,         // queue name
+		q.Name,              // queue name
 		"material.uploaded", // routing key
-		"edugo_events", // exchange
+		"edugo_events",      // exchange
 		false,
 		nil,
 	)

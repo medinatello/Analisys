@@ -11,24 +11,24 @@ type MaterialListResponse struct {
 
 // MaterialSummary representa un resumen de material en la lista
 type MaterialSummary struct {
-	ID           string    `json:"id" example:"uuid-1"`
-	Title        string    `json:"title" example:"Introducción a Pascal"`
-	SubjectName  string    `json:"subject_name" example:"Programación"`
-	UnitName     string    `json:"unit_name" example:"5.º A - Programación"`
-	Status       string    `json:"status" example:"new" enums:"new,in_progress,completed"`
-	Progress     float64   `json:"progress" example:"0"`
-	HasSummary   bool      `json:"has_summary" example:"true"`
-	HasQuiz      bool      `json:"has_quiz" example:"true"`
-	PublishedAt  time.Time `json:"published_at" example:"2025-01-15T12:00:00Z"`
+	ID          string    `json:"id" example:"uuid-1"`
+	Title       string    `json:"title" example:"Introducción a Pascal"`
+	SubjectName string    `json:"subject_name" example:"Programación"`
+	UnitName    string    `json:"unit_name" example:"5.º A - Programación"`
+	Status      string    `json:"status" example:"new" enums:"new,in_progress,completed"`
+	Progress    float64   `json:"progress" example:"0"`
+	HasSummary  bool      `json:"has_summary" example:"true"`
+	HasQuiz     bool      `json:"has_quiz" example:"true"`
+	PublishedAt time.Time `json:"published_at" example:"2025-01-15T12:00:00Z"`
 } // @name MaterialSummary
 
 // MaterialDetailResponse representa el detalle completo de un material
 type MaterialDetailResponse struct {
-	Material          MaterialDetail `json:"material"`
-	PDFURL            string         `json:"pdf_url" example:"https://s3.../presigned-url"`
-	PDFURLExpiresAt   time.Time      `json:"pdf_url_expires_at" example:"2025-01-29T11:15:00Z"`
-	HasSummary        bool           `json:"has_summary" example:"true"`
-	HasQuiz           bool           `json:"has_quiz" example:"true"`
+	Material        MaterialDetail `json:"material"`
+	PDFURL          string         `json:"pdf_url" example:"https://s3.../presigned-url"`
+	PDFURLExpiresAt time.Time      `json:"pdf_url_expires_at" example:"2025-01-29T11:15:00Z"`
+	HasSummary      bool           `json:"has_summary" example:"true"`
+	HasQuiz         bool           `json:"has_quiz" example:"true"`
 } // @name MaterialDetailResponse
 
 // MaterialDetail contiene información detallada del material
@@ -51,11 +51,11 @@ type ErrorResponse struct {
 
 // CreateMaterialResponse representa la respuesta al crear un material
 type CreateMaterialResponse struct {
-	Status              string    `json:"status" example:"created"`
-	MaterialID          string    `json:"material_id" example:"uuid-123"`
-	UploadURL           string    `json:"upload_url" example:"https://s3.amazonaws.com/edugo-materials-prod/upload-url-mock"`
-	UploadURLExpiresAt  time.Time `json:"upload_url_expires_at" example:"2025-01-29T12:15:00Z"`
-	MaxFileSizeBytes    int64     `json:"max_file_size_bytes" example:"104857600"`
+	Status             string    `json:"status" example:"created"`
+	MaterialID         string    `json:"material_id" example:"uuid-123"`
+	UploadURL          string    `json:"upload_url" example:"https://s3.amazonaws.com/edugo-materials-prod/upload-url-mock"`
+	UploadURLExpiresAt time.Time `json:"upload_url_expires_at" example:"2025-01-29T12:15:00Z"`
+	MaxFileSizeBytes   int64     `json:"max_file_size_bytes" example:"104857600"`
 } // @name CreateMaterialResponse
 
 // UploadCompleteResponse representa la respuesta al completar un upload
