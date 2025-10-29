@@ -605,26 +605,46 @@ const docTemplate = `{
         "AssessmentResponse": {
             "type": "object",
             "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Evaluación de conceptos básicos"
+                },
+                "passing_score": {
+                    "type": "integer",
+                    "example": 70
+                },
                 "questions": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/Question"
                     }
+                },
+                "time_limit_minutes": {
+                    "type": "integer",
+                    "example": 15
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Cuestionario: Introducción a Pascal"
+                },
+                "total_points": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "total_questions": {
+                    "type": "integer",
+                    "example": 5
                 }
             }
         },
         "AttemptResultResponse": {
             "type": "object",
             "properties": {
-                "feedback": {
+                "detailed_feedback": {
                     "type": "array",
                     "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "Pregunta 1: Correcta",
-                        "Pregunta 2: Incorrecta"
-                    ]
+                        "$ref": "#/definitions/QuestionFeedback"
+                    }
                 },
                 "passed": {
                     "type": "boolean",
@@ -712,6 +732,23 @@ const docTemplate = `{
                 "message": {
                     "type": "string",
                     "example": "Field 'title' is required"
+                }
+            }
+        },
+        "GlossaryTerm": {
+            "type": "object",
+            "properties": {
+                "definition": {
+                    "type": "string",
+                    "example": "Programa que traduce código fuente a código máquina"
+                },
+                "order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "term": {
+                    "type": "string",
+                    "example": "Compilador"
                 }
             }
         },
@@ -900,38 +937,138 @@ const docTemplate = `{
         "MaterialSummaryResponse": {
             "type": "object",
             "properties": {
-                "summary": {
+                "glossary": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/GlossaryTerm"
+                    }
+                },
+                "processing_metadata": {
+                    "$ref": "#/definitions/ProcessingMetadata"
+                },
+                "reflection_questions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "¿Cómo aplicarías este concepto?",
+                        "¿Qué diferencias encuentras?"
+                    ]
+                },
+                "sections": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SummarySection"
+                    }
+                }
+            }
+        },
+        "ProcessingMetadata": {
+            "type": "object",
+            "properties": {
+                "language": {
                     "type": "string",
-                    "example": "Este material introduce los conceptos básicos de Pascal..."
+                    "example": "es"
+                },
+                "model": {
+                    "type": "string",
+                    "example": "gpt-4"
+                },
+                "nlp_provider": {
+                    "type": "string",
+                    "example": "openai"
+                },
+                "processing_time_seconds": {
+                    "type": "integer",
+                    "example": 45
+                },
+                "prompt_version": {
+                    "type": "string",
+                    "example": "v1.2"
+                },
+                "tokens_used": {
+                    "type": "integer",
+                    "example": 3500
                 }
             }
         },
         "Question": {
             "type": "object",
             "properties": {
+                "difficulty": {
+                    "type": "string",
+                    "enum": [
+                        "basic",
+                        "medium",
+                        "advanced"
+                    ],
+                    "example": "basic"
+                },
                 "id": {
                     "type": "string",
-                    "example": "q-uuid-1"
+                    "example": "q1"
                 },
                 "options": {
                     "type": "array",
                     "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "option_a",
-                        "option_b",
-                        "option_c",
-                        "option_d"
-                    ]
+                        "$ref": "#/definitions/QuestionOption"
+                    }
                 },
-                "question": {
+                "order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "points": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "text": {
                     "type": "string",
-                    "example": "¿Qué es Pascal?"
+                    "example": "¿Qué es un compilador?"
                 },
                 "type": {
                     "type": "string",
+                    "enum": [
+                        "multiple_choice",
+                        "true_false",
+                        "short_answer"
+                    ],
                     "example": "multiple_choice"
+                }
+            }
+        },
+        "QuestionFeedback": {
+            "type": "object",
+            "properties": {
+                "feedback_message": {
+                    "type": "string",
+                    "example": "¡Correcto! Un compilador traduce código fuente a código máquina."
+                },
+                "is_correct": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "question_id": {
+                    "type": "string",
+                    "example": "q1"
+                },
+                "your_answer": {
+                    "type": "string",
+                    "example": "a"
+                }
+            }
+        },
+        "QuestionOption": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "a"
+                },
+                "text": {
+                    "type": "string",
+                    "example": "Un programa que traduce código"
                 }
             }
         },
@@ -959,6 +1096,36 @@ const docTemplate = `{
                 "status": {
                     "type": "string",
                     "example": "success"
+                }
+            }
+        },
+        "SummarySection": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Pascal fue desarrollado..."
+                },
+                "difficulty": {
+                    "type": "string",
+                    "enum": [
+                        "basic",
+                        "medium",
+                        "advanced"
+                    ],
+                    "example": "basic"
+                },
+                "estimated_time_minutes": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "order": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Contexto Histórico"
                 }
             }
         },

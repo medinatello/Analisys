@@ -9,6 +9,63 @@
     "host": "localhost:8081",
     "basePath": "/v1",
     "paths": {
+        "/guardian-relations": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Crea una relación entre un tutor (guardian) y un estudiante",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Guardians"
+                ],
+                "summary": "Crear vínculo tutor-estudiante (Post-MVP)",
+                "parameters": [
+                    {
+                        "description": "Datos de la relación",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateGuardianRelationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/GuardianRelationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Relación ya existe",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/materials/{id}": {
             "delete": {
                 "security": [
@@ -109,6 +166,76 @@
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/CreateSubjectResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/subjects/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Actualiza información de una materia del catálogo",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subjects"
+                ],
+                "summary": "Actualizar materia (Post-MVP)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID de la materia",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Datos a actualizar",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateSubjectRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/SubjectResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Solo administradores",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Materia no encontrada",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
                         }
                     }
                 }
@@ -309,6 +436,34 @@
         }
     },
     "definitions": {
+        "CreateGuardianRelationRequest": {
+            "type": "object",
+            "required": [
+                "guardian_id",
+                "relationship_type",
+                "student_id"
+            ],
+            "properties": {
+                "guardian_id": {
+                    "type": "string",
+                    "example": "uuid-guardian-123"
+                },
+                "relationship_type": {
+                    "type": "string",
+                    "enum": [
+                        "father",
+                        "mother",
+                        "guardian",
+                        "other"
+                    ],
+                    "example": "father"
+                },
+                "student_id": {
+                    "type": "string",
+                    "example": "uuid-student-456"
+                }
+            }
+        },
         "CreateSchoolResponse": {
             "type": "object",
             "properties": {
@@ -374,6 +529,19 @@
                 }
             }
         },
+        "ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Invalid request"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Field 'guardian_id' is required"
+                }
+            }
+        },
         "GlobalStatsResponse": {
             "type": "object",
             "properties": {
@@ -391,12 +559,83 @@
                 }
             }
         },
+        "GuardianRelationResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-01-15T10:00:00Z"
+                },
+                "guardian_id": {
+                    "type": "string",
+                    "example": "uuid-guardian-123"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "uuid-relation-789"
+                },
+                "relationship_type": {
+                    "type": "string",
+                    "example": "father"
+                },
+                "student_id": {
+                    "type": "string",
+                    "example": "uuid-student-456"
+                }
+            }
+        },
+        "SubjectResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2025-01-01T00:00:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Curso de matemáticas"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "uuid-subject-101"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Matemáticas"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2025-01-15T10:00:00Z"
+                }
+            }
+        },
         "SuccessResponse": {
             "type": "object",
             "properties": {
                 "message": {
                     "type": "string",
                     "example": "Operación exitosa"
+                }
+            }
+        },
+        "UpdateSubjectRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Curso avanzado de matemáticas"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Matemáticas Avanzadas"
                 }
             }
         }

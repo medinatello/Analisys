@@ -14,19 +14,34 @@ definitions:
     type: object
   AssessmentResponse:
     properties:
+      description:
+        example: Evaluación de conceptos básicos
+        type: string
+      passing_score:
+        example: 70
+        type: integer
       questions:
         items:
           $ref: '#/definitions/Question'
         type: array
+      time_limit_minutes:
+        example: 15
+        type: integer
+      title:
+        example: 'Cuestionario: Introducción a Pascal'
+        type: string
+      total_points:
+        example: 100
+        type: integer
+      total_questions:
+        example: 5
+        type: integer
     type: object
   AttemptResultResponse:
     properties:
-      feedback:
-        example:
-        - 'Pregunta 1: Correcta'
-        - 'Pregunta 2: Incorrecta'
+      detailed_feedback:
         items:
-          type: string
+          $ref: '#/definitions/QuestionFeedback'
         type: array
       passed:
         example: true
@@ -91,6 +106,18 @@ definitions:
         type: string
       message:
         example: Field 'title' is required
+        type: string
+    type: object
+  GlossaryTerm:
+    properties:
+      definition:
+        example: Programa que traduce código fuente a código máquina
+        type: string
+      order:
+        example: 1
+        type: integer
+      term:
+        example: Compilador
         type: string
     type: object
   LoginRequest:
@@ -225,29 +252,100 @@ definitions:
     type: object
   MaterialSummaryResponse:
     properties:
-      summary:
-        example: Este material introduce los conceptos básicos de Pascal...
-        type: string
-    type: object
-  Question:
-    properties:
-      id:
-        example: q-uuid-1
-        type: string
-      options:
+      glossary:
+        items:
+          $ref: '#/definitions/GlossaryTerm'
+        type: array
+      processing_metadata:
+        $ref: '#/definitions/ProcessingMetadata'
+      reflection_questions:
         example:
-        - option_a
-        - option_b
-        - option_c
-        - option_d
+        - ¿Cómo aplicarías este concepto?
+        - ¿Qué diferencias encuentras?
         items:
           type: string
         type: array
-      question:
-        example: ¿Qué es Pascal?
+      sections:
+        items:
+          $ref: '#/definitions/SummarySection'
+        type: array
+    type: object
+  ProcessingMetadata:
+    properties:
+      language:
+        example: es
+        type: string
+      model:
+        example: gpt-4
+        type: string
+      nlp_provider:
+        example: openai
+        type: string
+      processing_time_seconds:
+        example: 45
+        type: integer
+      prompt_version:
+        example: v1.2
+        type: string
+      tokens_used:
+        example: 3500
+        type: integer
+    type: object
+  Question:
+    properties:
+      difficulty:
+        enum:
+        - basic
+        - medium
+        - advanced
+        example: basic
+        type: string
+      id:
+        example: q1
+        type: string
+      options:
+        items:
+          $ref: '#/definitions/QuestionOption'
+        type: array
+      order:
+        example: 1
+        type: integer
+      points:
+        example: 20
+        type: integer
+      text:
+        example: ¿Qué es un compilador?
         type: string
       type:
+        enum:
+        - multiple_choice
+        - true_false
+        - short_answer
         example: multiple_choice
+        type: string
+    type: object
+  QuestionFeedback:
+    properties:
+      feedback_message:
+        example: ¡Correcto! Un compilador traduce código fuente a código máquina.
+        type: string
+      is_correct:
+        example: true
+        type: boolean
+      question_id:
+        example: q1
+        type: string
+      your_answer:
+        example: a
+        type: string
+    type: object
+  QuestionOption:
+    properties:
+      id:
+        example: a
+        type: string
+      text:
+        example: Un programa que traduce código
         type: string
     type: object
   RecordAttemptRequest:
@@ -266,6 +364,28 @@ definitions:
         type: string
       status:
         example: success
+        type: string
+    type: object
+  SummarySection:
+    properties:
+      content:
+        example: Pascal fue desarrollado...
+        type: string
+      difficulty:
+        enum:
+        - basic
+        - medium
+        - advanced
+        example: basic
+        type: string
+      estimated_time_minutes:
+        example: 5
+        type: integer
+      order:
+        example: 1
+        type: integer
+      title:
+        example: Contexto Histórico
         type: string
     type: object
   UpdateProgressRequest:
