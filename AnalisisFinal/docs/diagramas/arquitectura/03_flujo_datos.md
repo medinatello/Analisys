@@ -20,30 +20,23 @@ sequenceDiagram
 
     Note over D,NOTIF: FLUJO 1: PUBLICACIÓN DE MATERIAL (Síncrono + Asíncrono)
 
-    D->>+API: POST /v1/materials
-        {title, description, subject_id, unit_ids}
+    D->>+API: POST /v1/materials<br/>{title, description, subject_id, unit_ids}
     API->>API: Validar permisos del docente
     API->>PG: INSERT INTO learning_material
     PG-->>API: material_id
     API->>PG: INSERT INTO material_unit_link (múltiples unidades)
     API->>S3: GeneratePresignedUploadURL(material_id)
     S3-->>API: upload_url (válido 15 min)
-    API-->>D: 201 Created
-        {material_id, upload_url}
+    API-->>D: 201 Created<br/>{material_id, upload_url}
 
-    D->>+S3: PUT upload_url
-        (multipart PDF)
+    D->>+S3: PUT upload_url<br/>(multipart PDF)
     S3-->>-D: 200 OK
 
     D->>+API: POST /v1/materials/:id/upload-complete
-    API->>PG: INSERT INTO material_version
-        (file_hash, s3_key)
-    API->>+Q: Publish event
-        material_uploaded
-        {material_id, s3_key, author_id}
+    API->>PG: INSERT INTO material_version<br/>(file_hash, s3_key)
+    API->>+Q: Publish event<br/>material_uploaded<br/>{material_id, s3_key, author_id}
     Q-->>-API: ACK
-    API-->>-D: 202 Accepted
-        "Procesando material..."
+    API-->>-D: 202 Accepted<br/>Procesando material
 
     Q->>+W: Consume material_uploaded
     W->>S3: DownloadFile(s3_key)
@@ -51,35 +44,25 @@ sequenceDiagram
     W->>W: ExtractText(PDF)
     W->>+NLP: GenerateSummary(text, language='es')
     NLP-->>-W: {sections[], glossary[], reflection_questions[]}
-    W->>+MONGO: InsertOne(material_summary)
-        {material_id, sections, glossary, ...}
+    W->>+MONGO: InsertOne(material_summary)<br/>{material_id, sections, glossary}
     MONGO-->>-W: summary_id
     W->>+NLP: GenerateAssessment(text, language='es')
     NLP-->>-W: {questions[], title}
-    W->>+MONGO: InsertOne(material_assessment)
-        {material_id, questions[]}
+    W->>+MONGO: InsertOne(material_assessment)<br/>{material_id, questions[]}
     MONGO-->>-W: assessment_id
-    W->>PG: UPDATE material_summary_link
-        SET mongo_document_id = summary_id
-    W->>PG: INSERT INTO assessment
-        (material_id, mongo_document_id)
-    W->>MONGO: InsertOne(material_event)
-        {event_type, duration, status}
-    W->>NOTIF: SendEmail(author_id)
-        "Material listo"
+    W->>PG: UPDATE material_summary_link<br/>SET mongo_document_id = summary_id
+    W->>PG: INSERT INTO assessment<br/>(material_id, mongo_document_id)
+    W->>MONGO: InsertOne(material_event)<br/>{event_type, duration, status}
+    W->>NOTIF: SendEmail(author_id)<br/>Material listo
     W->>-Q: ACK message
 
     Note over D,NOTIF: FLUJO 2: CONSUMO DE MATERIAL (Síncrono)
 
     E->>+API: GET /v1/materials?unit_id={id}
     API->>API: Extraer user_id de JWT
-    API->>+PG: SELECT m.* FROM learning_material m
-        JOIN material_unit_link mul ON m.id = mul.material_id
-        WHERE mul.unit_id = $1
-        AND EXISTS (SELECT 1 FROM unit_membership WHERE ...)
+    API->>+PG: SELECT m.* FROM learning_material m<br/>JOIN material_unit_link mul<br/>WHERE mul.unit_id = $1
     PG-->>-API: [material1, material2, ...]
-    API-->>-E: 200 OK
-        [{id, title, description, subject_name, ...}]
+    API-->>-E: 200 OK<br/>[{id, title, description}]
 
     E->>+API: GET /v1/materials/:id
     API->>+PG: SELECT * FROM learning_material WHERE id = $1
@@ -87,96 +70,65 @@ sequenceDiagram
     API->>API: Validar permisos (unit_membership)
     API->>+S3: GeneratePresignedDownloadURL(material_id)
     S3-->>-API: download_url (válido 15 min)
-    API->>+PG: SELECT mongo_document_id FROM material_summary_link
-        WHERE material_id = $1
+    API->>+PG: SELECT mongo_document_id FROM material_summary_link<br/>WHERE material_id = $1
     PG-->>-API: summary_id
-    API-->>-E: 200 OK
-        {material, pdf_url: download_url, has_summary: true}
+    API-->>-E: 200 OK<br/>{material, pdf_url, has_summary: true}
 
     E->>S3: GET download_url
     S3-->>E: PDF bytes (descarga directa)
 
     E->>+API: GET /v1/materials/:id/summary
-    API->>+MONGO: FindOne(material_summary, {material_id: ...})
+    API->>+MONGO: FindOne(material_summary, {material_id})
     MONGO-->>-API: {sections[], glossary[], reflection_questions[]}
-    API-->>-E: 200 OK
-        {sections[], glossary[], ...}
+    API-->>-E: 200 OK<br/>{sections[], glossary[]}
 
-    E->>+API: PATCH /v1/materials/:id/progress
-        {progress: 75, time_spent: 1200}
-    API->>+PG: INSERT INTO reading_log
-        (material_id, student_id, progress, time_spent)
-        ON CONFLICT UPDATE
+    E->>+API: PATCH /v1/materials/:id/progress<br/>{progress: 75, time_spent: 1200}
+    API->>+PG: INSERT INTO reading_log<br/>(material_id, student_id, progress)<br/>ON CONFLICT UPDATE
     PG-->>-API: OK
     API-->>-E: 200 OK
 
     Note over D,NOTIF: FLUJO 3: EVALUACIÓN (Síncrono + Asíncrono)
 
     E->>+API: GET /v1/materials/:id/assessment
-    API->>+PG: SELECT mongo_document_id FROM assessment
-        WHERE material_id = $1
+    API->>+PG: SELECT mongo_document_id FROM assessment<br/>WHERE material_id = $1
     PG-->>-API: assessment_id
     API->>+MONGO: FindOne(material_assessment, {_id: assessment_id})
     MONGO-->>-API: {title, questions[]}
     API->>API: Remover respuestas correctas de questions[]
-    API-->>-E: 200 OK
-        {title, questions[{id, text, options[]}]}
+    API-->>-E: 200 OK<br/>{title, questions[{id, text, options[]}]}
 
-    E->>+API: POST /v1/materials/:id/assessment/attempts
-        {answers: [{question_id, selected_option}]}
-    API->>+MONGO: FindOne(material_assessment, {_id: ...})
+    E->>+API: POST /v1/materials/:id/assessment/attempts<br/>{answers: [{question_id, selected_option}]}
+    API->>+MONGO: FindOne(material_assessment, {_id})
     MONGO-->>-API: {questions[]}
     API->>API: Calcular puntaje (comparar respuestas)
     API->>+PG: BEGIN TRANSACTION
     PG-->>-API: OK
-    API->>+PG: INSERT INTO assessment_attempt
-        (assessment_id, student_id, score, max_score)
+    API->>+PG: INSERT INTO assessment_attempt<br/>(assessment_id, student_id, score)
     PG-->>-API: attempt_id
-    API->>+PG: INSERT INTO assessment_attempt_answer
-        (attempt_id, question_id, selected_option, is_correct)
-        (múltiples inserts)
+    API->>+PG: INSERT INTO assessment_attempt_answer<br/>(múltiples inserts)
     PG-->>-API: OK
     API->>+PG: COMMIT TRANSACTION
     PG-->>-API: OK
-    API->>+Q: Publish event
-        assessment_attempt_recorded
-        {attempt_id, student_id, material_id, score}
+    API->>+Q: Publish event<br/>assessment_attempt_recorded<br/>{attempt_id, student_id, score}
     Q-->>-API: ACK
-    API-->>-E: 200 OK
-        {attempt_id, score, max_score, feedback[]}
+    API-->>-E: 200 OK<br/>{attempt_id, score, feedback[]}
 
     Q->>+W: Consume assessment_attempt_recorded
-    W->>+PG: SELECT m.title, u.name as student_name, a.score
-        FROM assessment_attempt a
-        JOIN learning_material m ON ...
-        WHERE a.id = $1
+    W->>+PG: SELECT m.title, u.name<br/>FROM assessment_attempt a<br/>WHERE a.id = $1
     PG-->>-W: {material_title, student_name, score}
-    W->>+PG: SELECT um.user_id FROM unit_membership um
-        WHERE um.unit_id IN (...)
-        AND um.role = 'teacher'
+    W->>+PG: SELECT um.user_id FROM unit_membership<br/>WHERE um.role = 'teacher'
     PG-->>-W: [teacher_id1, teacher_id2]
-    W->>NOTIF: SendEmail(teacher_ids)
-        "Estudiante X completó Y con Z%"
+    W->>NOTIF: SendEmail(teacher_ids)<br/>Estudiante X completó Y con Z%
     W->>-Q: ACK message
 
     Note over D,NOTIF: FLUJO 4: SEGUIMIENTO DE PROGRESO (Síncrono)
 
     D->>+API: GET /v1/materials/:id/stats
     API->>API: Validar permisos (autor o docente de unidad)
-    API->>+PG: SELECT
-          s.id, s.name,
-          rl.progress, rl.last_access_at,
-          aa.score, aa.created_at
-        FROM unit_membership um
-        JOIN student_profile s ON um.user_id = s.user_id
-        LEFT JOIN reading_log rl ON rl.student_id = s.user_id AND rl.material_id = $1
-        LEFT JOIN assessment_attempt aa ON aa.student_id = s.user_id
-        WHERE um.unit_id IN (SELECT unit_id FROM material_unit_link WHERE material_id = $1)
-        ORDER BY s.name
-    PG-->>-API: [{student, progress, score, last_access}, ...]
-    API->>API: Calcular agregados (promedio, completados, pendientes)
-    API-->>-D: 200 OK
-        {students: [...], summary: {avg_score, completion_rate}}
+    API->>+PG: SELECT s.id, s.name, rl.progress, aa.score<br/>FROM unit_membership um<br/>JOIN student_profile s<br/>LEFT JOIN reading_log rl<br/>ORDER BY s.name
+    PG-->>-API: [{student, progress, score}]
+    API->>API: Calcular agregados (promedio, completados)
+    API-->>-D: 200 OK<br/>{students: [], summary: {avg_score}}
 ```
 
 ## Descripción Detallada de Flujos

@@ -12,23 +12,23 @@ erDiagram
         varchar name
         varchar email UK
         varchar password_hash
-        varchar system_role "admin|teacher|student|guardian"
-        varchar status "active|inactive|suspended"
+        varchar system_role
+        varchar status
         timestamptz created_at
         timestamptz updated_at
-        timestamptz deleted_at "soft delete"
+        timestamptz deleted_at
     }
 
     TEACHER_PROFILE {
-        uuid user_id PK_FK
+        uuid user_id PK
         varchar specialization
-        varchar preferred_language "es|en"
+        varchar preferred_language
         jsonb preferences
         timestamptz created_at
     }
 
     STUDENT_PROFILE {
-        uuid user_id PK_FK
+        uuid user_id PK
         varchar current_grade
         varchar student_code UK
         jsonb extra_data
@@ -36,7 +36,7 @@ erDiagram
     }
 
     GUARDIAN_PROFILE {
-        uuid user_id PK_FK
+        uuid user_id PK
         varchar occupation
         varchar alternate_contact
         jsonb extra_data
@@ -47,8 +47,8 @@ erDiagram
         uuid id PK
         uuid guardian_id FK
         uuid student_id FK
-        varchar relationship_type "parent|legal_guardian|tutor"
-        varchar status "active|inactive"
+        varchar relationship_type
+        varchar status
         timestamptz created_at
         timestamptz updated_at
     }
@@ -67,9 +67,9 @@ erDiagram
 
     ACADEMIC_UNIT {
         uuid id PK
-        uuid parent_unit_id FK "NULL para root"
+        uuid parent_unit_id FK
         uuid school_id FK
-        varchar unit_type "school|grade|section|club|department"
+        varchar unit_type
         varchar display_name
         varchar code
         text description
@@ -83,7 +83,7 @@ erDiagram
         uuid id PK
         uuid unit_id FK
         uuid user_id FK
-        varchar role "owner|teacher|assistant|student|guardian"
+        varchar role
         date valid_from
         date valid_until
         timestamptz created_at
@@ -106,13 +106,13 @@ erDiagram
         uuid subject_id FK
         varchar title
         text description
-        varchar status "draft|published|archived"
+        varchar status
         jsonb metadata
         timestamptz published_at
         timestamptz created_at
         timestamptz updated_at
         timestamptz deleted_at
-        uuid deleted_by FK "admin que eliminó"
+        uuid deleted_by FK
     }
 
     MATERIAL_VERSION {
@@ -137,8 +137,8 @@ erDiagram
         uuid id PK
         uuid material_id FK
         uuid student_id FK
-        decimal progress "0.00-100.00"
-        integer time_spent "seconds"
+        decimal progress
+        integer time_spent
         integer last_page
         timestamptz last_access_at
         timestamptz created_at
@@ -147,9 +147,9 @@ erDiagram
 
     MATERIAL_SUMMARY_LINK {
         uuid id PK
-        uuid material_id FK UK
+        uuid material_id FK
         varchar mongo_document_id
-        varchar status "processing|completed|failed"
+        varchar status
         timestamptz created_at
         timestamptz updated_at
     }
@@ -167,8 +167,8 @@ erDiagram
         uuid id PK
         uuid assessment_id FK
         uuid student_id FK
-        decimal score "0.00-100.00"
-        decimal max_score "100.00"
+        decimal score
+        decimal max_score
         integer time_spent_seconds
         timestamptz started_at
         timestamptz completed_at
@@ -187,7 +187,7 @@ erDiagram
     AUDIT_LOG {
         uuid id PK
         uuid admin_user_id FK
-        varchar action "create|update|delete"
+        varchar action
         varchar entity_type
         uuid entity_id
         jsonb changes
@@ -197,9 +197,9 @@ erDiagram
     }
 
     %% Relaciones: Usuario y Perfiles
-    APP_USER ||--o| TEACHER_PROFILE : "1:1"
-    APP_USER ||--o| STUDENT_PROFILE : "1:1"
-    APP_USER ||--o| GUARDIAN_PROFILE : "1:1"
+    APP_USER ||--o| TEACHER_PROFILE : "user_id"
+    APP_USER ||--o| STUDENT_PROFILE : "user_id"
+    APP_USER ||--o| GUARDIAN_PROFILE : "user_id"
 
     %% Relaciones: Tutores-Estudiantes
     GUARDIAN_PROFILE ||--o{ GUARDIAN_STUDENT_RELATION : "guardian_id"
@@ -207,7 +207,7 @@ erDiagram
 
     %% Relaciones: Jerarquía Académica
     SCHOOL ||--o{ ACADEMIC_UNIT : "school_id"
-    ACADEMIC_UNIT ||--o{ ACADEMIC_UNIT : "parent_unit_id (recursivo)"
+    ACADEMIC_UNIT ||--o{ ACADEMIC_UNIT : "parent_unit_id"
 
     %% Relaciones: Membresías
     ACADEMIC_UNIT ||--o{ UNIT_MEMBERSHIP : "unit_id"
@@ -236,7 +236,7 @@ erDiagram
 
     %% Relaciones: Auditoría
     APP_USER ||--o{ AUDIT_LOG : "admin_user_id"
-    APP_USER ||--o{ LEARNING_MATERIAL : "deleted_by"
+    %% APP_USER ||--o{ LEARNING_MATERIAL : "deleted_by" -- Relación secundaria omitida (ya existe author_id)
 ```
 
 ## Descripción Detallada de Tablas
