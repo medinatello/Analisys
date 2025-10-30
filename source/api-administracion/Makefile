@@ -75,8 +75,9 @@ test-coverage: ## Tests con cobertura (HTML report)
 test-unit: ## Solo tests unitarios
 	@$(GOTEST) -v -short ./...
 
-test-integration: ## Tests de integración
-	@$(GOTEST) -v -tags=integration ./...
+test-integration: ## Tests de integración (con testcontainers)
+	@echo "$(YELLOW)🐳 Tests de integración...$(RESET)"
+	@$(GOTEST) -v -tags=integration ./test/integration/... -timeout 5m
 
 benchmark: ## Ejecutar benchmarks
 	@echo "$(YELLOW)⚡ Ejecutando benchmarks...$(RESET)"

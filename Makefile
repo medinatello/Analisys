@@ -147,8 +147,19 @@ dev-worker: ## Ejecutar Worker local
 # CI/CD
 # ============================================
 
+test-integration-all: ## Tests de integración en todos los proyectos
+	@echo "$(BLUE)=== 🐳 TESTS DE INTEGRACIÓN (TESTCONTAINERS) ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		echo "$(YELLOW)Integration testing $$project...$(RESET)"; \
+		cd $$project && make test-integration && cd ../../..; \
+	done
+	@echo "$(GREEN)✅ Integration tests completados$(RESET)"
+
 ci: audit-all test-all swagger-all ## Pipeline CI completo
 	@echo "$(GREEN)🎉 CI pipeline completado exitosamente$(RESET)"
+
+ci-full: audit-all test-all test-integration-all swagger-all ## CI completo con integration tests
+	@echo "$(GREEN)🎉 CI completo (unit + integration) exitoso$(RESET)"
 
 pre-commit: fmt-all audit-all ## Validación pre-commit
 
