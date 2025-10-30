@@ -19,14 +19,20 @@ type Container struct {
 
 	// Repositories
 	UserRepository     repository.UserRepository
+	SchoolRepository   repository.SchoolRepository
+	SubjectRepository  repository.SubjectRepository
 	GuardianRepository repository.GuardianRepository
 
 	// Services
 	UserService     service.UserService
+	SchoolService   service.SchoolService
+	SubjectService  service.SubjectService
 	GuardianService service.GuardianService
 
 	// Handlers
 	UserHandler     *handler.UserHandler
+	SchoolHandler   *handler.SchoolHandler
+	SubjectHandler  *handler.SubjectHandler
 	GuardianHandler *handler.GuardianHandler
 }
 
@@ -39,11 +45,21 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 
 	// Inicializar repositories (capa de infraestructura)
 	c.UserRepository = postgresRepo.NewPostgresUserRepository(db)
+	c.SchoolRepository = postgresRepo.NewPostgresSchoolRepository(db)
+	c.SubjectRepository = postgresRepo.NewPostgresSubjectRepository(db)
 	c.GuardianRepository = postgresRepo.NewPostgresGuardianRepository(db)
 
 	// Inicializar services (capa de aplicación)
 	c.UserService = service.NewUserService(
 		c.UserRepository,
+		logger,
+	)
+	c.SchoolService = service.NewSchoolService(
+		c.SchoolRepository,
+		logger,
+	)
+	c.SubjectService = service.NewSubjectService(
+		c.SubjectRepository,
 		logger,
 	)
 	c.GuardianService = service.NewGuardianService(
@@ -54,6 +70,14 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	// Inicializar handlers (capa de infraestructura HTTP)
 	c.UserHandler = handler.NewUserHandler(
 		c.UserService,
+		logger,
+	)
+	c.SchoolHandler = handler.NewSchoolHandler(
+		c.SchoolService,
+		logger,
+	)
+	c.SubjectHandler = handler.NewSubjectHandler(
+		c.SubjectService,
 		logger,
 	)
 	c.GuardianHandler = handler.NewGuardianHandler(
