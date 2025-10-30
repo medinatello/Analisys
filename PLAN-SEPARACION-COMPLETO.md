@@ -52,8 +52,8 @@ Preparar el proyecto actual para la separación sin romper nada.
 ### 1.1 Documentación y Análisis (Día 1-2)
 
 #### ✓ Documentar dependencias de shared/
-- [ ] Crear archivo `shared/DEPENDENCIAS.md`
-- [ ] Listar todos los paquetes en `shared/pkg/`:
+- [x] Crear archivo `shared/DEPENDENCIAS.md`
+- [x] Listar todos los paquetes en `shared/pkg/`:
   ```
   pkg/auth/        - Autenticación JWT
   pkg/config/      - Configuración
@@ -64,7 +64,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   pkg/types/       - Tipos compartidos
   pkg/validator/   - Validación
   ```
-- [ ] Documentar qué servicio usa qué paquete:
+- [x] Documentar qué servicio usa qué paquete:
   ```
   api-mobile usa:
     - auth (JWT tokens)
@@ -87,8 +87,8 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 #### ✓ Documentar variables de entorno
-- [ ] Crear archivo `VARIABLES_ENTORNO.md` en raíz
-- [ ] Listar todas las variables por servicio:
+- [x] Crear archivo `VARIABLES_ENTORNO.md` en raíz
+- [x] Listar todas las variables por servicio:
   ```
   api-mobile:
     - DB_HOST, DB_PORT, DB_USER, DB_PASS, DB_NAME
@@ -109,7 +109,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 #### ✓ Documentar flujos críticos
-- [ ] Crear diagrama de flujo:
+- [x] Crear diagrama de flujo:
   ```
   Usuario → api-mobile → PostgreSQL (guarda evaluación)
                       → RabbitMQ (publica job)
@@ -125,7 +125,7 @@ Preparar el proyecto actual para la separación sin romper nada.
 ### 1.2 Tests de Integración (Día 2-3)
 
 #### ✓ Tests para shared/
-- [ ] Crear `shared/pkg/auth/auth_test.go`
+- [x] Crear `shared/pkg/auth/auth_test.go`
   ```go
   func TestGenerateToken(t *testing.T) {
       // Test generación de JWT
@@ -135,7 +135,7 @@ Preparar el proyecto actual para la separación sin romper nada.
       // Test validación de JWT
   }
   ```
-- [ ] Crear `shared/pkg/database/database_test.go`
+- [x] Crear `shared/pkg/database/database_test.go`
   ```go
   func TestPostgreSQLConnection(t *testing.T) {
       // Test conexión PostgreSQL
@@ -145,7 +145,7 @@ Preparar el proyecto actual para la separación sin romper nada.
       // Test conexión MongoDB
   }
   ```
-- [ ] Crear `shared/pkg/messaging/rabbitmq_test.go`
+- [x] Crear `shared/pkg/messaging/rabbitmq_test.go`
   ```go
   func TestPublishMessage(t *testing.T) {
       // Test publicar mensaje
@@ -155,7 +155,7 @@ Preparar el proyecto actual para la separación sin romper nada.
       // Test consumir mensaje
   }
   ```
-- [ ] Ejecutar todos los tests:
+- [x] Ejecutar todos los tests:
   ```bash
   cd shared
   go test -v ./...
@@ -163,7 +163,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 #### ✓ Tests de integración entre servicios
-- [ ] Crear `tests/integration/api_to_worker_test.go`
+- [x] Crear `tests/integration/api_to_worker_test.go`
   ```go
   func TestFullWorkflow(t *testing.T) {
       // 1. API mobile crea evaluación
@@ -173,7 +173,7 @@ Preparar el proyecto actual para la separación sin romper nada.
       // 5. Verificar resultado
   }
   ```
-- [ ] Ejecutar test de integración:
+- [x] Ejecutar test de integración:
   ```bash
   # Levantar servicios con docker-compose
   docker-compose up -d postgres mongodb rabbitmq
@@ -189,7 +189,7 @@ Preparar el proyecto actual para la separación sin romper nada.
 #### ✓ Crear Dockerfiles para cada servicio
 
 **api-mobile:**
-- [ ] Crear `source/api-mobile/Dockerfile`:
+- [x] Crear `source/api-mobile/Dockerfile`:
   ```dockerfile
   # Build stage
   FROM golang:1.23-alpine AS builder
@@ -217,7 +217,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   CMD ["./api-mobile"]
   ```
 
-- [ ] Crear `source/api-mobile/.dockerignore`:
+- [x] Crear `source/api-mobile/.dockerignore`:
   ```
   .git
   .gitignore
@@ -229,11 +229,11 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 **api-administracion:**
-- [ ] Crear `source/api-administracion/Dockerfile` (similar a api-mobile)
-- [ ] Crear `source/api-administracion/.dockerignore`
+- [x] Crear `source/api-administracion/Dockerfile` (similar a api-mobile)
+- [x] Crear `source/api-administracion/.dockerignore`
 
 **worker:**
-- [ ] Crear `source/worker/Dockerfile`:
+- [x] Crear `source/worker/Dockerfile`:
   ```dockerfile
   FROM golang:1.23-alpine AS builder
   WORKDIR /app
@@ -253,21 +253,21 @@ Preparar el proyecto actual para la separación sin romper nada.
 
   CMD ["./worker"]
   ```
-- [ ] Crear `source/worker/.dockerignore`
+- [x] Crear `source/worker/.dockerignore`
 
 #### ✓ Probar builds locales
-- [ ] Build api-mobile:
+- [x] Build api-mobile:
   ```bash
   cd source/api-mobile
   docker build -t edugo-api-mobile:dev .
   # Verificar que build es exitoso
   ```
-- [ ] Build api-administracion:
+- [x] Build api-administracion:
   ```bash
   cd source/api-administracion
   docker build -t edugo-api-administracion:dev .
   ```
-- [ ] Build worker:
+- [x] Build worker:
   ```bash
   cd source/worker
   docker build -t edugo-worker:dev .
@@ -278,7 +278,7 @@ Preparar el proyecto actual para la separación sin romper nada.
 ### 1.4 Docker Compose Actual (Día 4-5)
 
 #### ✓ Crear docker-compose para desarrollo actual
-- [ ] Crear `docker-compose.dev.yml` en raíz:
+- [x] Crear `docker-compose.dev.yml` en raíz:
   ```yaml
   version: '3.8'
 
@@ -415,16 +415,16 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 #### ✓ Probar docker-compose completo
-- [ ] Levantar todos los servicios:
+- [x] Levantar todos los servicios:
   ```bash
   docker-compose -f docker-compose.dev.yml up -d
   ```
-- [ ] Verificar que todos los contenedores están corriendo:
+- [x] Verificar que todos los contenedores están corriendo:
   ```bash
   docker-compose -f docker-compose.dev.yml ps
   # Todos deben estar "Up"
   ```
-- [ ] Probar endpoints:
+- [x] Probar endpoints:
   ```bash
   # API Mobile health check
   curl http://localhost:8081/health
@@ -436,8 +436,8 @@ Preparar el proyecto actual para la separación sin romper nada.
   open http://localhost:15672
   # user: edugo, pass: edugo123
   ```
-- [ ] Probar flujo completo (crear evaluación → worker procesa)
-- [ ] Verificar logs:
+- [x] Probar flujo completo (crear evaluación → worker procesa)
+- [x] Verificar logs:
   ```bash
   docker-compose -f docker-compose.dev.yml logs -f worker
   ```
@@ -447,7 +447,7 @@ Preparar el proyecto actual para la separación sin romper nada.
 ### 1.5 Preparación de shared/ (Día 5-6)
 
 #### ✓ Documentación de shared/
-- [ ] Crear `shared/README.md`:
+- [x] Crear `shared/README.md`:
   ```markdown
   # EduGo Shared Module
 
@@ -488,7 +488,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   Ver [CHANGELOG.md](CHANGELOG.md).
   ```
 
-- [ ] Crear `shared/CHANGELOG.md`:
+- [x] Crear `shared/CHANGELOG.md`:
   ```markdown
   # Changelog
 
@@ -509,7 +509,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 #### ✓ Verificar go.mod de shared/
-- [ ] Verificar `shared/go.mod`:
+- [x] Verificar `shared/go.mod`:
   ```go
   module github.com/edugo/shared
 
@@ -525,33 +525,33 @@ Preparar el proyecto actual para la separación sin romper nada.
       // ... otras dependencias
   )
   ```
-- [ ] Ejecutar `go mod tidy` en shared/
-- [ ] Verificar que no hay dependencias circulares
+- [x] Ejecutar `go mod tidy` en shared/
+- [x] Verificar que no hay dependencias circulares
 
 #### ✓ Cobertura de tests en shared/
-- [ ] Ejecutar tests con cobertura:
+- [x] Ejecutar tests con cobertura:
   ```bash
   cd shared
   go test -coverprofile=coverage.out ./...
   go tool cover -html=coverage.out -o coverage.html
   open coverage.html
   ```
-- [ ] Objetivo: Mínimo 70% cobertura
-- [ ] Si falta cobertura, agregar tests faltantes
+- [x] Objetivo: Mínimo 70% cobertura
+- [x] Si falta cobertura, agregar tests faltantes
 
 ---
 
 ### 1.6 Backup y Plan de Rollback (Día 6-7)
 
 #### ✓ Crear backup completo
-- [ ] Hacer backup del monorepo actual:
+- [x] Hacer backup del monorepo actual:
   ```bash
   cd /Users/jhoanmedina/source/EduGo
   tar -czf edugo-monorepo-backup-$(date +%Y%m%d).tar.gz Analisys/
   # Mover a lugar seguro
   mv edugo-monorepo-backup-*.tar.gz ~/Backups/
   ```
-- [ ] Crear tag en Git antes de separar:
+- [x] Crear tag en Git antes de separar:
   ```bash
   cd Analisys
   git tag -a monorepo-final -m "Último commit antes de separación"
@@ -559,7 +559,7 @@ Preparar el proyecto actual para la separación sin romper nada.
   ```
 
 #### ✓ Documentar plan de rollback
-- [ ] Crear `ROLLBACK_PLAN.md`:
+- [x] Crear `ROLLBACK_PLAN.md`:
   ```markdown
   # Plan de Rollback
 
