@@ -69,6 +69,34 @@ APP_ENV=prod OPENAI_API_KEY=sk-xxx go run source/api-mobile/cmd/main.go
 
 Ver detalles: `source/*/config/README.md`
 
+---
+
+## 🛠️ Scripts de Desarrollo Local
+
+Para desarrollo local sin Docker:
+
+```bash
+# Iniciar todos los servicios
+./start-all.sh
+
+# Ver estado
+./status.sh
+
+# Ver logs en tiempo real
+./logs-all.sh
+
+# Detener todos
+./stop-all.sh
+```
+
+**Ventajas**:
+- ✅ Inicio rápido (sin Docker overhead)
+- ✅ Logs individuales en `logs/`
+- ✅ Fácil debugging y hot-reload
+- ✅ Gestión de PIDs automática
+
+Ver guía completa: [SCRIPTS.md](SCRIPTS.md)
+
 ### Acceso a Servicios
 
 - **API Mobile Swagger**: http://localhost:8080/swagger/index.html
