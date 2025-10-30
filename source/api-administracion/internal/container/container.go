@@ -20,6 +20,7 @@ type Container struct {
 	// Repositories
 	UserRepository     repository.UserRepository
 	SchoolRepository   repository.SchoolRepository
+	UnitRepository     repository.UnitRepository
 	SubjectRepository  repository.SubjectRepository
 	MaterialRepository repository.MaterialRepository
 	StatsRepository    repository.StatsRepository
@@ -28,6 +29,7 @@ type Container struct {
 	// Services
 	UserService     service.UserService
 	SchoolService   service.SchoolService
+	UnitService     service.UnitService
 	SubjectService  service.SubjectService
 	MaterialService service.MaterialService
 	StatsService    service.StatsService
@@ -36,6 +38,7 @@ type Container struct {
 	// Handlers
 	UserHandler     *handler.UserHandler
 	SchoolHandler   *handler.SchoolHandler
+	UnitHandler     *handler.UnitHandler
 	SubjectHandler  *handler.SubjectHandler
 	MaterialHandler *handler.MaterialHandler
 	StatsHandler    *handler.StatsHandler
@@ -52,6 +55,7 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	// Inicializar repositories (capa de infraestructura)
 	c.UserRepository = postgresRepo.NewPostgresUserRepository(db)
 	c.SchoolRepository = postgresRepo.NewPostgresSchoolRepository(db)
+	c.UnitRepository = postgresRepo.NewPostgresUnitRepository(db)
 	c.SubjectRepository = postgresRepo.NewPostgresSubjectRepository(db)
 	c.MaterialRepository = postgresRepo.NewPostgresMaterialRepository(db)
 	c.StatsRepository = postgresRepo.NewPostgresStatsRepository(db)
@@ -64,6 +68,10 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	)
 	c.SchoolService = service.NewSchoolService(
 		c.SchoolRepository,
+		logger,
+	)
+	c.UnitService = service.NewUnitService(
+		c.UnitRepository,
 		logger,
 	)
 	c.SubjectService = service.NewSubjectService(
@@ -90,6 +98,10 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	)
 	c.SchoolHandler = handler.NewSchoolHandler(
 		c.SchoolService,
+		logger,
+	)
+	c.UnitHandler = handler.NewUnitHandler(
+		c.UnitService,
 		logger,
 	)
 	c.SubjectHandler = handler.NewSubjectHandler(
