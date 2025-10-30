@@ -1,0 +1,27 @@
+# ============================================
+# SOPS Configuration - EduGo
+# ============================================
+# Encriptación de secretos con Age
+
+creation_rules:
+  # Secretos DEV (menos restrictivo)
+  - path_regex: \.env\.dev\.enc$
+    age: >-
+      age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
+    # ☝️ Clave pública Age - cada developer usa su propia clave
+    # Para generar: age-keygen -o ~/.config/sops/age/keys.txt
+  
+  # Secretos QA (más restrictivo)
+  - path_regex: \.env\.qa\.enc$
+    age: >-
+      age1qa3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
+    # ☝️ Clave QA (compartida con team leads)
+  
+  # Secretos PROD (muy restrictivo)
+  - path_regex: \.env\.prod\.enc$
+    age: >-
+      age1prod7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p
+    # ☝️ Solo DevOps/SRE tienen esta clave
+
+# Configuración global
+encrypted_regex: '^(POSTGRES_PASSWORD|MONGODB_URI|MONGODB_PASSWORD|RABBITMQ_URL|RABBITMQ_PASSWORD|OPENAI_API_KEY|.*_PASSWORD|.*_SECRET|.*_KEY)$'
