@@ -1,0 +1,80 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug API Admin (Local)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/main.go",
+      "env": {
+        "APP_ENV": "local",
+        "POSTGRES_PASSWORD": "edugo_pass",
+        "MONGODB_URI": "mongodb://edugo_admin:edugo_pass@localhost:27017/edugo?authSource=admin",
+      },
+      "showLog": true,
+      "trace": "verbose",
+      "preLaunchTask": "",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug API Admin (Dev)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/cmd/main.go",
+      "env": {
+        "APP_ENV": "dev",
+        "POSTGRES_PASSWORD": "${input:postgresPassword}",
+        "MONGODB_URI": "${input:mongodbUri}",
+      },
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Specific Test",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}",
+      "args": [
+        "-test.v",
+        "-test.run",
+        "^${input:testName}$"
+      ],
+      "showLog": true
+    },
+    {
+      "name": "Attach to Running Process",
+      "type": "go",
+      "request": "attach",
+      "mode": "local",
+      "processId": "${command:pickProcess}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "testName",
+      "type": "promptString",
+      "description": "Nombre del test (ej: TestMaterialSummaryResponse_JSON)",
+      "default": "TestMaterialSummaryResponse_JSON"
+    },
+    {
+      "id": "postgresPassword",
+      "type": "promptString",
+      "description": "PostgreSQL Password",
+      "default": "dev_password"
+    },
+    {
+      "id": "mongodbUri",
+      "type": "promptString",
+      "description": "MongoDB URI",
+      "default": "mongodb://dev-host:27017/edugo"
+    },
+    {
+      "type": "promptString",
+      "description": "RabbitMQ URL",
+      "default": "amqp://dev-host:5672/"
+    }
+  ]
+}
