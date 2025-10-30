@@ -7,6 +7,7 @@ import (
 
 	"github.com/edugo/api-mobile/internal/application/dto"
 	"github.com/edugo/api-mobile/internal/application/service"
+	"github.com/edugo/api-mobile/internal/domain/repository"
 	"github.com/edugo/shared/pkg/errors"
 	"github.com/edugo/shared/pkg/logger"
 )
@@ -122,6 +123,28 @@ func (h *MaterialHandler) NotifyUploadComplete(c *gin.Context) {
 
 	h.logger.Info("upload complete", "material_id", id)
 	c.Status(http.StatusNoContent)
+}
+
+// ListMaterials godoc
+// @Summary List materials
+// @Tags materials
+// @Produce json
+// @Success 200 {array} dto.MaterialResponse
+// @Router /materials [get]
+// @Security BearerAuth
+func (h *MaterialHandler) ListMaterials(c *gin.Context) {
+	// Por ahora sin filtros (se pueden agregar después)
+	materials, err := h.materialService.ListMaterials(c.Request.Context(), repository.ListFilters{})
+	if err != nil {
+		if appErr, ok := errors.GetAppError(err); ok {
+			c.JSON(appErr.StatusCode, ErrorResponse{Error: appErr.Message, Code: string(appErr.Code)})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "internal error", Code: "INTERNAL_ERROR"})
+		return
+	}
+
+	c.JSON(http.StatusOK, materials)
 }
 
 type ErrorResponse struct {
