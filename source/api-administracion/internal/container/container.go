@@ -1,0 +1,61 @@
+package container
+
+import (
+	"database/sql"
+
+	"github.com/edugo/api-administracion/internal/application/service"
+	"github.com/edugo/api-administracion/internal/domain/repository"
+	"github.com/edugo/api-administracion/internal/infrastructure/http/handler"
+	postgresRepo "github.com/edugo/api-administracion/internal/infrastructure/persistence/postgres/repository"
+	"github.com/edugo/shared/pkg/logger"
+)
+
+// Container es el contenedor de dependencias de la aplicación
+// Implementa el patrón Dependency Injection
+type Container struct {
+	// Infrastructure
+	DB     *sql.DB
+	Logger logger.Logger
+
+	// Repositories
+	GuardianRepository repository.GuardianRepository
+
+	// Services
+	GuardianService service.GuardianService
+
+	// Handlers
+	GuardianHandler *handler.GuardianHandler
+}
+
+// NewContainer crea un nuevo contenedor e inicializa todas las dependencias
+func NewContainer(db *sql.DB, logger logger.Logger) *Container {
+	c := &Container{
+		DB:     db,
+		Logger: logger,
+	}
+
+	// Inicializar repositories (capa de infraestructura)
+	c.GuardianRepository = postgresRepo.NewPostgresGuardianRepository(db)
+
+	// Inicializar services (capa de aplicación)
+	c.GuardianService = service.NewGuardianService(
+		c.GuardianRepository,
+		logger,
+	)
+
+	// Inicializar handlers (capa de infraestructura HTTP)
+	c.GuardianHandler = handler.NewGuardianHandler(
+		c.GuardianService,
+		logger,
+	)
+
+	return c
+}
+
+// Close cierra los recursos del contenedor
+func (c *Container) Close() error {
+	if c.DB != nil {
+		return c.DB.Close()
+	}
+	return nil
+}

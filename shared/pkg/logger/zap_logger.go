@@ -66,13 +66,13 @@ func NewZapLogger(level, format string) Logger {
 	)
 
 	// Crear logger con opciones
-	zapLogger := zap.New(core,
+	zapLog := zap.New(core,
 		zap.AddCaller(),
 		zap.AddCallerSkip(1), // Skip para mostrar el caller correcto
 	)
 
 	return &zapLogger{
-		logger: zapLogger.Sugar(),
+		logger: zapLog.Sugar(),
 	}
 }
 
