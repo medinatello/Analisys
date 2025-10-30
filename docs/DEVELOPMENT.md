@@ -20,7 +20,19 @@ cd ../api-administracion && go mod download
 cd ../worker && go mod download
 ```
 
-### 3. Configurar Bases de Datos
+### 3. Configurar Variables de Ambiente
+
+```bash
+# Copiar archivo de ejemplo
+cp .env.example .env
+
+# Editar .env y configurar:
+# - APP_ENV=local (o dev, qa, prod)
+# - OPENAI_API_KEY=sk-your-key
+# - Otros secretos si es necesario
+```
+
+### 4. Configurar Bases de Datos
 
 ```bash
 # Opción A: Con Docker (recomendado)
@@ -30,6 +42,87 @@ make up
 # Levantar PostgreSQL y MongoDB manualmente
 # Ejecutar scripts en source/scripts/
 ```
+
+---
+
+## ⚙️ Configuración por Ambientes
+
+### Sistema de Configuración
+
+Cada servicio usa **Viper** para gestionar configuración por ambientes (similar a Spring Boot profiles).
+
+**Estructura**:
+```
+source/{servicio}/config/
+├── config.yaml         # Configuración base (común)
+├── config-local.yaml   # Local development
+├── config-dev.yaml     # Development server
+├── config-qa.yaml      # QA/Staging
+├── config-prod.yaml    # Production
+└── README.md           # Documentación
+```
+
+### Cambiar Entre Ambientes
+
+```bash
+# Local (default)
+APP_ENV=local go run source/api-mobile/cmd/main.go
+
+# Development
+APP_ENV=dev go run source/api-mobile/cmd/main.go
+
+# QA
+APP_ENV=qa go run source/api-mobile/cmd/main.go
+
+# Production
+APP_ENV=prod OPENAI_API_KEY=sk-xxx go run source/api-mobile/cmd/main.go
+```
+
+### Precedencia de Configuración
+
+1. **Variables de ambiente** (ej: `EDUGO_MOBILE_SERVER_PORT=9090`)
+2. **Archivo específico** (ej: `config-dev.yaml`)
+3. **Archivo base** (`config.yaml`)
+4. **Defaults** (valores por defecto en código)
+
+### Variables de Ambiente por Servicio
+
+**Prefijos**:
+- API Mobile: `EDUGO_MOBILE_`
+- API Administración: `EDUGO_ADMIN_`
+- Worker: `EDUGO_WORKER_`
+
+**Ejemplos**:
+```bash
+# Cambiar puerto de API Mobile
+EDUGO_MOBILE_SERVER_PORT=9090 go run source/api-mobile/cmd/main.go
+
+# Cambiar log level
+EDUGO_MOBILE_LOGGING_LEVEL=debug go run source/api-mobile/cmd/main.go
+```
+
+### Secretos Requeridos
+
+Todos los ambientes (excepto local) requieren estas variables:
+
+```bash
+export POSTGRES_PASSWORD=your-password
+export MONGODB_URI=mongodb://user:pass@host:27017/edugo
+export RABBITMQ_URL=amqp://user:pass@host:5672/
+export OPENAI_API_KEY=sk-your-key
+```
+
+**IMPORTANTE**: Nunca commitear secretos en archivos YAML.
+
+### Agregar Nueva Configuración
+
+1. Editar `internal/config/config.go` (agregar campo al struct)
+2. Agregar valor en `config/config.yaml` (base)
+3. Sobrescribir en archivos específicos si es necesario
+4. Usar en código: `cfg.NuevoCampo`
+5. Regenerar si es necesario
+
+Ver ejemplos completos en `source/*/config/README.md`
 
 ---
 

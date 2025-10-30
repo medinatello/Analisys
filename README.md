@@ -30,11 +30,44 @@ EduGo/
 ```bash
 # 1. Configurar variables de entorno
 cp .env.example .env
-# Editar .env y agregar OPENAI_API_KEY
+# Editar .env y configurar:
+#   - APP_ENV (local, dev, qa, prod)
+#   - OPENAI_API_KEY
+#   - Otros secretos si es necesario
 
 # 2. Levantar servicios
 make up
+
+# O especificar ambiente:
+APP_ENV=dev make up
+APP_ENV=qa make up
 ```
+
+### Configuración por Ambientes
+
+Cada servicio usa **Viper** para cargar configuración dinámica:
+
+```bash
+# Local (default)
+go run source/api-mobile/cmd/main.go
+
+# Development
+APP_ENV=dev go run source/api-mobile/cmd/main.go
+
+# QA
+APP_ENV=qa go run source/api-mobile/cmd/main.go
+
+# Production
+APP_ENV=prod OPENAI_API_KEY=sk-xxx go run source/api-mobile/cmd/main.go
+```
+
+**Archivos de configuración**:
+- `config/config.yaml` - Base (común)
+- `config/config-{env}.yaml` - Específico por ambiente
+
+**Precedencia**: ENV vars > archivo específico > archivo base > defaults
+
+Ver detalles: `source/*/config/README.md`
 
 ### Acceso a Servicios
 
