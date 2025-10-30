@@ -70,14 +70,10 @@ services:
       dockerfile: Dockerfile.api-mobile
     container_name: edugo-api-mobile
     environment:
-      PORT: 8080
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: edugo
-      POSTGRES_USER: edugo_user
-      POSTGRES_PASSWORD: edugo_pass
-      MONGODB_URI: mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin
-      RABBITMQ_URL: amqp://edugo_user:edugo_pass@rabbitmq:5672/
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-edugo_pass}
+      MONGODB_URI: ${MONGODB_URI:-mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://edugo_user:edugo_pass@rabbitmq:5672/}
     ports:
       - "8080:8080"
     depends_on:
@@ -98,13 +94,9 @@ services:
       dockerfile: Dockerfile.api-administracion
     container_name: edugo-api-admin
     environment:
-      PORT: 8081
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: edugo
-      POSTGRES_USER: edugo_user
-      POSTGRES_PASSWORD: edugo_pass
-      MONGODB_URI: mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-edugo_pass}
+      MONGODB_URI: ${MONGODB_URI:-mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin}
     ports:
       - "8081:8081"
     depends_on:
@@ -123,14 +115,11 @@ services:
       dockerfile: Dockerfile.worker
     container_name: edugo-worker
     environment:
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: edugo
-      POSTGRES_USER: edugo_user
-      POSTGRES_PASSWORD: edugo_pass
-      MONGODB_URI: mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin
-      RABBITMQ_URL: amqp://edugo_user:edugo_pass@rabbitmq:5672/
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      APP_ENV: ${APP_ENV:-local}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-edugo_pass}
+      MONGODB_URI: ${MONGODB_URI:-mongodb://edugo_admin:edugo_pass@mongodb:27017/edugo?authSource=admin}
+      RABBITMQ_URL: ${RABBITMQ_URL:-amqp://edugo_user:edugo_pass@rabbitmq:5672/}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
