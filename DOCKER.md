@@ -1,8 +1,38 @@
 # 🐳 Infraestructura Docker - EduGo
 
+## 🏗️ Estructura Docker
+
+EduGo usa una **arquitectura Docker modular**:
+
+- **Cada proyecto** tiene su propio `Dockerfile` y `docker-compose.yml`
+- **Raíz**: `docker-compose.yml` orquestador con infraestructura compartida
+- **Red compartida**: `edugo-network` para comunicación entre servicios
+
+```
+/
+├── docker-compose.yml                   # Orquestador (infraestructura + apps)
+└── source/
+    ├── api-mobile/
+    │   ├── Dockerfile                   # Build standalone
+    │   └── docker-compose.yml           # Run standalone
+    ├── api-administracion/
+    │   ├── Dockerfile
+    │   └── docker-compose.yml
+    └── worker/
+        ├── Dockerfile
+        └── docker-compose.yml
+```
+
+**Ventajas**:
+✓ Ejecutar proyecto individual: `cd source/api-mobile && docker-compose up`
+✓ Ejecutar stack completo: `make up` (desde raíz)
+✓ Desarrollo modular y fácil mantenimiento
+
+---
+
 ## 📦 Servicios Incluidos
 
-Este stack de Docker Compose incluye todos los servicios necesarios para ejecutar EduGo:
+Este stack incluye todos los servicios necesarios:
 
 | Servicio | Puerto | Descripción |
 |----------|--------|-------------|
