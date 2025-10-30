@@ -1,75 +1,176 @@
-.PHONY: help build up down logs clean restart db-init test
+# ============================================
+# Makefile Orquestador - EduGo
+# Ejecuta comandos en los 3 proyectos
+# ============================================
 
-# Colores para output
+# Colors
 YELLOW := \033[1;33m
 GREEN := \033[1;32m
+BLUE := \033[1;34m
 RESET := \033[0m
 
-help: ## Mostrar esta ayuda
-	@echo "$(YELLOW)EduGo - Comandos disponibles:$(RESET)"
+# Projects
+PROJECTS := source/api-mobile source/api-administracion source/worker
+
+.DEFAULT_GOAL := help
+
+help: ## Mostrar ayuda
+	@echo "$(BLUE)EduGo - Comandos Orquestador:$(RESET)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(RESET) %s\n", $$1, $$2}'
 
-build: ## Construir todas las imágenes Docker
-	@echo "$(YELLOW)Construyendo imágenes Docker...$(RESET)"
-	docker-compose build
+# ============================================
+# Build Targets (Todos los Proyectos)
+# ============================================
 
-up: ## Levantar todos los servicios
-	@echo "$(YELLOW)Levantando servicios...$(RESET)"
-	docker-compose up -d
-	@echo "$(GREEN)✓ Servicios levantados$(RESET)"
-	@echo "  - API Mobile: http://localhost:8080/swagger/index.html"
-	@echo "  - API Admin:  http://localhost:8081/swagger/index.html"
-	@echo "  - RabbitMQ:   http://localhost:15672 (user: edugo_user, pass: edugo_pass)"
+build-all: ## Compilar los 3 proyectos
+	@echo "$(BLUE)=== 🔨 COMPILANDO TODOS LOS PROYECTOS ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		echo "$(YELLOW)Compilando $$project...$(RESET)"; \
+		cd $$project && make build && cd ../../..; \
+	done
+	@echo "$(GREEN)✅ Todos los proyectos compilados$(RESET)"
 
-down: ## Detener todos los servicios
-	@echo "$(YELLOW)Deteniendo servicios...$(RESET)"
-	docker-compose down
+test-all: ## Tests en los 3 proyectos
+	@echo "$(BLUE)=== 🧪 TESTS EN TODOS LOS PROYECTOS ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		echo "$(YELLOW)Testing $$project...$(RESET)"; \
+		cd $$project && make test && cd ../../..; \
+	done
+	@echo "$(GREEN)✅ Todos los tests completados$(RESET)"
 
-logs: ## Ver logs de todos los servicios
-	docker-compose logs -f
+coverage-all: ## Coverage en los 3 proyectos
+	@echo "$(BLUE)=== 📊 COVERAGE EN TODOS LOS PROYECTOS ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		echo "$(YELLOW)Coverage $$project...$(RESET)"; \
+		cd $$project && make test-coverage && cd ../../..; \
+	done
+	@echo "$(GREEN)✅ Coverage reports generados$(RESET)"
 
-logs-api-mobile: ## Ver logs de API Mobile
-	docker-compose logs -f api-mobile
+lint-all: ## Lint en los 3 proyectos
+	@echo "$(BLUE)=== 🔎 LINT EN TODOS LOS PROYECTOS ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		echo "$(YELLOW)Linting $$project...$(RESET)"; \
+		cd $$project && make lint && cd ../../..; \
+	done
 
-logs-api-admin: ## Ver logs de API Administración
-	docker-compose logs -f api-administracion
+fmt-all: ## Formatear código de los 3 proyectos
+	@echo "$(BLUE)=== ✨ FORMATEANDO TODOS LOS PROYECTOS ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		cd $$project && make fmt && cd ../../..; \
+	done
+	@echo "$(GREEN)✅ Código formateado$(RESET)"
 
-logs-worker: ## Ver logs del Worker
-	docker-compose logs -f worker
+swagger-all: ## Regenerar Swagger en las 2 APIs
+	@echo "$(BLUE)=== 📚 REGENERANDO SWAGGER ===$(RESET)"
+	@cd source/api-mobile && make swagger && cd ../..
+	@cd source/api-administracion && make swagger && cd ../..
+	@echo "$(GREEN)✅ Swagger regenerado$(RESET)"
 
-clean: ## Limpiar contenedores, volúmenes e imágenes
-	@echo "$(YELLOW)Limpiando Docker...$(RESET)"
-	docker-compose down -v --rmi all
+audit-all: ## Auditoría completa en los 3 proyectos
+	@echo "$(BLUE)=== 🔐 AUDITORÍA COMPLETA ===$(RESET)"
+	@for project in $(PROJECTS); do \
+		echo "$(YELLOW)Auditando $$project...$(RESET)"; \
+		cd $$project && make audit && cd ../../..; \
+	done
+	@echo "$(GREEN)✅ Auditoría completada$(RESET)"
+
+tidy-all: ## go mod tidy en los 3 proyectos
+	@for project in $(PROJECTS); do \
+		cd $$project && make tidy && cd ../../..; \
+	done
+
+clean-all: ## Limpiar binarios de los 3 proyectos
+	@echo "$(YELLOW)🧹 Limpiando todos los proyectos...$(RESET)"
+	@for project in $(PROJECTS); do \
+		cd $$project && make clean && cd ../../..; \
+	done
 	@echo "$(GREEN)✓ Limpieza completa$(RESET)"
 
-restart: down up ## Reiniciar todos los servicios
+# ============================================
+# Docker (Stack Completo)
+# ============================================
 
-db-init: ## Ejecutar scripts de inicialización de bases de datos
-	@echo "$(YELLOW)Inicializando bases de datos...$(RESET)"
-	@echo "PostgreSQL se inicializa automáticamente desde source/scripts/postgresql/"
-	@echo "MongoDB se inicializa automáticamente desde source/scripts/mongodb/"
-	@echo "$(GREEN)✓ Scripts configurados$(RESET)"
+docker-build: ## Construir todas las imágenes Docker
+	@echo "$(YELLOW)🐳 Construyendo imágenes Docker...$(RESET)"
+	@docker-compose build
+	@echo "$(GREEN)✓ Imágenes construidas$(RESET)"
 
-test: ## Ejecutar tests de las APIs
-	@echo "$(YELLOW)Ejecutando tests...$(RESET)"
-	cd source/api-mobile && go test ./...
-	cd source/api-administracion && go test ./...
-	@echo "$(GREEN)✓ Tests completados$(RESET)"
+up: ## Levantar stack completo
+	@echo "$(YELLOW)🚀 Levantando servicios...$(RESET)"
+	@docker-compose up -d
+	@echo "$(GREEN)✓ Servicios corriendo:$(RESET)"
+	@echo "  $(BLUE)API Mobile:$(RESET)  http://localhost:8080/swagger/index.html"
+	@echo "  $(BLUE)API Admin:$(RESET)   http://localhost:8081/swagger/index.html"
+	@echo "  $(BLUE)RabbitMQ:$(RESET)    http://localhost:15672 (edugo_user/edugo_pass)"
 
-swagger: ## Regenerar documentación Swagger
-	@echo "$(YELLOW)Regenerando Swagger...$(RESET)"
-	cd source/api-mobile && swag init -g cmd/main.go -o docs
-	cd source/api-administracion && swag init -g cmd/main.go -o docs
-	@echo "$(GREEN)✓ Swagger regenerado$(RESET)"
+down: ## Detener todos los servicios
+	@echo "$(YELLOW)⏹️  Deteniendo servicios...$(RESET)"
+	@docker-compose down
+	@echo "$(GREEN)✓ Servicios detenidos$(RESET)"
 
-dev-api-mobile: ## Ejecutar API Mobile en modo desarrollo (local)
-	cd source/api-mobile && go run cmd/main.go
+restart: down up ## Reiniciar servicios
 
-dev-api-admin: ## Ejecutar API Admin en modo desarrollo (local)
-	cd source/api-administracion && go run cmd/main.go
+logs: ## Ver logs de todos los servicios
+	@docker-compose logs -f
 
-dev-worker: ## Ejecutar Worker en modo desarrollo (local)
-	cd source/worker && go run cmd/main.go
+logs-api-mobile: ## Logs de API Mobile
+	@docker-compose logs -f api-mobile
 
-status: ## Ver estado de los servicios
+logs-api-admin: ## Logs de API Admin
+	@docker-compose logs -f api-administracion
+
+logs-worker: ## Logs de Worker
+	@docker-compose logs -f worker
+
+status: ## Estado de los servicios
 	@docker-compose ps
+
+clean-docker: ## Limpiar Docker (contenedores + volúmenes + imágenes)
+	@echo "$(YELLOW)🧹 Limpiando Docker...$(RESET)"
+	@docker-compose down -v --rmi all
+	@echo "$(GREEN)✓ Docker limpio$(RESET)"
+
+# ============================================
+# Development
+# ============================================
+
+dev-api-mobile: ## Ejecutar API Mobile local
+	@cd source/api-mobile && make run
+
+dev-api-admin: ## Ejecutar API Admin local
+	@cd source/api-administracion && make run
+
+dev-worker: ## Ejecutar Worker local
+	@cd source/worker && make run
+
+# ============================================
+# CI/CD
+# ============================================
+
+ci: audit-all test-all swagger-all ## Pipeline CI completo
+	@echo "$(GREEN)🎉 CI pipeline completado exitosamente$(RESET)"
+
+pre-commit: fmt-all audit-all ## Validación pre-commit
+
+# ============================================
+# Tools
+# ============================================
+
+tools: ## Instalar herramientas en todos los proyectos
+	@for project in $(PROJECTS); do \
+		cd $$project && make tools && cd ../../..; \
+	done
+
+# ============================================
+# Info
+# ============================================
+
+info: ## Información del proyecto
+	@echo "$(BLUE)📋 EduGo - Información$(RESET)"
+	@echo "  Proyectos: 3 (api-mobile, api-administracion, worker)"
+	@echo "  Version: $$(git describe --tags --always)"
+	@echo "  Branch: $$(git branch --show-current)"
+	@echo "  Go: $$(go version)"
+	@echo "  Commits: $$(git log --oneline | wc -l | tr -d ' ')"
+
+.PHONY: help build-all test-all coverage-all lint-all fmt-all swagger-all audit-all tidy-all clean-all docker-build up down restart logs logs-api-mobile logs-api-admin logs-worker status clean-docker dev-api-mobile dev-api-admin dev-worker ci pre-commit tools info
