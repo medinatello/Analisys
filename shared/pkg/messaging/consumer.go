@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+	// amqp "github.com/rabbitmq/amqp091-go" // No usado actualmente
 )
 
 // MessageHandler es la función que procesa un mensaje
