@@ -6,9 +6,11 @@ import (
 	"github.com/edugo/api-mobile/internal/application/service"
 	"github.com/edugo/api-mobile/internal/domain/repository"
 	"github.com/edugo/api-mobile/internal/infrastructure/http/handler"
+	mongoRepo "github.com/edugo/api-mobile/internal/infrastructure/persistence/mongodb/repository"
 	postgresRepo "github.com/edugo/api-mobile/internal/infrastructure/persistence/postgres/repository"
 	"github.com/edugo/shared/pkg/auth"
 	"github.com/edugo/shared/pkg/logger"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Container es el contenedor de dependencias de API Mobile
@@ -16,26 +18,34 @@ import (
 type Container struct {
 	// Infrastructure
 	DB         *sql.DB
+	MongoDB    *mongo.Database
 	Logger     logger.Logger
 	JWTManager *auth.JWTManager
 
 	// Repositories
-	UserRepository     repository.UserRepository
-	MaterialRepository repository.MaterialRepository
+	UserRepository       repository.UserRepository
+	MaterialRepository   repository.MaterialRepository
+	SummaryRepository    repository.SummaryRepository
+	AssessmentRepository repository.AssessmentRepository
 
 	// Services
-	AuthService     service.AuthService
-	MaterialService service.MaterialService
+	AuthService       service.AuthService
+	MaterialService   service.MaterialService
+	SummaryService    service.SummaryService
+	AssessmentService service.AssessmentService
 
 	// Handlers
-	AuthHandler     *handler.AuthHandler
-	MaterialHandler *handler.MaterialHandler
+	AuthHandler       *handler.AuthHandler
+	MaterialHandler   *handler.MaterialHandler
+	SummaryHandler    *handler.SummaryHandler
+	AssessmentHandler *handler.AssessmentHandler
 }
 
 // NewContainer crea un nuevo contenedor e inicializa todas las dependencias
-func NewContainer(db *sql.DB, jwtSecret string, logger logger.Logger) *Container {
+func NewContainer(db *sql.DB, mongoDB *mongo.Database, jwtSecret string, logger logger.Logger) *Container {
 	c := &Container{
 		DB:         db,
+		MongoDB:    mongoDB,
 		Logger:     logger,
 		JWTManager: auth.NewJWTManager(jwtSecret, "edugo-mobile"),
 	}
@@ -43,6 +53,8 @@ func NewContainer(db *sql.DB, jwtSecret string, logger logger.Logger) *Container
 	// Inicializar repositories (capa de infraestructura)
 	c.UserRepository = postgresRepo.NewPostgresUserRepository(db)
 	c.MaterialRepository = postgresRepo.NewPostgresMaterialRepository(db)
+	c.SummaryRepository = mongoRepo.NewMongoSummaryRepository(mongoDB)
+	c.AssessmentRepository = mongoRepo.NewMongoAssessmentRepository(mongoDB)
 
 	// Inicializar services (capa de aplicación)
 	c.AuthService = service.NewAuthService(
@@ -54,6 +66,14 @@ func NewContainer(db *sql.DB, jwtSecret string, logger logger.Logger) *Container
 		c.MaterialRepository,
 		logger,
 	)
+	c.SummaryService = service.NewSummaryService(
+		c.SummaryRepository,
+		logger,
+	)
+	c.AssessmentService = service.NewAssessmentService(
+		c.AssessmentRepository,
+		logger,
+	)
 
 	// Inicializar handlers (capa de infraestructura HTTP)
 	c.AuthHandler = handler.NewAuthHandler(
@@ -62,6 +82,14 @@ func NewContainer(db *sql.DB, jwtSecret string, logger logger.Logger) *Container
 	)
 	c.MaterialHandler = handler.NewMaterialHandler(
 		c.MaterialService,
+		logger,
+	)
+	c.SummaryHandler = handler.NewSummaryHandler(
+		c.SummaryService,
+		logger,
+	)
+	c.AssessmentHandler = handler.NewAssessmentHandler(
+		c.AssessmentService,
 		logger,
 	)
 
