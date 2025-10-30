@@ -47,8 +47,15 @@ logs/
 
 # Environment files
 .env
-.env.local
 .env.*.local
+
+# Environment-specific files (gitignored - contienen secretos reales)
+.env.dev
+.env.qa
+.env.prod
+
+# NOTA: .env.local SÍ se commitea (valores de desarrollo OK)
+# Los archivos .env.{env}.enc (encriptados con SOPS) SÍ se commitean
 
 # Temporary files
 tmp/

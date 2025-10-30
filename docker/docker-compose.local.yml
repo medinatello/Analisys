@@ -1,0 +1,96 @@
+# ============================================
+# Docker Compose Local - Infraestructura Compartida
+# ============================================
+# Contenedores persistentes para los 3 proyectos
+# Red virtual compartida: edugo-local-network
+
+version: '3.8'
+
+services:
+  # PostgreSQL Compartido
+  postgres-local:
+    image: postgres:15-alpine
+    container_name: edugo-postgres-local
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-edugo}
+      POSTGRES_USER: ${POSTGRES_USER:-edugo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-edugo_pass}
+    ports:
+      - "5432:5432"
+    volumes:
+      - edugo-postgres-local-data:/var/lib/postgresql/data
+      - ../source/scripts/postgresql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-edugo_user} -d ${POSTGRES_DB:-edugo}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - edugo-local-network
+
+  # MongoDB Compartido
+  mongodb-local:
+    image: mongo:7.0
+    container_name: edugo-mongodb-local
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-edugo_admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-edugo_pass}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-edugo}
+    ports:
+      - "27017:27017"
+    volumes:
+      - edugo-mongodb-local-data:/data/db
+      - ../source/scripts/mongodb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/${MONGO_DB:-edugo} --quiet
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - edugo-local-network
+
+  # RabbitMQ Compartido
+  rabbitmq-local:
+    image: rabbitmq:3.12-management-alpine
+    container_name: edugo-rabbitmq-local
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-edugo_user}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-edugo_pass}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - edugo-rabbitmq-local-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - edugo-local-network
+
+# Volúmenes Persistentes (datos NO se eliminan al hacer down)
+volumes:
+  edugo-postgres-local-data:
+    name: edugo-postgres-local-data
+    driver: local
+  
+  edugo-mongodb-local-data:
+    name: edugo-mongodb-local-data
+    driver: local
+  
+  edugo-rabbitmq-local-data:
+    name: edugo-rabbitmq-local-data
+    driver: local
+
+# Red Virtual Compartida
+networks:
+  edugo-local-network:
+    name: edugo-local-network
+    driver: bridge
