@@ -33,3 +33,13 @@ func AllSystemRoles() []SystemRole {
 		SystemRoleGuardian,
 	}
 }
+
+// AllSystemRolesStrings retorna todos los roles como strings (útil para validación)
+func AllSystemRolesStrings() []string {
+	return []string{
+		string(SystemRoleAdmin),
+		string(SystemRoleTeacher),
+		string(SystemRoleStudent),
+		string(SystemRoleGuardian),
+	}
+}

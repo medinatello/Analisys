@@ -18,12 +18,15 @@ type Container struct {
 	Logger logger.Logger
 
 	// Repositories
+	UserRepository     repository.UserRepository
 	GuardianRepository repository.GuardianRepository
 
 	// Services
+	UserService     service.UserService
 	GuardianService service.GuardianService
 
 	// Handlers
+	UserHandler     *handler.UserHandler
 	GuardianHandler *handler.GuardianHandler
 }
 
@@ -35,15 +38,24 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	}
 
 	// Inicializar repositories (capa de infraestructura)
+	c.UserRepository = postgresRepo.NewPostgresUserRepository(db)
 	c.GuardianRepository = postgresRepo.NewPostgresGuardianRepository(db)
 
 	// Inicializar services (capa de aplicación)
+	c.UserService = service.NewUserService(
+		c.UserRepository,
+		logger,
+	)
 	c.GuardianService = service.NewGuardianService(
 		c.GuardianRepository,
 		logger,
 	)
 
 	// Inicializar handlers (capa de infraestructura HTTP)
+	c.UserHandler = handler.NewUserHandler(
+		c.UserService,
+		logger,
+	)
 	c.GuardianHandler = handler.NewGuardianHandler(
 		c.GuardianService,
 		logger,
