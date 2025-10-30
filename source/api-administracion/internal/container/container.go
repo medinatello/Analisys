@@ -21,18 +21,24 @@ type Container struct {
 	UserRepository     repository.UserRepository
 	SchoolRepository   repository.SchoolRepository
 	SubjectRepository  repository.SubjectRepository
+	MaterialRepository repository.MaterialRepository
+	StatsRepository    repository.StatsRepository
 	GuardianRepository repository.GuardianRepository
 
 	// Services
 	UserService     service.UserService
 	SchoolService   service.SchoolService
 	SubjectService  service.SubjectService
+	MaterialService service.MaterialService
+	StatsService    service.StatsService
 	GuardianService service.GuardianService
 
 	// Handlers
 	UserHandler     *handler.UserHandler
 	SchoolHandler   *handler.SchoolHandler
 	SubjectHandler  *handler.SubjectHandler
+	MaterialHandler *handler.MaterialHandler
+	StatsHandler    *handler.StatsHandler
 	GuardianHandler *handler.GuardianHandler
 }
 
@@ -47,6 +53,8 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	c.UserRepository = postgresRepo.NewPostgresUserRepository(db)
 	c.SchoolRepository = postgresRepo.NewPostgresSchoolRepository(db)
 	c.SubjectRepository = postgresRepo.NewPostgresSubjectRepository(db)
+	c.MaterialRepository = postgresRepo.NewPostgresMaterialRepository(db)
+	c.StatsRepository = postgresRepo.NewPostgresStatsRepository(db)
 	c.GuardianRepository = postgresRepo.NewPostgresGuardianRepository(db)
 
 	// Inicializar services (capa de aplicación)
@@ -60,6 +68,14 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	)
 	c.SubjectService = service.NewSubjectService(
 		c.SubjectRepository,
+		logger,
+	)
+	c.MaterialService = service.NewMaterialService(
+		c.MaterialRepository,
+		logger,
+	)
+	c.StatsService = service.NewStatsService(
+		c.StatsRepository,
 		logger,
 	)
 	c.GuardianService = service.NewGuardianService(
@@ -78,6 +94,14 @@ func NewContainer(db *sql.DB, logger logger.Logger) *Container {
 	)
 	c.SubjectHandler = handler.NewSubjectHandler(
 		c.SubjectService,
+		logger,
+	)
+	c.MaterialHandler = handler.NewMaterialHandler(
+		c.MaterialService,
+		logger,
+	)
+	c.StatsHandler = handler.NewStatsHandler(
+		c.StatsService,
 		logger,
 	)
 	c.GuardianHandler = handler.NewGuardianHandler(
