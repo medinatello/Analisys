@@ -145,6 +145,65 @@ Ver guía completa: [MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)
 
 ---
 
+## 🐳 Docker Local Persistente
+
+Para desarrollo local con contenedores que NO se destruyen:
+
+```bash
+# Iniciar infraestructura + apps (datos persisten)
+make local-start-all
+
+# Detener (mantiene datos en volúmenes Docker)
+make local-stop-all
+
+# Limpiar todo (requiere confirmación DELETE)
+make local-clean
+```
+
+**Ventajas**:
+- ✅ Contenedores persisten entre reinicios
+- ✅ Datos NO se pierden al cerrar terminal
+- ✅ Rápido (no recrear cada vez)
+- ✅ Validación inteligente de datos
+
+Ver guía: [docker/README.md](docker/README.md)
+
+---
+
+## 🔐 Manejo de Secretos
+
+Sistema profesional con **SOPS** (encriptación) para secretos por ambiente.
+
+### Por Ambiente
+
+| Ambiente | Método | Archivo |
+|----------|--------|---------|
+| **local** | Valores fijos | config-local.yaml (committed) |
+| **dev** | SOPS encriptado | .env.dev.enc (committed) |
+| **qa** | SOPS encriptado | .env.qa.enc (committed) |
+| **prod** | Kubernetes Secrets | No archivos |
+
+### Setup (Primera Vez)
+
+```bash
+# Generar tu clave Age personal
+make secrets-setup
+
+# Compartir clave pública con team lead
+
+# Desencriptar secretos
+make secrets-decrypt-all
+
+# Usar
+APP_ENV=dev make run
+```
+
+**Cada developer usa su propia clave** - no necesitan compartir claves privadas.
+
+Ver guía completa: [SECRETS.md](SECRETS.md)
+
+---
+
 ## 🛠️ Desarrollo
 
 Ver guía detallada: [DEVELOPMENT.md](docs/DEVELOPMENT.md)
