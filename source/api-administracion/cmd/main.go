@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/edugo/api-administracion/internal/config"
 	_ "github.com/edugo/api-administracion/docs" // Swagger docs generados
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -20,6 +23,18 @@ import (
 // @name Authorization
 
 func main() {
+	// Cargar configuración
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("❌ Error loading configuration: %v", err)
+	}
+
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "local"
+	}
+	log.Printf("🌍 Environment: %s", env)
+
 	r := gin.Default()
 
 	r.GET("/health", func(c *gin.Context) {
@@ -52,9 +67,13 @@ func main() {
 		v1.GET("/stats/global", GetGlobalStats) // GET /v1/stats/global
 	}
 
-	log.Println("🔧 API Administración running on :8081")
-	log.Println("📚 Swagger: http://localhost:8081/swagger/index.html")
-	r.Run(":8081")
+	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("🔧 API Administración running on http://localhost:%d", cfg.Server.Port)
+	log.Printf("📚 Swagger: http://localhost:%d/swagger/index.html", cfg.Server.Port)
+
+	if err := r.Run(addr); err != nil {
+		log.Fatalf("❌ Error starting server: %v", err)
+	}
 }
 
 // Middleware Admin
