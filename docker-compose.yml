@@ -66,8 +66,8 @@ services:
   # API Mobile (puerto 8080)
   api-mobile:
     build:
-      context: .
-      dockerfile: Dockerfile.api-mobile
+      context: ./source/api-mobile
+      dockerfile: Dockerfile
     container_name: edugo-api-mobile
     environment:
       APP_ENV: ${APP_ENV:-local}
@@ -90,8 +90,8 @@ services:
   # API Administración (puerto 8081)
   api-administracion:
     build:
-      context: .
-      dockerfile: Dockerfile.api-administracion
+      context: ./source/api-administracion
+      dockerfile: Dockerfile
     container_name: edugo-api-admin
     environment:
       APP_ENV: ${APP_ENV:-local}
@@ -111,8 +111,8 @@ services:
   # Worker de Procesamiento
   worker:
     build:
-      context: .
-      dockerfile: Dockerfile.worker
+      context: ./source/worker
+      dockerfile: Dockerfile
     container_name: edugo-worker
     environment:
       APP_ENV: ${APP_ENV:-local}
