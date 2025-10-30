@@ -131,6 +131,47 @@ clean-docker: ## Limpiar Docker (contenedores + volúmenes + imágenes)
 	@echo "$(GREEN)✓ Docker limpio$(RESET)"
 
 # ============================================
+# Docker Local (Desarrollo Persistente)
+# ============================================
+
+local-up: ## Iniciar infraestructura local persistente
+	@./scripts/local/start-infra.sh
+
+local-start-all: ## Iniciar infraestructura + 3 apps
+	@./scripts/local/start-all-local.sh
+
+local-stop: ## Detener infraestructura (mantiene datos)
+	@./scripts/local/stop-infra.sh
+
+local-stop-all: ## Detener apps + infraestructura (mantiene datos)
+	@./scripts/local/stop-all-local.sh
+
+local-clean: ## Destruir TODO (incluye datos) - Requiere confirmación
+	@./scripts/local/clean-all-local.sh
+
+local-status: ## Ver estado de contenedores locales
+	@docker-compose -f docker/docker-compose.local.yml ps
+
+# ============================================
+# Secrets Management (SOPS)
+# ============================================
+
+secrets-setup: ## Setup SOPS + Age (primera vez)
+	@./scripts/secrets/setup-sops.sh
+
+secrets-encrypt: ## Encriptar un ambiente (uso: make secrets-encrypt ENV=dev)
+	@./scripts/secrets/encrypt.sh $(ENV)
+
+secrets-decrypt: ## Desencriptar un ambiente (uso: make secrets-decrypt ENV=dev)
+	@./scripts/secrets/decrypt.sh $(ENV)
+
+secrets-encrypt-all: ## Encriptar todos los ambientes
+	@./scripts/secrets/encrypt-all.sh
+
+secrets-decrypt-all: ## Desencriptar todos los ambientes
+	@./scripts/secrets/decrypt-all.sh
+
+# ============================================
 # Development
 # ============================================
 
@@ -184,4 +225,4 @@ info: ## Información del proyecto
 	@echo "  Go: $$(go version)"
 	@echo "  Commits: $$(git log --oneline | wc -l | tr -d ' ')"
 
-.PHONY: help build-all test-all coverage-all lint-all fmt-all swagger-all audit-all tidy-all clean-all docker-build up down restart logs logs-api-mobile logs-api-admin logs-worker status clean-docker dev-api-mobile dev-api-admin dev-worker ci pre-commit tools info
+.PHONY: help build-all test-all coverage-all lint-all fmt-all swagger-all audit-all tidy-all clean-all test-integration-all docker-build up down restart logs logs-api-mobile logs-api-admin logs-worker status clean-docker local-up local-start-all local-stop local-stop-all local-clean local-status secrets-setup secrets-encrypt secrets-decrypt secrets-encrypt-all secrets-decrypt-all dev-api-mobile dev-api-admin dev-worker ci ci-full pre-commit tools info
