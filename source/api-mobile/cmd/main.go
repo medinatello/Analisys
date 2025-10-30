@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/edugo/api-mobile/internal/config"
 	"github.com/edugo/api-mobile/internal/handlers"
 	"github.com/edugo/api-mobile/internal/middleware"
 	"github.com/gin-gonic/gin"
@@ -33,6 +36,20 @@ import (
 // @description JWT token con formato: Bearer {token}
 
 func main() {
+	// Cargar configuración
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("❌ Error loading configuration: %v", err)
+	}
+
+	// Mostrar ambiente activo
+	env := os.Getenv("APP_ENV")
+	if env == "" {
+		env = "local"
+	}
+	log.Printf("🌍 Environment: %s", env)
+	log.Printf("📊 Log Level: %s, Format: %s", cfg.Logging.Level, cfg.Logging.Format)
+
 	// Configurar Gin
 	r := gin.Default()
 
@@ -73,13 +90,16 @@ func main() {
 		}
 	}
 
-	// Iniciar servidor
-	port := ":8080"
-	log.Printf("🚀 API Mobile running on http://localhost%s", port)
-	log.Printf("📚 Swagger UI: http://localhost%s/swagger/index.html", port)
+	// Iniciar servidor usando configuración
+	addr := fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port)
+	log.Printf("🚀 API Mobile running on http://localhost:%d", cfg.Server.Port)
+	log.Printf("📚 Swagger UI: http://localhost:%d/swagger/index.html", cfg.Server.Port)
+	log.Printf("🗄️  PostgreSQL: %s:%d/%s", cfg.Database.Postgres.Host, cfg.Database.Postgres.Port, cfg.Database.Postgres.Database)
+	log.Printf("🍃 MongoDB: %s", cfg.Database.MongoDB.Database)
+	log.Printf("🐰 RabbitMQ: Connected")
 
-	if err := r.Run(port); err != nil {
-		log.Fatal("Error starting server:", err)
+	if err := r.Run(addr); err != nil {
+		log.Fatalf("❌ Error starting server: %v", err)
 	}
 }
 
