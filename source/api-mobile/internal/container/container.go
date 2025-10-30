@@ -25,20 +25,25 @@ type Container struct {
 	// Repositories
 	UserRepository       repository.UserRepository
 	MaterialRepository   repository.MaterialRepository
+	ProgressRepository   repository.ProgressRepository
 	SummaryRepository    repository.SummaryRepository
 	AssessmentRepository repository.AssessmentRepository
 
 	// Services
 	AuthService       service.AuthService
 	MaterialService   service.MaterialService
+	ProgressService   service.ProgressService
 	SummaryService    service.SummaryService
 	AssessmentService service.AssessmentService
+	StatsService      service.StatsService
 
 	// Handlers
 	AuthHandler       *handler.AuthHandler
 	MaterialHandler   *handler.MaterialHandler
+	ProgressHandler   *handler.ProgressHandler
 	SummaryHandler    *handler.SummaryHandler
 	AssessmentHandler *handler.AssessmentHandler
+	StatsHandler      *handler.StatsHandler
 }
 
 // NewContainer crea un nuevo contenedor e inicializa todas las dependencias
@@ -53,6 +58,7 @@ func NewContainer(db *sql.DB, mongoDB *mongo.Database, jwtSecret string, logger 
 	// Inicializar repositories (capa de infraestructura)
 	c.UserRepository = postgresRepo.NewPostgresUserRepository(db)
 	c.MaterialRepository = postgresRepo.NewPostgresMaterialRepository(db)
+	c.ProgressRepository = postgresRepo.NewPostgresProgressRepository(db)
 	c.SummaryRepository = mongoRepo.NewMongoSummaryRepository(mongoDB)
 	c.AssessmentRepository = mongoRepo.NewMongoAssessmentRepository(mongoDB)
 
@@ -66,6 +72,10 @@ func NewContainer(db *sql.DB, mongoDB *mongo.Database, jwtSecret string, logger 
 		c.MaterialRepository,
 		logger,
 	)
+	c.ProgressService = service.NewProgressService(
+		c.ProgressRepository,
+		logger,
+	)
 	c.SummaryService = service.NewSummaryService(
 		c.SummaryRepository,
 		logger,
@@ -74,6 +84,7 @@ func NewContainer(db *sql.DB, mongoDB *mongo.Database, jwtSecret string, logger 
 		c.AssessmentRepository,
 		logger,
 	)
+	c.StatsService = service.NewStatsService(logger)
 
 	// Inicializar handlers (capa de infraestructura HTTP)
 	c.AuthHandler = handler.NewAuthHandler(
@@ -84,12 +95,20 @@ func NewContainer(db *sql.DB, mongoDB *mongo.Database, jwtSecret string, logger 
 		c.MaterialService,
 		logger,
 	)
+	c.ProgressHandler = handler.NewProgressHandler(
+		c.ProgressService,
+		logger,
+	)
 	c.SummaryHandler = handler.NewSummaryHandler(
 		c.SummaryService,
 		logger,
 	)
 	c.AssessmentHandler = handler.NewAssessmentHandler(
 		c.AssessmentService,
+		logger,
+	)
+	c.StatsHandler = handler.NewStatsHandler(
+		c.StatsService,
 		logger,
 	)
 
