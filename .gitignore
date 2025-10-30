@@ -42,6 +42,9 @@ vendor/
 logs/
 *.log
 
+# Scripts runtime
+.running_services.pid
+
 # Environment files
 .env
 .env.local
