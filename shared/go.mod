@@ -3,7 +3,10 @@ module github.com/edugo/shared
 go 1.25.3
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/google/uuid v1.6.0
 	github.com/lib/pq v1.10.9
+	github.com/rabbitmq/amqp091-go v1.10.0
 	go.mongodb.org/mongo-driver v1.17.6
 	go.uber.org/zap v1.27.0
 )
