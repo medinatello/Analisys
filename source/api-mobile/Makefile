@@ -76,8 +76,17 @@ test-coverage: ## Tests con cobertura (HTML report)
 test-unit: ## Solo tests unitarios
 	@$(GOTEST) -v -short ./...
 
-test-integration: ## Tests de integración
-	@$(GOTEST) -v -tags=integration ./...
+test-integration: ## Tests de integración (con testcontainers)
+	@echo "$(YELLOW)🐳 Ejecutando tests de integración con testcontainers...$(RESET)"
+	@$(GOTEST) -v -tags=integration ./test/integration/... -timeout 5m
+	@echo "$(GREEN)✓ Tests de integración completados$(RESET)"
+
+test-integration-coverage: ## Tests de integración con coverage
+	@echo "$(YELLOW)📊 Tests de integración con coverage...$(RESET)"
+	@mkdir -p $(COVERAGE_DIR)
+	@$(GOTEST) -tags=integration -coverprofile=$(COVERAGE_DIR)/integration-coverage.out -covermode=atomic ./test/integration/... -timeout 5m
+	@$(GOCMD) tool cover -html=$(COVERAGE_DIR)/integration-coverage.out -o $(COVERAGE_DIR)/integration-coverage.html
+	@echo "$(GREEN)✓ Reporte: $(COVERAGE_DIR)/integration-coverage.html$(RESET)"
 
 benchmark: ## Ejecutar benchmarks
 	@echo "$(YELLOW)⚡ Ejecutando benchmarks...$(RESET)"
