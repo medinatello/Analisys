@@ -1,123 +1,196 @@
-# 📚 EduGo - Plataforma Educativa
+# EduGo - Repositorio de Análisis y Documentación
 
-Sistema integral para gestión de materiales educativos con procesamiento automático mediante IA.
+Este repositorio contiene la **documentación, análisis y proceso de separación** del proyecto EduGo en repositorios independientes.
 
----
+## 📋 Propósito
 
-## 🏗️ Arquitectura
+Este repositorio sirve como:
+- **Archivo histórico** del proceso de separación del monorepo
+- **Documentación técnica** de decisiones arquitectónicas
+- **Scripts de automatización** para gestión de repositorios
+- **Entorno de desarrollo** centralizado (edugo-dev-environment)
+
+## 🏗️ Arquitectura Actual
+
+EduGo ha sido **separado en 5 repositorios independientes** alojados en la organización **EduGoGroup** en GitHub:
+
+| Repositorio | Descripción | URL |
+|-------------|-------------|-----|
+| **edugo-shared** | Biblioteca compartida (logger, db, auth, errors, etc.) | https://github.com/EduGoGroup/edugo-shared |
+| **edugo-api-mobile** | API REST para aplicación móvil (puerto 8080) | https://github.com/EduGoGroup/edugo-api-mobile |
+| **edugo-api-administracion** | API REST administrativa (puerto 8081) | https://github.com/EduGoGroup/edugo-api-administracion |
+| **edugo-worker** | Worker de procesamiento asíncrono (RabbitMQ) | https://github.com/EduGoGroup/edugo-worker |
+| **edugo-dev-environment** | Entorno de desarrollo completo (Docker Compose) | https://github.com/EduGoGroup/edugo-dev-environment |
+
+**Estado:** ✅ Todos los repositorios publicados con contenido (266 archivos totales)
+
+## 📂 Contenido de Este Repositorio
 
 ```
-EduGo/
-├── source/
-│   ├── api-mobile/          # API para estudiantes/profesores (Puerto 8080)
-│   ├── api-administracion/  # API administrativa (Puerto 8081)
-│   ├── worker/              # Procesador de materiales (RabbitMQ)
-│   └── scripts/             # Scripts de inicialización de BD
-├── docs/                    # Documentación técnica y diagramas
-└── Docker files             # Infraestructura containerizada
+Analisys/
+├── docs/                           # Documentación técnica
+│   ├── diagramas/                  # Diagramas de arquitectura y BD
+│   ├── historias_usuario/          # Historias de usuario por módulo
+│   └── MIGRATION_GUIDE.md          # Guía de migración de BD
+├── edugo-dev-environment/          # Entorno Docker para desarrollo local
+│   ├── docker/                     # Docker Compose y configuración
+│   ├── scripts/                    # Scripts de setup y cleanup
+│   └── docs/                       # Documentación del entorno
+├── scripts/                        # Scripts de automatización
+│   ├── gitlab-runner-start.sh      # Iniciar GitLab Runner local
+│   ├── gitlab-runner-status.sh     # Estado del runner
+│   ├── push-dual.sh                # Push dual a GitHub + GitLab
+│   └── secrets/                    # Scripts para SOPS (secretos)
+├── REPOS_DEFINITIVOS.md            # Información de repositorios creados
+├── ESTADO_REPOS_GITHUB.md          # Estado actual de repos en GitHub
+├── FLUJOS_CRITICOS.md              # Flujos críticos del sistema
+├── VARIABLES_ENTORNO.md            # Variables de entorno por proyecto
+└── README.md                       # Este archivo
 ```
 
----
+## 🚀 Stack Tecnológico
 
-## 🚀 Inicio Rápido
+### Backend
+- **Lenguaje:** Go 1.21+
+- **Framework Web:** Gin (APIs REST)
+- **ORM:** GORM
+- **Documentación:** Swagger/OpenAPI
+- **Config:** Viper (multi-ambiente)
 
-### Prerrequisitos
-- Docker y Docker Compose
-- (Opcional) Go 1.21+ para desarrollo local
+### Bases de Datos
+- **PostgreSQL 15:** Datos relacionales (17 tablas)
+- **MongoDB 7.0:** Documentos JSON (3 colecciones)
 
-### Levantar Stack Completo
+### Mensajería
+- **RabbitMQ 3.12:** Cola de mensajes para worker
+
+### DevOps
+- **Docker & Docker Compose:** Containerización
+- **GitHub Actions:** CI/CD en GitHub
+- **GitLab CI/CD:** Pipeline alternativo (dual-repo)
+- **SOPS + Age:** Manejo seguro de secretos
+
+## 🛠️ Desarrollo Local
+
+### Opción 1: Usar Entorno Completo (Recomendado)
+
+El repositorio **edugo-dev-environment** incluye todo lo necesario:
 
 ```bash
-# 1. Configurar variables de entorno
-cp .env.example .env
-# Editar .env y agregar OPENAI_API_KEY
+# Clonar el entorno de desarrollo
+cd edugo-dev-environment/
 
-# 2. Levantar servicios
-make up
+# Iniciar todos los servicios (PostgreSQL, MongoDB, RabbitMQ)
+./scripts/setup.sh
+
+# Los servicios quedan corriendo en:
+# - PostgreSQL: localhost:5432
+# - MongoDB: localhost:27017
+# - RabbitMQ: localhost:5672 (UI en :15672)
 ```
 
-### Acceso a Servicios
+Ver documentación completa: [edugo-dev-environment/README.md](edugo-dev-environment/README.md)
 
-- **API Mobile Swagger**: http://localhost:8080/swagger/index.html
-- **API Admin Swagger**: http://localhost:8081/swagger/index.html
-- **RabbitMQ Management**: http://localhost:15672 (edugo_user/edugo_pass)
-
----
-
-## 📦 Servicios
-
-### API Mobile (Puerto 8080)
-Endpoints para consumo de materiales educativos:
-- Búsqueda y listado de materiales
-- Resúmenes generados por IA
-- Quizzes con feedback personalizado
-- Tracking de progreso
-
-### API Administración (Puerto 8081)
-Endpoints administrativos:
-- Gestión de usuarios y roles
-- Jerarquía organizacional (escuelas, unidades)
-- Gestión de materias
-- Estadísticas globales
-- **Post-MVP**: Vínculos tutor-estudiante, actualización de materias
-
-### Worker
-Procesamiento automático de materiales:
-- Generación de resúmenes con OpenAI
-- Generación de quizzes
-- Procesamiento asíncrono vía RabbitMQ
-
----
-
-## 🗄️ Bases de Datos
-
-**PostgreSQL** (17 tablas):
-- Usuarios, jerarquía organizacional
-- Materiales, progreso, evaluaciones
-
-**MongoDB** (3 colecciones):
-- `material_summary` - Resúmenes generados
-- `material_assessment` - Quizzes
-- `material_event` - Eventos de consumo
-
-Ver guía completa: [MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)
-
----
-
-## 🛠️ Desarrollo
-
-Ver guía detallada: [DEVELOPMENT.md](docs/DEVELOPMENT.md)
-
-### Comandos Útiles
+### Opción 2: Clonar Repositorios Individuales
 
 ```bash
-make help               # Ver todos los comandos
-make build              # Construir imágenes Docker
-make up                 # Levantar servicios
-make down               # Detener servicios
-make logs               # Ver logs
-make swagger            # Regenerar Swagger
-make test               # Ejecutar tests
+# Clonar cada proyecto
+git clone https://github.com/EduGoGroup/edugo-shared.git
+git clone https://github.com/EduGoGroup/edugo-api-mobile.git
+git clone https://github.com/EduGoGroup/edugo-api-administracion.git
+git clone https://github.com/EduGoGroup/edugo-worker.git
+
+# Cada proyecto tiene su propio Makefile
+cd edugo-api-mobile/
+make help              # Ver comandos disponibles
+make build             # Compilar
+make run               # Ejecutar localmente
+make test              # Tests
+make swagger           # Regenerar Swagger
 ```
 
----
+## 📖 Documentación Importante
 
-## 📖 Documentación
+### Guías Técnicas
+- **[FLUJOS_CRITICOS.md](FLUJOS_CRITICOS.md)** - Flujos principales del sistema
+- **[VARIABLES_ENTORNO.md](VARIABLES_ENTORNO.md)** - Variables de entorno por proyecto
+- **[docs/MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md)** - Guía de migración de base de datos
+- **[docs/diagramas/](docs/diagramas/)** - Diagramas de arquitectura
 
-- [DOCKER.md](DOCKER.md) - Guía de Docker
-- [MIGRATION_GUIDE.md](docs/MIGRATION_GUIDE.md) - Guía de migración de BD
-- [CHANGELOG.md](CHANGELOG.md) - Historial de cambios
-- [docs/diagramas/](docs/diagramas/) - Diagramas técnicos
+### Proceso de Separación (Histórico)
+- **[REPOS_DEFINITIVOS.md](REPOS_DEFINITIVOS.md)** - Repositorios creados y proceso
+- **[ESTADO_REPOS_GITHUB.md](ESTADO_REPOS_GITHUB.md)** - Estado de publicación
 
----
+## 🔐 Manejo de Secretos
+
+Los proyectos usan **SOPS + Age** para encriptar secretos:
+
+```bash
+# Setup inicial (generar clave Age personal)
+./scripts/secrets/setup-sops.sh
+
+# Desencriptar secretos de un ambiente
+./scripts/secrets/decrypt.sh dev
+
+# Variables quedan en .env.dev (gitignored)
+```
+
+Ver guía completa en cada repositorio: `<repo>/docs/SECRETS.md`
+
+## 🔄 Workflow de Desarrollo
+
+### 1. Desarrollo Local
+```bash
+# Levantar infraestructura
+cd edugo-dev-environment/
+./scripts/setup.sh
+
+# En otro terminal, trabajar en tu proyecto
+cd ../edugo-api-mobile/
+make run
+```
+
+### 2. Hacer Cambios
+```bash
+# Hacer cambios en el código
+git add .
+git commit -m "feat: nueva funcionalidad"
+```
+
+### 3. Push Dual (GitHub + GitLab)
+```bash
+# Si trabajas con dual-repo
+./scripts/push-dual.sh api-mobile "feat: nueva funcionalidad"
+```
 
 ## 📊 Estado del Proyecto
 
-**Versión**: 1.0.0 (Post-Refactorización)
-**Última actualización**: 2025-10-29
-**Tests**: 3/3 passing ✓
-**Cobertura**: Básica (modelos)
+**Fase Actual:** ✅ **FASE 1 COMPLETADA - Separación de Repositorios**
+
+### Completado ✅
+- Separación de monorepo en 5 repositorios independientes
+- Publicación de todos los repos en GitHub (privados)
+- Entorno de desarrollo Docker completo
+- Documentación técnica y guías
+- CI/CD básico configurado
+
+### Próximos Pasos ⏭️
+- **FASE 2:** Configurar mirroring automático en GitLab
+- **FASE 3:** Implementar pipelines CI/CD completos
+- **FASE 4:** Configurar ambientes de staging/producción
+
+Ver roadmap completo en: [PLAN-SEPARACION-COMPLETO.md](PLAN-SEPARACION-COMPLETO.md)
+
+## 🤝 Equipo
+
+**Desarrollado con** 🤖 [Claude Code](https://claude.com/claude-code)
+
+## 📝 Notas Importantes
+
+> **⚠️ IMPORTANTE:** Las carpetas `source/`, `shared/` y `templates/` fueron **eliminadas** de este repositorio tras la separación exitosa. El código vive ahora en sus repositorios independientes en GitHub.
+
+> **✅ Rama de respaldo:** Existe una rama `backup/feature-fase1-pre-separacion` con el estado pre-limpieza por si se necesita referencia histórica.
 
 ---
 
-**Desarrollado con** 🤖 [Claude Code](https://claude.com/claude-code)
+**Última actualización:** 11 de Noviembre, 2025

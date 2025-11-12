@@ -1,0 +1,48 @@
+# Configuración golangci-lint para EduGo
+# Ver https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  tests: true
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - unused
+    - misspell
+    - gocyclo
+    - gosec
+    - exportloopref
+    - nilerr
+
+  disable:
+    - deadcode     # deprecated
+    - structcheck  # deprecated
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+
+  misspell:
+    locale: US
+
+  errcheck:
+    check-blank: false
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - gosec

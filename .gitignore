@@ -1,1 +1,72 @@
+# ============================================
+# .gitignore - EduGo
+# ============================================
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Go
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output coverage
+coverage/
+coverage.out
+coverage.html
+*.coverprofile
+
+# Go workspace file
+go.work
+
+# Dependency directories
+vendor/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/settings.json.local
+
+# Logs
+logs/
+*.log
+
+# Scripts runtime
+.running_services.pid
+
+# Environment files
+.env
+.env.*.local
+
+# Environment-specific files (gitignored - contienen secretos reales)
+.env.dev
+.env.qa
+.env.prod
+
+# NOTA: .env.local SÍ se commitea (valores de desarrollo OK)
+# Los archivos .env.{env}.enc (encriptados con SOPS) SÍ se commitean
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build artifacts
+dist/
+build/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini

@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "[API Mobile] Debug Local",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/source/api-mobile/cmd/main.go",
+      "cwd": "${workspaceFolder}/source/api-mobile",
+      "env": {
+        "APP_ENV": "local",
+        "POSTGRES_PASSWORD": "edugo_pass",
+        "MONGODB_URI": "mongodb://edugo_admin:edugo_pass@localhost:27017/edugo?authSource=admin",
+        "RABBITMQ_URL": "amqp://edugo_user:edugo_pass@localhost:5672/"
+      },
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[API Admin] Debug Local",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/source/api-administracion/cmd/main.go",
+      "cwd": "${workspaceFolder}/source/api-administracion",
+      "env": {
+        "APP_ENV": "local",
+        "POSTGRES_PASSWORD": "edugo_pass",
+        "MONGODB_URI": "mongodb://edugo_admin:edugo_pass@localhost:27017/edugo?authSource=admin"
+      },
+      "showLog": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "[Worker] Debug Local",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}/source/worker/cmd/main.go",
+      "cwd": "${workspaceFolder}/source/worker",
+      "env": {
+        "APP_ENV": "local",
+        "POSTGRES_PASSWORD": "edugo_pass",
+        "MONGODB_URI": "mongodb://edugo_admin:edugo_pass@localhost:27017/edugo?authSource=admin",
+        "RABBITMQ_URL": "amqp://edugo_user:edugo_pass@localhost:5672/",
+        "OPENAI_API_KEY": "sk-test-key"
+      },
+      "showLog": true,
+      "console": "integratedTerminal"
+    }
+  ]
+}
