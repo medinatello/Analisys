@@ -1,164 +1,124 @@
-# Spec: Jerarquía Académica en api-administracion
+# Jerarquía Académica - EduGo API Administración
 
-**Epic:** Modernización + Jerarquía Académica  
-**Fecha:** 11 de Noviembre, 2025  
-**Estilo:** Amazon-style Technical Specification
+**Estado:** 🔄 En progreso - FASE 1 completada  
+**Última actualización:** 12 de Noviembre, 2025
 
----
+## 📊 Resumen del Proyecto
 
-## 📋 CONTENIDO DE ESTE SPEC
+Implementación de sistema de jerarquía académica en `edugo-api-administracion` siguiendo arquitectura Clean Architecture.
 
-| Documento | Propósito | Audiencia |
-|-----------|-----------|-----------|
-| **[PRD.md](PRD.md)** | Product Requirements Document | PMs, Stakeholders |
-| **[USER_STORIES.md](USER_STORIES.md)** | Historias de usuario con AC | Developers, QA |
-| **[DESIGN.md](DESIGN.md)** | Diseño técnico detallado | Arquitectos, Sr Developers |
-| **[TASKS.md](TASKS.md)** | Plan de tareas con checkboxes | Todo el equipo |
-| **[MEJORAS_SHARED.md](MEJORAS_SHARED.md)** | Migraciones a shared | Developers |
-
----
-
-## 🎯 OBJETIVO DEL SPEC
-
-Implementar **jerarquía académica completa** en `edugo-api-administracion`, modernizando la arquitectura y consolidando utilidades comunes en `edugo-shared`.
-
-### Alcance
-
-**Incluido:**
-- ✅ 3 tablas PostgreSQL (school, academic_unit, unit_membership)
-- ✅ 15+ endpoints REST CRUD
-- ✅ Clean Architecture completa
-- ✅ Tests >80% coverage
-- ✅ CI/CD con GitHub Actions
-- ✅ Migración de bootstrap a shared
-
-**Excluido (futuros sprints):**
-- ❌ Perfiles especializados (Admin-2)
-- ❌ Materias (Admin-3)
-- ❌ Reportes (Admin-4)
-
----
-
-## 📊 RESUMEN EJECUTIVO
-
-| Métrica | Valor |
-|---------|-------|
-| **Duración total** | 24 días (~5 semanas) |
-| **Fases** | 8 fases (0-7) |
-| **PRs** | 4-5 PRs a rama `dev` |
-| **Archivos nuevos** | ~50 archivos |
-| **LOC estimado** | ~5,000 líneas |
-| **Tests** | ~40 archivos de test |
-| **Coverage objetivo** | >80% |
-
----
-
-## 🚀 ORDEN DE LECTURA RECOMENDADO
-
-### Para Product Managers
-1. **PRD.md** - Entender objetivos y alcance
-2. **USER_STORIES.md** - Validar casos de uso
-3. **TASKS.md** - Revisar cronograma
-
-### Para Developers
-1. **TASKS.md** - Ver plan de implementación
-2. **DESIGN.md** - Entender arquitectura técnica
-3. **USER_STORIES.md** - Criterios de aceptación
-4. **MEJORAS_SHARED.md** - Migración de utilidades
-
-### Para Tech Leads
-1. **PRD.md** - Overview completo
-2. **DESIGN.md** - Decisiones técnicas
-3. **TASKS.md** - Validar estimaciones
-4. **MEJORAS_SHARED.md** - Impacto en shared
-
----
-
-## 🗺️ ROADMAP VISUAL
+### Progreso General
 
 ```
-┌─────────────┐
-│  Semana 1   │  Fase 0: Migrar a shared (3d) + Fase 1: Modernizar (5d) 
-│  (8 días)   │  
-└──────┬──────┘
-       │
-       ↓ PR-S1 (shared) + PR-1 (api-admin)
-       │
-┌──────┴──────┐
-│  Semana 2   │  Fase 2: Schema (2d) + Fase 3: Dominio (3d)
-│  (5 días)   │
-└──────┬──────┘
-       │
-       ↓ PR-2 (api-admin)
-       │
-┌──────┴──────┐
-│  Semana 3   │  Fase 4: Services (3d) + Fase 5: API (4d)
-│  (7 días)   │
-└──────┬──────┘
-       │
-       ↓ PR-3 (api-admin)
-       │
-┌──────┴──────┐
-│  Semana 4   │  Fase 6: Testing (3d) + Fase 7: CI/CD (1d)
-│  (4 días)   │
-└──────┬──────┘
-       │
-       ↓ PR-4 (api-admin)
-       │
-┌──────┴──────┐
-│  Semana 5   │  Buffer, docs, deploy a dev
-└─────────────┘
+Fases Completadas: 4/9 (44.4%)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 44.4%
+
+✅ FASE 0.1: Refactorizar Bootstrap Genérico (shared)
+✅ FASE 0.2: Migrar api-mobile a shared/bootstrap
+✅ FASE 0.3: Migrar edugo-worker a shared/bootstrap  
+✅ FASE 1:   Modernizar arquitectura api-administracion
+⏳ FASE 2:   Schema BD jerarquía (PRÓXIMA)
+⬜ FASE 3:   Dominio jerarquía
+⬜ FASE 4:   Services jerarquía
+⬜ FASE 5:   API REST jerarquía
+⬜ FASE 6:   Testing completo
+⬜ FASE 7:   CI/CD
 ```
 
-**Total:** 24 días de trabajo
+## 📁 Estructura de Documentación
+
+```
+specs/api-admin-jerarquia/
+├── README.md                    # Este archivo (estado actual)
+├── RULES.md                     # Reglas del proyecto (LEER SIEMPRE)
+├── LOGS.md                      # Registro detallado de trabajo
+├── TASKS_UPDATED.md             # Plan actualizado de tareas
+├── DESIGN.md                    # Diseño técnico
+├── PRD.md                       # Product Requirements Document
+├── USER_STORIES.md              # Historias de usuario
+├── GITHUB_ISSUES.md             # Issues pendientes
+├── MEJORAS_SHARED.md            # Mejoras propuestas para shared
+└── archived/                    # Documentos de fases completadas
+    ├── FASE_0.1_PLAN.md
+    ├── FASE_0.2_*.md
+    ├── FASE_0.3_PLAN.md
+    └── *.bak
+```
+
+## ✅ Fases Completadas
+
+### FASE 0.1 - Refactorizar Bootstrap Genérico ✅
+**Duración:** 2.5 horas  
+**PR:** shared#11  
+**Resultado:**
+- ✅ Componentes genéricos en `shared/bootstrap`
+- ✅ 2,667 LOC creadas
+- ✅ 28 tests pasando
+- ✅ Releases: config/v0.4.0, lifecycle/v0.4.0, bootstrap/v0.1.0
+
+### FASE 0.2 - Migrar api-mobile ✅
+**Duración:** 9 horas  
+**PR:** api-mobile#42  
+**Resultado:**
+- ✅ 937 LOC eliminadas (42.4% reducción)
+- ✅ Integración completa con shared/bootstrap
+- ✅ Sin breaking changes
+
+### FASE 0.3 - Migrar edugo-worker ✅
+**Duración:** 45 minutos  
+**PR:** worker#9  
+**Resultado:**
+- ✅ main.go reducido 25%
+- ✅ Mismo patrón que api-mobile
+
+### FASE 1 - Modernizar api-administracion ✅
+**Duración:** 2 horas (2 PRs)  
+**PRs:** api-admin#12, #13  
+**Resultado:**
+- ✅ Bootstrap integrado (PR#12)
+- ✅ Config mejorado + limpieza (PR#13)
+- ✅ Clean Architecture implementada
+- ✅ Tests de integración con testcontainers
+
+## 🎯 Próxima Fase
+
+### FASE 2 - Schema de Base de Datos
+**Duración estimada:** 2 días  
+**Objetivo:** Crear tablas de jerarquía académica en PostgreSQL
+
+**Tareas pendientes:**
+1. Crear migrations para tablas de jerarquía
+2. Implementar constraints y relaciones
+3. Crear seeds de datos de prueba
+4. Tests de schema
+
+## 📚 Documentos Importantes
+
+- **[RULES.md](./RULES.md)** - ⚠️ Leer SIEMPRE antes de trabajar
+- **[LOGS.md](./LOGS.md)** - Registro completo de sesiones
+- **[TASKS_UPDATED.md](./TASKS_UPDATED.md)** - Plan detallado actualizado
+- **[archived/](./archived/)** - Documentos de fases completadas
+
+## 🔗 Repositorios Involucrados
+
+| Repositorio | Estado | Branch Activa | Últimos PRs |
+|-------------|--------|---------------|-------------|
+| **edugo-shared** | ✅ Actualizado | dev | #11 (merged) |
+| **edugo-api-mobile** | ✅ Actualizado | dev | #42 (merged) |
+| **edugo-worker** | ✅ Actualizado | dev | #9 (merged) |
+| **edugo-api-administracion** | ✅ Actualizado | dev | #12, #13 (merged) |
+
+## 📈 Métricas Globales
+
+- **PRs Mergeados:** 4
+- **LOC Totales:** ~+2,500 (shared) / -800 (apis)
+- **Tests Creados:** 28+ (shared) + 8 (mobile) + setup (admin)
+- **Releases Creados:** 3 (shared modules)
+- **Tiempo Invertido:** ~15 horas
 
 ---
 
-## ✅ CRITERIOS DE ÉXITO
-
-El spec se considera **completado exitosamente** cuando:
-
-- [ ] Todos los checkboxes de `TASKS.md` marcados ✅
-- [ ] Todos los PRs mergeados a rama `dev`
-- [ ] Todas las historias de usuario cumpliendo AC
-- [ ] Coverage >80%
-- [ ] CI/CD pasando
-- [ ] API desplegada a ambiente dev
-- [ ] Validación manual exitosa
-- [ ] Documentación actualizada
-
----
-
-## 🚨 RIESGOS
-
-| Riesgo | Mitigación |
-|--------|------------|
-| Shared no listo a tiempo | Ejecutar Sprint Shared-1 en paralelo semana 1 |
-| Código legacy incompatible | Reescribir en lugar de refactorizar |
-| CTE recursivo lento | Agregar índices, cachear si es necesario |
-| Tests legacy no funcionan | Crear tests nuevos con testcontainers |
-
----
-
-## 📞 PRÓXIMOS PASOS
-
-1. **Revisar este spec completo**
-2. **Aprobar el plan de trabajo**
-3. **Asignar recursos/desarrolladores**
-4. **Crear issues en GitHub** (automático, ver abajo)
-5. **Iniciar Sprint Shared-1**
-
----
-
-## 🔗 ISSUES EN GITHUB (Serán Creados)
-
-Ver sección final para lista de issues que se crearán automáticamente.
-
----
-
-**Última actualización:** 11 de Noviembre, 2025  
-**Status:** ✅ Spec completo, listo para ejecución
-
----
-
-**Generado con** 🤖 Claude Code
+**Última sesión:** 12 de Noviembre, 2025 19:45  
+**Próxima acción:** FASE 2 - Schema de Base de Datos
