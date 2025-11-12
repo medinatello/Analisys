@@ -267,3 +267,41 @@ _Última actualización: 12 de Noviembre, 2025 22:25_
 ---
 
 _Última actualización: 12 de Noviembre, 2025 22:55_
+
+### [2025-11-12 23:00] Fase 0.1 - Etapa 5: Bootstrap Core
+- **Duración:** 35 minutos
+- **Estado:** ✅ Completada
+- **Rama:** feature/shared-bootstrap-migration (edugo-shared)
+- **Archivos Creados:**
+  - bootstrap/bootstrap.go (469 LOC)
+  - bootstrap/resource_implementations.go (147 LOC)
+- **Total LOC:** 616 líneas de código
+- **Notas:**
+  - ✅ **Bootstrap()** función principal de orquestación
+  - ✅ Inicialización secuencial: Logger → PostgreSQL → MongoDB → RabbitMQ → S3
+  - ✅ Soporte para recursos obligatorios y opcionales
+  - ✅ Mock factories para testing
+  - ✅ Health checks con timeout de 10s
+  - ✅ Error handling con opción StopOnFirstError
+  - ✅ Integración con lifecycle manager (stubs preparados)
+  - ✅ Logging detallado en cada paso
+  - ✅ **defaultMessagePublisher:** Publicación RabbitMQ con prioridades
+  - ✅ **defaultStorageClient:** Operaciones S3 (upload, download, delete, exists)
+  - ✅ Patrón de options flexible
+  - ✅ Degradación elegante para recursos opcionales
+  - ✅ Compilación exitosa: go build .
+  - 📝 TODOs: Integración con BaseConfig, cleanup registrations, presigned URLs
+  - 💡 Base completa para bootstrap genérico production-ready
+
+---
+
+## 🎯 Próxima Tarea
+
+**Tarea Pendiente:** Fase 0.1 - Etapa 6: Tests de Integración
+**Bloqueantes:** Ninguno
+**Tiempo Estimado:** 2 horas
+**Progreso Fase 0.1:** 5/6 etapas completadas (83.3%)
+
+---
+
+_Última actualización: 12 de Noviembre, 2025 23:35_
