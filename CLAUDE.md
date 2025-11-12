@@ -169,6 +169,17 @@ docker-compose -f docker/docker-compose.yml logs -f
 2. Implementar pipelines completos
 3. Configurar ambientes de staging/producción
 
+## ⚠️ IMPORTANTE: Leer RULES.md SIEMPRE
+
+**ANTES DE INICIAR CUALQUIER TAREA, LEER:**
+- `specs/api-admin-jerarquia/RULES.md` - Reglas del proyecto (workflow, git, PR, CI/CD)
+
+Este archivo contiene:
+- Gestión de Contexto y Logs
+- Workflow de Ramas y Pull Requests
+- Manejo de CI/CD y revisores automáticos
+- **CASO ESPECIAL:** edugo-shared requiere releases por módulos desde dev antes de usar en otros proyectos
+
 ## 🎓 Para Claude Code en Futuras Sesiones
 
 ### Si el usuario pregunta por código de aplicación:
