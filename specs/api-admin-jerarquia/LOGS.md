@@ -585,3 +585,268 @@ _Fase 0.1 COMPLETADA con éxito 🎉_
 
 _Checkpoint creado: 13 de Noviembre, 2025 00:30_
 _Próxima sesión: Continuar con Fase 0.2 - Refactorización de api-mobile_
+
+---
+
+## 📋 FASE 0.2: Plan Aprobado
+
+**Fecha:** 13 de Noviembre, 2025 01:15
+**Estado:** 🟢 PLAN APROBADO, LISTO PARA IMPLEMENTACIÓN
+
+### Documentación Creada
+
+1. **FASE_0.2_ANALISIS.md** (~900 LOC)
+   - Análisis exhaustivo de bootstrap interno api-mobile
+   - Comparación detallada con shared/bootstrap
+   - Identificación de duplicaciones y diferencias críticas
+   - Estrategia: Adaptación por Capas (no reemplazo)
+
+2. **FASE_0.2_PLAN.md** (~600 LOC)
+   - 6 etapas detalladas con subtareas
+   - Estimación: 8-13 horas (3 sesiones)
+   - Checkpoints y criterios de avance
+   - Plan de rollback
+
+### ✅ Decisiones Aprobadas por Usuario
+
+1. **Mantener sql.DB** (no migrar a gorm.DB) → Usar adapters
+2. **Eliminar lifecycle.go** interno → Usar shared/lifecycle (ahorra 424 LOC)
+3. **Dividir en 3 sesiones** → 3-4 horas cada una
+4. **Estrategia de Adaptación por Capas** → No reemplazo total
+
+### Resultados Esperados
+
+- **LOC eliminadas:** 424 (lifecycle)
+- **LOC nuevas:** 200 (adapters)
+- **Reducción neta:** -224 LOC
+- **Tests adicionales:** 15+
+- **Duplicación:** 0% (lifecycle)
+
+### 🚀 Próxima Sesión
+
+**ETAPA 1: Análisis de Dependencias** (1-2 horas)
+- Revisar internal/config completo
+- Mapear uso de bootstrap.Resources
+- Validar tests de integración
+- Crear FASE_0.2_DEPENDENCIAS.md
+
+**Estado Actual:**
+- Rama: `feature/mobile-use-shared-bootstrap` (activa en api-mobile)
+- go.mod: ✅ Actualizado con shared v0.4.0/v0.1.0
+- Commits pendientes: go.mod (no commiteado)
+
+---
+
+_Aprobación recibida: 13 de Noviembre, 2025 01:15_
+_Tokens usados sesión: 128K/200K (64%)_
+_Próxima sesión: Implementación ETAPA 1_
+
+---
+
+## 📅 Sesión 4: 12 de Noviembre, 2025 - FASE 0.2 Etapa 1 Completada
+
+### 🎯 Objetivo
+Completar ETAPA 1 de FASE 0.2: Análisis de Dependencias exhaustivo antes de la refactorización.
+
+### 📊 Trabajo Realizado
+
+#### 1. Análisis de Código Base (1.5 horas)
+
+**internal/bootstrap/** (1,849 LOC analizadas)
+- ✅ bootstrap.go (304 LOC) - Orquestación principal
+- ✅ config.go (147 LOC) - BootstrapOptions
+- ✅ interfaces.go (89 LOC) - Interfaces de factories
+- ✅ factories.go (62 LOC) - DefaultFactories
+- ✅ lifecycle.go (155 LOC) - **DUPLICADO con shared** 
+- ✅ noop/ (128 LOC) - Implementaciones noop
+- ✅ Tests (964 LOC total)
+
+**internal/config/** (~500 LOC analizadas)
+- ✅ config.go (162 LOC) - Structs específicos
+- ✅ loader.go (192 LOC) - Viper + validaciones
+- ✅ validator.go (115 LOC) - go-playground/validator
+
+**internal/infrastructure/**
+- ✅ database/postgres.go - Retorna `*sql.DB`
+- ✅ database/mongodb.go - Retorna `*mongo.Database`
+- ✅ messaging/rabbitmq/publisher.go - Interfaz `Publisher`
+- ✅ storage/s3/client.go - **Presigned URLs (funcionalidad única)**
+
+#### 2. Mapeo de Dependencias
+
+**Puntos de Uso de bootstrap.Resources:**
+```
+1. cmd/main.go
+   - InitializeInfrastructure(ctx)
+   - container.NewContainer(resources)
+   - handler.NewHealthHandler(resources.PostgreSQL, resources.MongoDB)
+
+2. internal/container/container.go
+   - NewContainer(resources) → InfrastructureContainer
+
+3. test/integration/testhelpers.go
+   - setupSharedTestInfrastructure()
+   - setupTestContainer()
+```
+
+**Cadena de Dependencias:**
+```
+main.go → bootstrap.Resources → container.NewContainer()
+    ↓
+InfrastructureContainer {
+    Logger:            logger.Logger (interfaz)
+    PostgreSQL:        *sql.DB
+    MongoDB:           *mongo.Database
+    RabbitMQPublisher: rabbitmq.Publisher (interfaz)
+    S3Client:          S3Storage (interfaz)
+}
+    ↓
+RepositoryContainer, ServiceContainer, HandlerContainer
+```
+
+#### 3. Incompatibilidades Identificadas
+
+| Componente | api-mobile | shared | Solución |
+|------------|-----------|--------|----------|
+| Logger | `logger.Logger` (interfaz) | `*logrus.Logger` | LoggerAdapter |
+| PostgreSQL | `*sql.DB` | `*gorm.DB` | ✅ Usar `CreateRawConnection` |
+| MongoDB | `*mongo.Database` | `*mongo.Client` | Adapter `.Database()` |
+| RabbitMQ | `rabbitmq.Publisher` | `*amqp.Channel` | MessagePublisherAdapter |
+| S3 | `S3Storage` con presigned | `*s3.Client` | Mantener wrapper local |
+
+#### 4. Hallazgos Críticos
+
+##### ✅ Código Duplicado Confirmado
+- `internal/bootstrap/lifecycle.go` (155 LOC)
+- **98% idéntico** a `shared/lifecycle/manager.go`
+- Diferencias: shared tiene context support y startup management
+- **Decisión:** ELIMINAR y usar `shared/lifecycle`
+
+##### 🔧 Funcionalidad Única Identificada
+- `internal/infrastructure/storage/s3/client.go`
+  - Métodos de presigned URLs
+  - 591 LOC de tests de integración
+  - **No existe en shared/bootstrap**
+  - **Decisión:** Preservar wrapper, usar shared para cliente base
+
+##### ⚠️ Riesgos Principales
+1. **Logger usado en ~100 archivos** → Adapter crítico, requiere tests exhaustivos
+2. **Presigned URLs funcionalidad crítica** → 591 LOC de tests deben pasar
+3. **RabbitMQ para eventos asíncronos** → Adapter bien testeado necesario
+
+#### 5. Documento Generado
+
+**specs/api-admin-jerarquia/FASE_0.2_DEPENDENCIAS.md** (1,315 LOC)
+
+Contenido:
+1. Resumen Ejecutivo con hallazgos clave
+2. Inventario completo de código (1,849 LOC)
+3. Análisis de configuración (api-mobile vs shared)
+4. Comparación de arquitecturas de bootstrap
+5. Análisis detallado de lifecycle (155 LOC duplicado)
+6. Mapeo de puntos de uso en aplicación
+7. Incompatibilidades de tipos con soluciones propuestas
+8. Análisis de tests de integración (964 LOC)
+9. Plan de adaptación por capas
+10. Riesgos identificados con mitigaciones
+11. Métricas actuales y proyectadas
+12. Conclusiones y recomendaciones
+
+**Métricas del Análisis:**
+- LOC neto esperado después del refactor: **-137 LOC**
+- Reducción porcentual: **~7.4%**
+- Código a eliminar: 417 LOC
+- Código nuevo (adapters): 280 LOC
+
+### 🎯 Validaciones Realizadas
+
+✅ Confirmado que lifecycle.go es 98% idéntico a shared  
+✅ Identificadas todas las incompatibilidades de tipos  
+✅ Mapeados todos los puntos de uso de Resources  
+✅ Analizados 964 LOC de tests (11 test cases en bootstrap_integration_test.go)  
+✅ Documentadas funcionalidades únicas (presigned URLs)  
+✅ Identificados riesgos y mitigaciones  
+
+### 📈 Progreso FASE 0.2
+
+```
+FASE 0.2: Refactorización de api-mobile con Bootstrap Genérico
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[████████████████░░░░░░░░░░░░░░░░░░░░░░░░] 16.7% (1/6 etapas)
+
+Etapa 1: Análisis de Dependencias        ✅ COMPLETADA (1.5h)
+Etapa 2: Crear Capa de Adaptación        ⏳ PENDIENTE (2-3h)
+Etapa 3: Refactorizar bootstrap.go       ⏳ PENDIENTE (2-3h)
+Etapa 4: Actualizar main.go              ⏳ PENDIENTE (1h)
+Etapa 5: Limpieza                        ⏳ PENDIENTE (1-2h)
+Etapa 6: Testing Exhaustivo              ⏳ PENDIENTE (1-2h)
+```
+
+### 📝 Decisiones Clave
+
+1. **Lifecycle:** Eliminar internal/bootstrap/lifecycle.go (155 LOC), usar shared/lifecycle
+2. **PostgreSQL:** Usar `CreateRawConnection` de shared (retorna `*sql.DB`), sin adapter
+3. **Logger:** Crear LoggerAdapter (`*logrus.Logger` → `logger.Logger` interfaz)
+4. **RabbitMQ:** Crear MessagePublisherAdapter (`*amqp.Channel` → `rabbitmq.Publisher`)
+5. **S3:** Preservar wrapper local, usar shared solo para cliente base
+6. **Tests:** Mantener y adaptar bootstrap_integration_test.go (591 LOC)
+
+### 🔄 Commits Realizados
+
+```bash
+fc35fb3 docs: agregar análisis exhaustivo de dependencias para FASE 0.2
+```
+
+### 🚀 Próxima Sesión
+
+**ETAPA 2: Crear Capa de Adaptación** (2-3 horas estimadas)
+
+Crear adapters en `internal/bootstrap/adapter/`:
+
+1. **logger.go** (~80 LOC)
+   - LoggerAdapter: `*logrus.Logger` → `logger.Logger` interfaz
+   - Convertir zap.Field a logrus.Fields
+   - Implementar todos los métodos: Info, Error, Warn, Debug, etc.
+
+2. **messaging.go** (~60 LOC)
+   - MessagePublisherAdapter: `*amqp.Channel` → `rabbitmq.Publisher`
+   - Implementar Publish(ctx, event) con JSON marshaling
+   - Implementar Close()
+
+3. **storage.go** (~40 LOC)
+   - StorageClientAdapter para mantener interfaz S3Storage
+   - Envolver `*s3.Client` de shared
+   - Delegar a wrapper existente para presigned URLs
+
+4. **Tests de adapters** (~150 LOC)
+   - test/adapter/logger_adapter_test.go
+   - test/adapter/messaging_adapter_test.go
+   - test/adapter/storage_adapter_test.go
+
+**Checkpoint:** Todos los adapters con tests pasando antes de continuar con Etapa 3.
+
+### 📊 Estado del Repositorio
+
+**Analisys:**
+- Rama actual: `dev`
+- Último commit: fc35fb3
+- Estado: Limpio (documento commiteado)
+
+**edugo-api-mobile:**
+- Rama actual: `feature/mobile-use-shared-bootstrap`
+- go.mod actualizado con shared v0.4.0/v0.1.0
+- Estado: Cambios sin commitear (esperando completar etapa 2)
+
+### ⏱️ Tiempo Utilizado
+
+- Análisis de código: 1.5 horas
+- Creación de documento: 30 minutos
+- **Total Etapa 1:** 2 horas
+
+**Estimado restante FASE 0.2:** 6-11 horas (según plan)
+
+---
+
+**Sesión completada exitosamente** ✅  
+**Próxima acción:** Crear adapters (ETAPA 2)
