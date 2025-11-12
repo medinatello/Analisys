@@ -11,15 +11,21 @@
       "Bash(xargs kill:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(for repo in edugo-shared edugo-api-mobile edugo-api-administracion edugo-worker edugo-dev-environment)",
-      "Bash(do echo \"Verificando: $repo\" curl -s \"https://api.github.com/repos/medinatello/$repo\")",
       "Bash(gh api orgs/edugogroup)",
       "Bash(gh repo list:*)",
       "Bash(git checkout:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-api-mobile",
+      "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-api-administracion",
+      "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-worker",
+      "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-shared",
+      "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-dev-environment"
+    ]
   },
   "outputStyle": "default"
 }
