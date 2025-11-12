@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(go run:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(make swagger:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(for repo in edugo-shared edugo-api-mobile edugo-api-administracion edugo-worker edugo-dev-environment)",
+      "Bash(do echo \"Verificando: $repo\" curl -s \"https://api.github.com/repos/medinatello/$repo\")",
+      "Bash(gh api orgs/edugogroup)",
+      "Bash(gh repo list:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "outputStyle": "default"
+}
