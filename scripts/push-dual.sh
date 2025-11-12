@@ -18,7 +18,6 @@ fi
 
 # Mapeo de directorios locales a nombres de repos
 declare -A REPO_MAP
-REPO_MAP["shared"]="edugo-shared"
 REPO_MAP["api-mobile"]="edugo-api-mobile"
 REPO_MAP["api-administracion"]="edugo-api-administracion"
 REPO_MAP["worker"]="edugo-worker"
@@ -29,7 +28,7 @@ REPO_NAME="${REPO_MAP[$REPO_DIR]}"
 
 if [ -z "$REPO_NAME" ]; then
     echo "❌ Repositorio no reconocido: $REPO_DIR"
-    echo "Opciones válidas: shared, api-mobile, api-administracion, worker, dev-environment"
+    echo "Opciones válidas: api-mobile, api-administracion, worker, dev-environment"
     exit 1
 fi
 
