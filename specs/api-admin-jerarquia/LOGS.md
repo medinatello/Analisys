@@ -2006,3 +2006,107 @@ Total: 3 archivos, 884 LOC
 _Última actualización: 12 de Noviembre, 2025_
 _FASE 5 Días 1-3 COMPLETADOS 🎉_
 
+
+### [2025-11-12 XX:XX] Fase 5 - Día 4: Router y Container DI
+- **Duración:** 45 minutos
+- **Estado:** ✅ Completada
+- **Rama:** feature/admin-api-jerarquia
+- **Commit:** 149eb77
+- **PR:** #18 (Open)
+- **Notas:**
+  - ✅ **Container actualizado**:
+    * Agregado AcademicUnitRepository
+    * Agregado UnitMembershipRepository
+    * Agregado AcademicUnitService
+    * Agregado UnitMembershipService
+    * Agregado AcademicUnitHandler
+    * Agregado UnitMembershipHandler
+  - ✅ **Main.go refactorizado**:
+    * Integrado container de dependencias
+    * 23 rutas REST conectadas
+    * Schools: 6 endpoints
+    * Academic Units: 9 endpoints  
+    * Memberships: 8 endpoints
+    * Rutas legacy mantenidas
+  - ✅ Compilación exitosa
+  - ✅ PR #18 creado a dev
+
+---
+
+## 🎉 FASE 5 COMPLETADA - API REST de Jerarquía
+
+### 📊 Resumen Final de FASE 5
+
+**Duración Total:** ~1.5 horas (Días 1-4)
+**Estado:** ✅ 100% Completada
+**PR:** #18 → dev (Open)
+
+### 📦 Entregables
+
+| Componente | Cantidad | LOC |
+|------------|----------|-----|
+| Handlers HTTP | 3 nuevos + 1 actualizado | 884 |
+| Container DI | Actualizado | 30 |
+| Main.go | Refactorizado | 111 |
+| **TOTAL** | **5 archivos** | **+1,025 / -138** |
+
+### ✨ Endpoints Implementados (23 total)
+
+**Schools (6):**
+- POST /v1/schools
+- GET /v1/schools
+- GET /v1/schools/:id
+- GET /v1/schools/code/:code
+- PUT /v1/schools/:id
+- DELETE /v1/schools/:id
+
+**Academic Units (9):**
+- POST /v1/schools/:schoolId/units
+- GET /v1/schools/:schoolId/units
+- GET /v1/schools/:schoolId/units/tree
+- GET /v1/schools/:schoolId/units/by-type
+- GET /v1/units/:id
+- PUT /v1/units/:id
+- DELETE /v1/units/:id
+- POST /v1/units/:id/restore
+- GET /v1/units/:id/hierarchy-path
+
+**Memberships (8):**
+- POST /v1/memberships
+- GET /v1/memberships/:id
+- PUT /v1/memberships/:id
+- DELETE /v1/memberships/:id
+- POST /v1/memberships/:id/expire
+- GET /v1/units/:unitId/memberships
+- GET /v1/units/:unitId/memberships/by-role
+- GET /v1/users/:userId/memberships
+
+### ✅ Logros
+
+- ✅ API REST completa y funcional
+- ✅ Anotaciones Swagger en todos los endpoints
+- ✅ Error handling robusto y consistente
+- ✅ Logging estructurado
+- ✅ Container DI integrado
+- ✅ Compilación exitosa
+- ✅ Sin breaking changes en rutas legacy
+
+### 📋 Commits de FASE 5
+
+1. `c9b4ae4` - feat(api): handlers REST completos (Días 1-3)
+2. `149eb77` - feat(api): router y container DI (Día 4)
+
+---
+
+## 🎯 Próxima Fase
+
+**FASE 6:** Testing Completo  
+**Duración estimada:** 3 días  
+**Objetivo:** Tests unitarios, integración y E2E con >80% coverage  
+**Estado:** ⏳ Pendiente (después de merge PR #18)
+
+---
+
+_Última actualización: 12 de Noviembre, 2025_
+_FASE 5 COMPLETADA CON ÉXITO 🎉_
+
