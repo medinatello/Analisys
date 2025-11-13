@@ -2298,3 +2298,76 @@ _Sesión puede pausarse aquí sin pérdida de contexto_
 
 _Última actualización: 12 de Noviembre, 2025_
 
+
+### [2025-11-12 XX:XX] Fase 6 - Día 2: Tests de Integración (Parcial)
+- **Duración:** 30 minutos
+- **Estado:** ⏳ En Progreso (50%)
+- **Rama:** feature/admin-tests
+- **Commit:** ee0cb02
+- **Notas:**
+  - ✅ Setup de testcontainers actualizado
+  - ✅ Helper execSQLFile para migraciones
+  - ✅ setupTestDBWithMigrations creado
+  - ✅ SchoolRepository tests preparados (6 tests)
+  - ⏳ **Pendiente:** 
+    * Ejecutar tests (requiere Docker)
+    * AcademicUnitRepository tests
+    * UnitMembershipRepository tests
+
+---
+
+## ⚠️ CHECKPOINT DE CONTEXTO - Pausar Sesión
+
+**Tokens usados:** 144K / 1M (14.4%)
+**Razón:** Según RULES.md - Gestión de Contexto
+**Estado:** FASE 6 parcialmente completada
+
+### Progreso FASE 6
+- ✅ Día 1: Tests unitarios (30 tests, 100% pass) - COMPLETADO
+- ⏳ Día 2: Tests integración (setup listo, requiere Docker) - 50%
+- ⏳ Día 3: Tests E2E - Pendiente
+
+### Trabajo en feature/admin-tests
+
+**Commits locales pusheados:**
+1. `e4a5280` - SchoolHandler tests (parcial)
+2. `65c15cd` - Todos los handlers tests (Día 1)
+3. `ee0cb02` - Setup de integración (Día 2 parcial)
+
+**Archivos creados:**
+- school_handler_test.go (296 LOC)
+- academic_unit_handler_test.go (282 LOC)
+- unit_membership_handler_test.go (282 LOC)
+- school_repository_test.go (120 LOC)
+- setup_test.go (actualizado)
+- setup.go (actualizado)
+
+### Para Retomar FASE 6
+
+1. **Verificar Docker está corriendo:**
+   ```bash
+   docker ps
+   ```
+
+2. **Ejecutar tests de integración:**
+   ```bash
+   cd edugo-api-administracion
+   go test -v -tags=integration ./test/integration/
+   ```
+
+3. **Completar tests faltantes:**
+   - AcademicUnitRepository (9 métodos)
+   - UnitMembershipRepository (8 métodos)
+
+4. **Día 3: Tests E2E**
+   - Flujo completo de jerarquía
+   - Verificar coverage >80%
+
+5. **Crear PR final** de FASE 6+7
+
+---
+
+_Checkpoint creado: 12 de Noviembre, 2025_
+_Tokens: 144K - Pausar por gestión de contexto_
+_Próxima sesión: Completar FASE 6 Días 2-3_
+
