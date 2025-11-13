@@ -2371,3 +2371,37 @@ _Checkpoint creado: 12 de Noviembre, 2025_
 _Tokens: 144K - Pausar por gestión de contexto_
 _Próxima sesión: Completar FASE 6 Días 2-3_
 
+
+### [2025-11-12 XX:XX] Fase 6 - Día 2: Tests de Integración (Completado)
+- **Duración:** 45 minutos
+- **Estado:** ✅ Completada
+- **Rama:** feature/admin-tests
+- **Commit:** ee0cb02, bce892d
+- **Notas:**
+  - ✅ Setup de testcontainers corregido
+  - ✅ Helper execSQLFile para migraciones
+  - ✅ setupTestDBWithMigrations creado
+  - ✅ **13 tests de integración preparados:**
+    * SchoolRepository: 6 tests
+    * AcademicUnitRepository: 4 tests
+    * UnitMembershipRepository: 3 tests
+  - ✅ Todos los tests usan postgres:15-alpine
+  - ✅ Migraciones aplicadas automáticamente
+  - ⚠️ Tests requieren Docker running para ejecutar
+
+---
+
+## 🎯 FASE 6 Día 2 COMPLETADO
+
+**Progreso FASE 6:** 66% (Día 1-2 de 3)
+
+**Total tests preparados:** 43
+- Unitarios: 30 (100% pass)
+- Integración: 13 (listos para ejecutar)
+
+**Próximo:** Día 3 - Tests E2E y verificar coverage >80%
+
+---
+
+_Última actualización: 12 de Noviembre, 2025_
+
