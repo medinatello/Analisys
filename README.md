@@ -1,7 +1,28 @@
 # EduGo - Centro de Documentación y Análisis
 
-**Última actualización:** 11 de Noviembre, 2025  
+**Última actualización:** 14 de Noviembre, 2025  
 **Propósito:** Documentación centralizada del ecosistema EduGo
+
+---
+
+## 📍 ESTADO ACTUAL DEL PROYECTO
+
+### 🎯 **[Ver Estado Completo →](docs/ESTADO_PROYECTO.md)**
+
+**Progreso Global:** 22% del plan de implementación completado
+
+| Proyecto | Estado | Progreso |
+|----------|--------|----------|
+| **shared-testcontainers** | ✅ Completado | 100% |
+| **api-administracion (jerarquía)** | 🔄 En progreso | 44% |
+| **dev-environment** | ✅ Completado | 100% |
+| **api-mobile (evaluaciones)** | ⬜ Pendiente | 0% |
+| **worker** | ⬜ Pendiente | 0% |
+
+**Última sesión:** 13 de Noviembre, 2025  
+**Próximo paso:** FASE 2 - Schema BD para jerarquía académica
+
+📖 **Para continuar trabajando:** Leer [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)
 
 ---
 
@@ -9,6 +30,7 @@
 
 Este es el **centro de documentación técnica** del proyecto EduGo. Contiene:
 
+- ✅ **Estado actual** de proyectos completados y en progreso
 - ✅ **Diseño arquitectónico** original del sistema
 - ✅ **Análisis de implementación real** vs diseño
 - ✅ **Roadmap de desarrollo** para completar funcionalidades
@@ -23,13 +45,13 @@ Este es el **centro de documentación técnica** del proyecto EduGo. Contiene:
 
 EduGo está compuesto por **5 proyectos independientes** en la organización **EduGoGroup**:
 
-| Repositorio | Descripción | Tecnología | Estado |
-|-------------|-------------|------------|--------|
-| [**edugo-shared**](https://github.com/EduGoGroup/edugo-shared) | Biblioteca compartida (auth, db, logger, messaging) | Go 1.21+ | 🟢 **80%** |
-| [**edugo-api-mobile**](https://github.com/EduGoGroup/edugo-api-mobile) | API REST alta frecuencia - Puerto 8080 | Go + Gin + GORM | 🟡 **60%** |
-| [**edugo-api-administracion**](https://github.com/EduGoGroup/edugo-api-administracion) | API REST administrativa - Puerto 8081 | Go + Gin + GORM | 🟢 **100%** |
-| [**edugo-worker**](https://github.com/EduGoGroup/edugo-worker) | Worker procesamiento asíncrono + IA | Go + RabbitMQ + OpenAI | ⚠️ **30%?** |
-| [**edugo-dev-environment**](https://github.com/EduGoGroup/edugo-dev-environment) | Entorno Docker completo | Docker Compose | 🟡 **40%** |
+| Repositorio | Descripción | Tecnología | Estado | Última Actualización |
+|-------------|-------------|------------|--------|---------------------|
+| [**edugo-shared**](https://github.com/EduGoGroup/edugo-shared) | Biblioteca compartida (bootstrap, config, logger, testing) | Go 1.21+ | ✅ Actualizado | testing/v0.6.2 |
+| [**edugo-api-mobile**](https://github.com/EduGoGroup/edugo-api-mobile) | API REST alta frecuencia - Puerto 8080 | Go + Gin + GORM + Swagger | ✅ Actualizado | Usando shared/testing |
+| [**edugo-api-administracion**](https://github.com/EduGoGroup/edugo-api-administracion) | API REST administrativa - Puerto 8081 | Go + Gin + GORM | 🔄 En progreso | FASE 1 completada |
+| [**edugo-worker**](https://github.com/EduGoGroup/edugo-worker) | Worker procesamiento asíncrono + IA | Go + RabbitMQ + OpenAI | ✅ Actualizado | Tests integración |
+| [**edugo-dev-environment**](https://github.com/EduGoGroup/edugo-dev-environment) | Entorno Docker completo | Docker Compose | ✅ Completado | Profiles + seeds |
 
 ### Infraestructura Compartida
 
@@ -39,27 +61,7 @@ Todos los proyectos comparten **una misma instancia** de:
 - 🐰 **RabbitMQ 3.12** - Cola de mensajes asíncrona
 - 🪣 **S3 (MinIO)** - Almacenamiento de archivos
 
----
-
-## 📊 ESTADO ACTUAL DEL PROYECTO
-
-### Completitud Global
-
-```
-Diseño Original:    100%  ████████████████████
-Implementado:        70%  ██████████████░░░░░░
-Gap:                 30%  ░░░░░░
-```
-
-### Por Proyecto
-
-| Proyecto | % Completo | Prioridad |
-|----------|------------|-----------|
-| edugo-api-mobile | 60% 🟡 | Media (activo) |
-| edugo-api-administracion | 100% 🟢 | Baja (completado) | **CRÍTICA** |
-| edugo-worker | 30%? ⚠️ | Alta (verificar) |
-| edugo-shared | 80% 🟢 | Baja |
-| edugo-dev-environment | 40% 🟡 | Media |
+**Rutas locales (Claude Code):** `/Users/jhoanmedina/source/EduGo/repos-separados/`
 
 ---
 
@@ -68,116 +70,94 @@ Gap:                 30%  ░░░░░░
 ```
 Analisys/
 ├── docs/
-│   ├── analisis/                        # ⭐ ANÁLISIS DE IMPLEMENTACIÓN
-│   │   ├── GAP_ANALYSIS.md              # Diseño vs realidad
-│   │   └── DISTRIBUCION_RESPONSABILIDADES.md  # Quién hace qué
+│   ├── ESTADO_PROYECTO.md               # ⭐⭐⭐ PUNTO DE ENTRADA PRINCIPAL
+│   ├── DEVELOPMENT.md                   # Guía de desarrollo actualizada
 │   │
-│   ├── roadmap/                         # ⭐ PLANES DE TRABAJO
-│   │   └── PLAN_IMPLEMENTACION.md       # Sprints y cronograma
+│   ├── specs/                           # ⭐ ESPECIFICACIONES DE PROYECTOS
+│   │   ├── api-admin-jerarquia/         # 🔄 En progreso (44%)
+│   │   │   ├── README.md
+│   │   │   ├── RULES.md                 # ⚠️ Leer siempre
+│   │   │   ├── TASKS_UPDATED.md
+│   │   │   └── LOGS.md
+│   │   └── shared-testcontainers/       # ✅ Completado (100%)
+│   │       ├── README.md
+│   │       └── ESTADO_FINAL_REPOS.md
+│   │
+│   ├── analisis/                        # ANÁLISIS TÉCNICO
+│   │   ├── GAP_ANALYSIS.md              # Diseño vs realidad
+│   │   ├── VERIFICACION_WORKER.md       # Base para Sprint Worker-1
+│   │   └── DISTRIBUCION_RESPONSABILIDADES.md
+│   │
+│   ├── roadmap/                         # PLANES DE TRABAJO
+│   │   └── PLAN_IMPLEMENTACION.md       # Plan original (sprints)
 │   │
 │   ├── diagramas/                       # Diseño arquitectónico original
-│   │   ├── arquitectura/                # Diagramas de arquitectura
-│   │   ├── base_datos/                  # Schemas PostgreSQL + MongoDB
-│   │   └── procesos/                    # Flujos de procesos
+│   │   ├── arquitectura/
+│   │   ├── base_datos/
+│   │   └── procesos/
 │   │
 │   ├── historias_usuario/               # User stories por módulo
 │   │   ├── api_mobile/
 │   │   ├── api_administracion/
 │   │   └── worker/
 │   │
-│   ├── historico/                       # ⭐ DOCUMENTACIÓN HISTÓRICA
-│   │   ├── README.md                    # Sobre el proceso de separación
-│   │   ├── REPOS_DEFINITIVOS.md         # Repos creados
-│   │   └── ESTADO_REPOS_GITHUB.md       # Estado inicial
-│   │
-│   └── MIGRATION_GUIDE.md               # Guía de migraciones de BD
+│   └── historico/                       # DOCUMENTACIÓN HISTÓRICA
+│       ├── README.md                    # Proceso de separación
+│       └── REPOS_DEFINITIVOS.md
 │
-├── edugo-dev-environment/               # Entorno Docker
 ├── scripts/                             # Scripts de automatización
+│   ├── push-dual.sh                     # Push a GitHub + GitLab
+│   └── gitlab-runner-*.sh               # GitLab Runner local
+│
 ├── FLUJOS_CRITICOS.md                   # Flujos principales del sistema
 ├── VARIABLES_ENTORNO.md                 # Variables de entorno
-└── CLAUDE.md                            # Contexto para Claude Code
+├── CLAUDE.md                            # Contexto para Claude Code
+└── README.md                            # Este archivo
 ```
 
 ---
 
 ## 🎯 DOCUMENTOS CLAVE
 
-### Para Entender el Estado Actual
+### 📍 Punto de Entrada
 
-| Documento | Propósito | Audiencia |
-|-----------|-----------|-----------|
-| **[docs/analisis/GAP_ANALYSIS.md](docs/analisis/GAP_ANALYSIS.md)** | Comparación detallada: diseño vs implementación | Tech Leads, Developers |
-| **[docs/analisis/DISTRIBUCION_RESPONSABILIDADES.md](docs/analisis/DISTRIBUCION_RESPONSABILIDADES.md)** | Qué proyecto implementa qué funcionalidad | Arquitectos, PMs |
-| **[FLUJOS_CRITICOS.md](FLUJOS_CRITICOS.md)** | Flujos principales del sistema | Developers, QA |
+| Documento | Descripción |
+|-----------|-------------|
+| **[docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)** | ⭐ **INICIO AQUÍ** - Estado completo, navegación rápida, proyectos activos |
+| **[CLAUDE.md](CLAUDE.md)** | Contexto para Claude Code, reglas del proyecto |
 
-### Para Planificar el Futuro
+### 🔄 Proyectos Activos
 
-| Documento | Propósito | Audiencia |
-|-----------|-----------|-----------|
-| **[docs/roadmap/PLAN_IMPLEMENTACION.md](docs/roadmap/PLAN_IMPLEMENTACION.md)** | Plan de sprints para completar funcionalidades | PMs, Tech Leads |
-| **[docs/diagramas/base_datos/](docs/diagramas/base_datos/)** | Diseño completo de BD (objetivo final) | DBAs, Backend Developers |
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| **[specs/api-admin-jerarquia/](specs/api-admin-jerarquia/)** | Implementación de jerarquía académica | 🔄 44% - FASE 2 próxima |
+| **[specs/shared-testcontainers/](specs/shared-testcontainers/)** | Módulo de testing | ✅ 100% Completado |
 
-### Documentación de Diseño Original
+### 📊 Análisis y Planificación
+
+| Documento | Propósito |
+|-----------|-----------|
+| **[docs/roadmap/PLAN_IMPLEMENTACION.md](docs/roadmap/PLAN_IMPLEMENTACION.md)** | Plan maestro de sprints (Q1-Q2 2026) |
+| **[docs/analisis/GAP_ANALYSIS.md](docs/analisis/GAP_ANALYSIS.md)** | Análisis diseño vs implementación |
+| **[docs/analisis/VERIFICACION_WORKER.md](docs/analisis/VERIFICACION_WORKER.md)** | Estado del worker (base para auditoría) |
+| **[FLUJOS_CRITICOS.md](FLUJOS_CRITICOS.md)** | Flujos principales del sistema |
+
+### 🎨 Diseño Original
 
 | Documento | Contenido |
 |-----------|-----------|
-| **[docs/diagramas/arquitectura/](docs/diagramas/arquitectura/)** | Diagramas de arquitectura de microservicios |
-| **[docs/diagramas/base_datos/01_modelo_er_postgresql.md](docs/diagramas/base_datos/01_modelo_er_postgresql.md)** | Diseño de 17 tablas PostgreSQL |
-| **[docs/diagramas/base_datos/02_colecciones_mongodb.md](docs/diagramas/base_datos/02_colecciones_mongodb.md)** | Diseño de 3 colecciones MongoDB |
-| **[docs/historias_usuario/](docs/historias_usuario/)** | 8+ historias de usuario por módulo |
+| **[docs/diagramas/arquitectura/](docs/diagramas/arquitectura/)** | Diagramas de arquitectura |
+| **[docs/diagramas/base_datos/](docs/diagramas/base_datos/)** | Schemas PostgreSQL + MongoDB |
+| **[docs/historias_usuario/](docs/historias_usuario/)** | User stories por módulo |
 
----
+### 📚 Desarrollo
 
-## 🚀 HALLAZGOS DEL ANÁLISIS
+| Documento | Propósito |
+|-----------|-----------|
+| **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** | Guía de desarrollo actualizada |
+| **[VARIABLES_ENTORNO.md](VARIABLES_ENTORNO.md)** | Variables de entorno por proyecto |
 
-### ⚠️ CRÍTICOS IDENTIFICADOS
 
-#### 1. Jerarquía Académica (BLOQUEANTE)
-
-**Problema:** Sin las tablas `school`, `academic_unit` y `unit_membership`, no se puede:
-- Organizar estudiantes por secciones/grupos
-- Asignar materiales a grupos específicos
-- Gestionar permisos por unidad académica
-
-**Estado:** ❌ **0% implementado**  
-**Responsable:** `edugo-api-administracion`  
-**Prioridad:** 🔴 **P0 - CRÍTICA**
-
-#### 2. Sistema de Evaluaciones
-
-**Problema:** Sin las tablas `assessment*`, no hay quizzes ni calificaciones.
-
-**Estado:** ❌ **0% implementado**  
-**Responsable:** `edugo-api-mobile` + `edugo-worker`  
-**Prioridad:** 🔴 **P0 - ALTA**
-
-#### 3. Verificación del Worker
-
-**Problema:** No está confirmado si el worker procesa PDFs con IA y guarda en MongoDB.
-
-**Estado:** ⚠️ **Desconocido**  
-**Acción:** Auditoría de código pendiente
-
----
-
-## 📈 ROADMAP RESUMIDO
-
-### Q1 2026 (Completitud: 45% → 75%)
-
-| Semanas 1-2 | Semanas 3-4 | Semanas 5-6 | Semanas 7-8 |
-|-------------|-------------|-------------|-------------|
-| Admin: Jerarquía académica | Mobile: Evaluaciones | Admin: Perfiles especializados | DevEnv: Actualización |
-| 🔴 CRÍTICO | 🔴 CRÍTICO | 🟡 Alta | 🟢 Media |
-
-### Q2 2026 (Completitud: 75% → 100%)
-
-| Semanas 9-10 | Semanas 11-12 | Semanas 13-14 | Semanas 15-16 |
-|--------------|---------------|---------------|---------------|
-| Mobile: Resúmenes IA | Admin: Materias | Worker: Completar | Admin: Reportes |
-| 🟡 Media | 🟢 Media | 🟡 Alta | 🟢 Baja |
-
-**Ver plan detallado:** [docs/roadmap/PLAN_IMPLEMENTACION.md](docs/roadmap/PLAN_IMPLEMENTACION.md)
 
 ---
 
@@ -187,41 +167,24 @@ Analisys/
 
 ```bash
 # 1. Clonar entorno de desarrollo
-git clone https://github.com/EduGoGroup/edugo-dev-environment.git
+cd ~/source/EduGo/repos-separados
+git clone git@github.com:EduGoGroup/edugo-dev-environment.git
 cd edugo-dev-environment/
-./scripts/setup.sh
+./scripts/setup.sh --profile full --seed
 
-# 2. Clonar proyecto que vas a desarrollar
-git clone https://github.com/EduGoGroup/edugo-api-mobile.git
+# 2. Clonar proyecto a desarrollar
+git clone git@github.com:EduGoGroup/edugo-api-mobile.git
 cd edugo-api-mobile/
 
 # 3. Ejecutar
 make run
 ```
 
-### Guías de Desarrollo
+### Guías Actualizadas
 
-- **[edugo-api-mobile/README.md](https://github.com/EduGoGroup/edugo-api-mobile)** - Arquitectura y convenciones
-- **[edugo-shared/README.md](https://github.com/EduGoGroup/edugo-shared)** - Módulos compartidos
-- **[VARIABLES_ENTORNO.md](VARIABLES_ENTORNO.md)** - Variables de entorno
-
----
-
-## 🔍 ANÁLISIS TÉCNICO DETALLADO
-
-### Base de Datos
-
-**Diseñado:** 17 tablas PostgreSQL + 3 colecciones MongoDB  
-**Implementado:** 3 tablas PostgreSQL (api-mobile)
-
-| Grupo de Tablas | Diseñado | Implementado | Gap |
-|-----------------|----------|--------------|-----|
-| Usuarios y Perfiles | 6 tablas | 1 tabla simplificada | 83% |
-| Jerarquía Académica | 2 tablas | 0 tablas | 100% |
-| Materiales Educativos | 5 tablas | 2 tablas | 60% |
-| Evaluaciones | 4 tablas | 0 tablas | 100% |
-
-**Ver análisis completo:** [docs/analisis/GAP_ANALYSIS.md](docs/analisis/GAP_ANALYSIS.md)
+- **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** - ⭐ Guía completa de desarrollo actualizada
+- **[docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)** - Estado actual de cada proyecto
+- **[VARIABLES_ENTORNO.md](VARIABLES_ENTORNO.md)** - Variables por ambiente
 
 ---
 
@@ -263,11 +226,24 @@ Este repositorio sirve como **contexto centralizado** para Claude Code. Ver [CLA
 
 ## 📝 HISTORIAL DE CAMBIOS
 
+### 14 de Noviembre, 2025
+- ✅ Creación de documento pivote [ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)
+- ✅ Actualización completa de documentación (README, DEVELOPMENT, CLAUDE)
+- ✅ Marcado de proyectos completados (shared-testcontainers, dev-environment)
+- ✅ Actualización de estado de api-admin-jerarquia (FASE 1 → FASE 2)
+- ✅ Limpieza de carpeta edugo-dev-environment duplicada
+
+### 12-13 de Noviembre, 2025
+- ✅ Proyecto shared-testcontainers completado al 100%
+- ✅ Módulo testing/v0.6.2 publicado
+- ✅ 3 proyectos migrados a shared/testing
+- ✅ dev-environment actualizado con profiles y seeds
+- ✅ 11 PRs mergeados en total
+
 ### 11 de Noviembre, 2025
 - ✅ Análisis exhaustivo de gap entre diseño e implementación
-- ✅ Creación de documentos de análisis (`GAP_ANALYSIS.md`, `DISTRIBUCION_RESPONSABILIDADES.md`)
+- ✅ Creación de documentos de análisis
 - ✅ Roadmap de implementación por proyecto
-- ✅ Limpieza de archivos obsoletos (source/, docker/, .env*)
 - ✅ Reorganización en docs/historico/ vs docs/analisis/ vs docs/roadmap/
 
 ### 30 de Octubre, 2025
@@ -281,5 +257,5 @@ Este repositorio sirve como **contexto centralizado** para Claude Code. Ver [CLA
 
 ---
 
-**Última actualización:** 11 de Noviembre, 2025  
-**Próxima revisión: Fin de Q1 2026 (post evaluaciones)
+**Última actualización:** 14 de Noviembre, 2025  
+**Próxima revisión:** Fin de FASE 2 (api-admin-jerarquia)

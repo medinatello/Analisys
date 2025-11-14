@@ -1,310 +1,486 @@
 # 🛠️ GUÍA DE DESARROLLO - EduGo
 
-## 🏁 Setup Inicial
+**Actualizado:** 14 de Noviembre, 2025
 
-### 1. Clonar Repositorio
-```bash
-git clone <repo-url>
-cd Analisys
+---
+
+## ⚠️ IMPORTANTE: CAMBIO DE ARQUITECTURA
+
+Este repositorio (`Analisys`) **YA NO contiene código de aplicación**. Es un repositorio de **documentación y análisis**.
+
+El código de las aplicaciones ahora reside en **repositorios independientes** bajo la organización **EduGoGroup** en GitHub:
+
+- [edugo-shared](https://github.com/EduGoGroup/edugo-shared)
+- [edugo-api-mobile](https://github.com/EduGoGroup/edugo-api-mobile)
+- [edugo-api-administracion](https://github.com/EduGoGroup/edugo-api-administracion)
+- [edugo-worker](https://github.com/EduGoGroup/edugo-worker)
+- [edugo-dev-environment](https://github.com/EduGoGroup/edugo-dev-environment)
+
+**Rutas locales (con acceso de Claude Code):**
 ```
-
-### 2. Instalar Dependencias
-
-```bash
-# Instalar swag para Swagger
-go install github.com/swaggo/swag/cmd/swag@latest
-
-# Descargar dependencias de cada servicio
-cd source/api-mobile && go mod download
-cd ../api-administracion && go mod download
-cd ../worker && go mod download
-```
-
-### 3. Configurar Variables de Ambiente
-
-```bash
-# Copiar archivo de ejemplo
-cp .env.example .env
-
-# Editar .env y configurar:
-# - APP_ENV=local (o dev, qa, prod)
-# - OPENAI_API_KEY=sk-your-key
-# - Otros secretos si es necesario
-```
-
-### 4. Configurar Bases de Datos
-
-```bash
-# Opción A: Con Docker (recomendado)
-make up
-
-# Opción B: Manual
-# Levantar PostgreSQL y MongoDB manualmente
-# Ejecutar scripts en source/scripts/
+/Users/jhoanmedina/source/EduGo/repos-separados/edugo-*
 ```
 
 ---
 
-## ⚙️ Configuración por Ambientes
+## 📊 Estado Actual del Proyecto
 
-### Sistema de Configuración
+**Antes de empezar a desarrollar, leer:**
 
-Cada servicio usa **Viper** para gestionar configuración por ambientes (similar a Spring Boot profiles).
+🎯 **[ESTADO_PROYECTO.md](ESTADO_PROYECTO.md)** - Punto de entrada principal
 
-**Estructura**:
+Este documento contiene:
+- ✅ Proyectos completados
+- 🔄 Proyectos en progreso con % avance
+- ⬜ Proyectos pendientes
+- 🗺️ Navegación rápida a documentación relevante
+
+---
+
+## 🏁 Setup para Desarrollo
+
+### 1. Clonar Repositorios
+
+```bash
+# Crear carpeta de trabajo
+mkdir -p ~/source/EduGo/repos-separados
+cd ~/source/EduGo/repos-separados
+
+# Clonar repositorios individuales
+git clone git@github.com:EduGoGroup/edugo-shared.git
+git clone git@github.com:EduGoGroup/edugo-api-mobile.git
+git clone git@github.com:EduGoGroup/edugo-api-administracion.git
+git clone git@github.com:EduGoGroup/edugo-worker.git
+git clone git@github.com:EduGoGroup/edugo-dev-environment.git
 ```
-source/{servicio}/config/
-├── config.yaml         # Configuración base (común)
-├── config-local.yaml   # Local development
+
+### 2. Setup del Entorno de Desarrollo
+
+```bash
+cd edugo-dev-environment
+
+# Instalar dependencias de desarrollo
+./scripts/setup.sh --profile full
+
+# O solo bases de datos (más rápido)
+./scripts/setup.sh --profile db-only
+
+# Con datos de prueba (recomendado)
+./scripts/setup.sh --profile full --seed
+```
+
+Ver documentación completa: `/repos-separados/edugo-dev-environment/README.md`
+
+### 3. Instalar Herramientas Go
+
+```bash
+# Swagger
+go install github.com/swaggo/swag/cmd/swag@latest
+
+# Linter (opcional)
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+```
+
+---
+
+## ⚙️ Sistema de Configuración
+
+### Arquitectura Multi-Ambiente
+
+Todos los proyectos usan **Viper** para gestión de configuración por ambientes:
+
+```
+{proyecto}/config/
+├── config.yaml         # Base (común a todos)
+├── config-local.yaml   # Local development (default)
 ├── config-dev.yaml     # Development server
 ├── config-qa.yaml      # QA/Staging
-├── config-prod.yaml    # Production
-└── README.md           # Documentación
+└── config-prod.yaml    # Production
 ```
 
 ### Cambiar Entre Ambientes
 
 ```bash
-# Local (default)
-APP_ENV=local go run source/api-mobile/cmd/main.go
+# Local (default) - Usa Docker local
+cd repos-separados/edugo-api-mobile
+APP_ENV=local go run cmd/main.go
 
-# Development
-APP_ENV=dev go run source/api-mobile/cmd/main.go
+# Development - Apunta a servidores dev
+APP_ENV=dev go run cmd/main.go
 
 # QA
-APP_ENV=qa go run source/api-mobile/cmd/main.go
+APP_ENV=qa go run cmd/main.go
 
-# Production
-APP_ENV=prod OPENAI_API_KEY=sk-xxx go run source/api-mobile/cmd/main.go
+# Production (requiere todas las credenciales)
+APP_ENV=prod OPENAI_API_KEY=sk-xxx go run cmd/main.go
 ```
 
-### Precedencia de Configuración
+### Variables de Ambiente
 
-1. **Variables de ambiente** (ej: `EDUGO_MOBILE_SERVER_PORT=9090`)
-2. **Archivo específico** (ej: `config-dev.yaml`)
-3. **Archivo base** (`config.yaml`)
-4. **Defaults** (valores por defecto en código)
+**Prefijos por proyecto:**
+- API Mobile: `EDUGO_MOBILE_*`
+- API Admin: `EDUGO_ADMIN_*`
+- Worker: `EDUGO_WORKER_*`
 
-### Variables de Ambiente por Servicio
-
-**Prefijos**:
-- API Mobile: `EDUGO_MOBILE_`
-- API Administración: `EDUGO_ADMIN_`
-- Worker: `EDUGO_WORKER_`
-
-**Ejemplos**:
+**Ejemplos:**
 ```bash
-# Cambiar puerto de API Mobile
-EDUGO_MOBILE_SERVER_PORT=9090 go run source/api-mobile/cmd/main.go
+# Cambiar puerto
+EDUGO_MOBILE_SERVER_PORT=9090 go run cmd/main.go
 
-# Cambiar log level
-EDUGO_MOBILE_LOGGING_LEVEL=debug go run source/api-mobile/cmd/main.go
+# Cambiar nivel de logs
+EDUGO_MOBILE_LOGGING_LEVEL=debug go run cmd/main.go
+
+# Cambiar base de datos
+EDUGO_MOBILE_POSTGRES_HOST=localhost go run cmd/main.go
 ```
 
-### Secretos Requeridos
-
-Todos los ambientes (excepto local) requieren estas variables:
+### Secretos Requeridos (ambientes remotos)
 
 ```bash
-export POSTGRES_PASSWORD=your-password
-export MONGODB_URI=mongodb://user:pass@host:27017/edugo
-export RABBITMQ_URL=amqp://user:pass@host:5672/
-export OPENAI_API_KEY=sk-your-key
+export POSTGRES_PASSWORD=xxx
+export MONGODB_URI=mongodb://user:pass@host/db
+export RABBITMQ_URL=amqp://user:pass@host/
+export OPENAI_API_KEY=sk-xxx
 ```
 
-**IMPORTANTE**: Nunca commitear secretos en archivos YAML.
-
-### Agregar Nueva Configuración
-
-1. Editar `internal/config/config.go` (agregar campo al struct)
-2. Agregar valor en `config/config.yaml` (base)
-3. Sobrescribir en archivos específicos si es necesario
-4. Usar en código: `cfg.NuevoCampo`
-5. Regenerar si es necesario
-
-Ver ejemplos completos en `source/*/config/README.md`
+**⚠️ NUNCA commitear secretos** en archivos YAML o .env sin encriptar.
 
 ---
 
-## 📝 Agregar Nuevos Endpoints
+## 📝 Workflow de Desarrollo
 
-### 1. Crear Modelos
+### Crear Nueva Funcionalidad
 
-**Request** (`internal/models/request/`):
-```go
-type MyRequest struct {
-    Field string `json:"field" binding:"required"`
-}
-```
+1. **Leer documentación del proyecto:**
+   - Si es nuevo: `specs/<proyecto>/RULES.md`
+   - Si continúas: `specs/<proyecto>/TASKS.md`
 
-**Response** (`internal/models/response/`):
-```go
-type MyResponse struct {
-    Data string `json:"data" example:"example"`
-} // @name MyResponse
-```
+2. **Crear branch:**
+   ```bash
+   cd repos-separados/edugo-<proyecto>
+   git checkout dev
+   git pull origin dev
+   git checkout -b feature/descripcion-corta
+   ```
 
-### 2. Crear Handler
+3. **Desarrollar siguiendo Clean Architecture:**
+   ```
+   internal/
+   ├── domain/          # Entities, Value Objects, Repository interfaces
+   ├── application/     # Use Cases, DTOs, Services
+   ├── infrastructure/  # DB, HTTP, External services
+   └── bootstrap/       # Inicialización y DI
+   ```
 
-En `internal/handlers/`:
-```go
-// MyHandler godoc
-// @Summary Descripción breve
-// @Description Descripción detallada
-// @Tags TagName
-// @Accept json
-// @Produce json
-// @Param body body request.MyRequest true "Descripción"
-// @Success 200 {object} response.MyResponse
-// @Security BearerAuth
-// @Router /my-endpoint [post]
-func MyHandler(c *gin.Context) {
-    // Implementación
-}
-```
+4. **Escribir tests:**
+   ```bash
+   # Tests unitarios
+   go test ./internal/domain/...
+   
+   # Tests de integración (usa shared/testing)
+   go test -tags=integration ./test/integration/...
+   ```
 
-### 3. Regenerar Swagger
+5. **Regenerar Swagger (si hay cambios en API):**
+   ```bash
+   make swagger
+   # O manualmente:
+   swag init -g cmd/main.go -o docs
+   ```
 
+6. **Verificar calidad:**
+   ```bash
+   make lint    # Linter
+   make test    # Tests
+   make build   # Compilar
+   ```
+
+7. **Commit y PR:**
+   ```bash
+   git add .
+   git commit -m "feat: descripción del cambio"
+   git push origin feature/descripcion-corta
+   
+   # Crear PR en GitHub: feature/x → dev
+   ```
+
+### Convenciones de Commits
+
+Formato: `tipo(scope): descripción`
+
+**Tipos:**
+- `feat`: Nueva funcionalidad
+- `fix`: Corrección de bug
+- `refactor`: Refactorización sin cambio funcional
+- `test`: Agregar/modificar tests
+- `docs`: Cambios en documentación
+- `chore`: Tareas de mantenimiento
+- `ci`: Cambios en CI/CD
+
+**Ejemplos:**
 ```bash
-cd source/api-mobile
-swag init -g cmd/main.go -o docs
-```
-
-### 4. Ejecutar Tests
-
-```bash
-go test ./...
+feat(domain): agregar entity School con validaciones
+fix(handler): corregir validación de email en CreateUser
+refactor(repository): simplificar query de GetTree
+test(integration): agregar tests de flujo de evaluaciones
+docs(readme): actualizar guía de instalación
 ```
 
 ---
 
-## 🧪 Ejecutar Tests
+## 🧪 Testing
+
+### Estructura de Tests
+
+```
+{proyecto}/
+├── internal/           # Tests unitarios junto al código
+│   └── domain/
+│       ├── entity/
+│       │   ├── school.go
+│       │   └── school_test.go
+│       └── ...
+└── test/
+    └── integration/    # Tests de integración
+        ├── main_test.go           # Setup con testcontainers
+        └── school_flow_test.go    # Tests de flujos
+```
 
 ### Tests Unitarios
-```bash
-# Todos los tests
-cd source/api-mobile && go test ./...
 
-# Tests específicos
-go test ./internal/models/response/... -v
+```bash
+cd repos-separados/edugo-api-mobile
+
+# Todos los tests unitarios
+go test ./internal/...
+
+# Con verbosidad
+go test ./internal/domain/... -v
 
 # Con cobertura
-go test ./... -cover
+go test ./internal/... -cover
 ```
 
----
+### Tests de Integración
 
-## 🔄 Workflow de Desarrollo
+Usan **shared/testing** con testcontainers (PostgreSQL, MongoDB, RabbitMQ):
 
-### 1. Crear Branch
 ```bash
-git checkout -b feature/nueva-funcionalidad
+# Ejecutar tests de integración
+go test -tags=integration ./test/integration/... -v
+
+# Con cobertura
+go test -tags=integration ./test/integration/... -cover
 ```
 
-### 2. Desarrollar
-- Escribir tests primero (TDD)
-- Implementar funcionalidad
-- Regenerar Swagger si es necesario
-
-### 3. Verificar
-```bash
-gofmt -w .                    # Formatear código
-go vet ./...                  # Linter
-go test ./...                 # Tests
-swag init -g cmd/main.go -o docs  # Swagger
-```
-
-### 4. Commit
-```bash
-git add .
-git commit -m "feat: descripción del cambio"
-```
-
----
-
-## 📚 Convenciones de Código
-
-### Nombres
-- **Handlers**: PascalCase (`GetMaterials`, `CreateUser`)
-- **Structs**: PascalCase (`MaterialSummaryResponse`)
-- **Campos**: PascalCase (`TotalPoints`)
-- **Paquetes**: lowercase (`handlers`, `models`)
-
-### Comentarios Swagger
-- Siempre incluir `// @name` para structs de respuesta
-- Usar `example:` para ejemplos en Swagger
-- Usar `enums:` para valores permitidos
-
-### Estructura de Archivos
-```
-internal/
-├── handlers/       # Handlers HTTP
-├── middleware/     # Middleware (auth, etc.)
-├── models/
-│   ├── request/    # Request DTOs
-│   ├── response/   # Response DTOs
-│   ├── mongodb/    # MongoDB documents
-│   └── enum/       # Enumeraciones
-└── services/       # Lógica de negocio (futuro)
-```
+**Nota:** Los tests de integración requieren Docker corriendo.
 
 ---
 
 ## 🐛 Debugging
 
-### Ver Logs
+### Logs de Servicios
+
+Si usas `edugo-dev-environment`:
+
 ```bash
-make logs                # Todos los servicios
-make logs-api-mobile     # Solo API Mobile
-make logs-api-admin      # Solo API Admin
-make logs-worker         # Solo Worker
+cd repos-separados/edugo-dev-environment
+
+# Ver logs de todos los servicios
+docker-compose -f docker/docker-compose.yml logs -f
+
+# Logs específicos
+docker-compose -f docker/docker-compose.yml logs -f postgres
+docker-compose -f docker/docker-compose.yml logs -f mongodb
+docker-compose -f docker/docker-compose.yml logs -f rabbitmq
 ```
 
 ### Conectar a Bases de Datos
+
 ```bash
 # PostgreSQL
 docker exec -it edugo-postgres psql -U edugo_user -d edugo
 
 # MongoDB
 docker exec -it edugo-mongodb mongosh -u edugo_admin -p edugo_pass edugo
+
+# RabbitMQ Management UI
+open http://localhost:15672
+# User: guest / Password: guest
 ```
+
+### Debugging en VS Code / GoLand
+
+Crear configuración de debug apuntando a `cmd/main.go` con variables de ambiente:
+
+```json
+{
+  "type": "go",
+  "request": "launch",
+  "name": "Launch API Mobile",
+  "program": "${workspaceFolder}/repos-separados/edugo-api-mobile",
+  "env": {
+    "APP_ENV": "local",
+    "EDUGO_MOBILE_LOGGING_LEVEL": "debug"
+  }
+}
+```
+
+---
+
+## 📚 Documentación por Proyecto
+
+### Compartido (shared)
+
+**Ubicación:** `/repos-separados/edugo-shared`
+
+**Módulos:**
+- `bootstrap`: Sistema de inicialización y DI
+- `config`: Gestión de configuración multi-ambiente
+- `lifecycle`: Manejo de ciclo de vida de aplicación
+- `logger`: Logger estructurado
+- `testing`: Testcontainers helpers
+
+**Releases:** Por módulo (ej: `testing/v0.6.2`, `bootstrap/v0.1.0`)
+
+### API Mobile
+
+**Ubicación:** `/repos-separados/edugo-api-mobile`  
+**Puerto:** 8080  
+**Swagger:** http://localhost:8080/swagger/index.html
+
+**Funcionalidades:**
+- Gestión de materiales educativos
+- Sistema de progreso de estudiantes
+- Evaluaciones y quizzes
+- Autenticación y autorización
+
+### API Administración
+
+**Ubicación:** `/repos-separados/edugo-api-administracion`  
+**Puerto:** 8081  
+**Estado:** 🔄 En desarrollo (jerarquía académica)
+
+**Funcionalidades planeadas:**
+- Gestión de escuelas y unidades académicas
+- Perfiles especializados (teachers, students)
+- Asignación de materiales a unidades
+- Reportes administrativos
+
+**Ver progreso:** [specs/api-admin-jerarquia/](../specs/api-admin-jerarquia/)
+
+### Worker
+
+**Ubicación:** `/repos-separados/edugo-worker`  
+**Puerto:** N/A (procesamiento asíncrono)
+
+**Funcionalidades:**
+- Procesamiento de PDFs
+- Generación de resúmenes con OpenAI
+- Generación de quizzes automáticos
+- Eventos de RabbitMQ
+
+### Dev Environment
+
+**Ubicación:** `/repos-separados/edugo-dev-environment`
+
+**Servicios:**
+- PostgreSQL 15
+- MongoDB 7.0
+- RabbitMQ 3.12
+
+**Profiles disponibles:**
+- `full`: Todos los servicios
+- `db-only`: Solo bases de datos
+- `api-only`: APIs sin worker
+- `mobile-only`, `admin-only`, `worker-only`: Servicios individuales
 
 ---
 
 ## 🔧 Troubleshooting
 
-### Error: "no Go files"
+### Error: "Cannot connect to database"
+
 ```bash
-# Asegúrate de estar en el directorio correcto
-cd source/api-mobile
-swag init -g cmd/main.go -o docs
+# Verificar que Docker esté corriendo
+docker ps
+
+# Verificar contenedores del proyecto
+cd repos-separados/edugo-dev-environment
+docker-compose -f docker/docker-compose.yml ps
+
+# Reiniciar si es necesario
+./scripts/stop.sh
+./scripts/setup.sh --profile db-only
 ```
 
-### Error: Dependencias
+### Error: "Port already in use"
+
 ```bash
+# Ver qué proceso usa el puerto (ej: 8080)
+lsof -i :8080
+
+# Matar proceso si es necesario
+kill -9 <PID>
+
+# O cambiar puerto de la aplicación
+EDUGO_MOBILE_SERVER_PORT=9090 go run cmd/main.go
+```
+
+### Error: "Go module not found"
+
+```bash
+cd repos-separados/edugo-<proyecto>
 go mod tidy
 go mod download
 ```
 
-### Limpiar y Reconstruir
+### Error en Tests de Integración
+
 ```bash
-make clean
-make build
-make up
+# Verificar que Docker esté corriendo
+docker ps
+
+# Limpiar contenedores de testcontainers
+docker ps -a | grep testcontainers | awk '{print $1}' | xargs docker rm -f
+
+# Ejecutar tests nuevamente
+go test -tags=integration ./test/integration/... -v
 ```
 
 ---
 
-## 📊 Próximos Pasos
+## 📖 Recursos Adicionales
 
-1. **Conectar handlers a BD real** (actualmente usan mocks)
-2. **Implementar autenticación JWT real**
-3. **Implementar Worker con OpenAI**
-4. **Agregar más tests** (coverage > 80%)
-5. **CI/CD** (GitHub Actions)
+### Documentación del Proyecto
+- **[ESTADO_PROYECTO.md](ESTADO_PROYECTO.md)** - 🎯 Estado actual y navegación
+- **[PLAN_IMPLEMENTACION.md](roadmap/PLAN_IMPLEMENTACION.md)** - Roadmap completo
+- **[CLAUDE.md](../CLAUDE.md)** - Contexto para Claude Code
+- **[specs/](../specs/)** - Especificaciones de proyectos
 
-Ver roadmap completo en [PLAN_REFACTORIZACION.md](../PLAN_REFACTORIZACION.md)
+### Análisis Técnico
+- [GAP_ANALYSIS.md](analisis/GAP_ANALYSIS.md) - Análisis de gaps
+- [VERIFICACION_WORKER.md](analisis/VERIFICACION_WORKER.md) - Estado del worker
+- [DISTRIBUCION_RESPONSABILIDADES.md](analisis/DISTRIBUCION_RESPONSABILIDADES.md) - Arquitectura
+
+### Diagramas
+- [diagramas/](diagramas/) - Diagramas de arquitectura, BD, flujos
 
 ---
 
-**Última actualización**: 2025-10-29
+## 🚀 Siguientes Pasos
+
+Para saber qué hacer a continuación, consulta:
+
+1. **[ESTADO_PROYECTO.md](ESTADO_PROYECTO.md)** - Ver proyectos en progreso y pendientes
+2. **[specs/api-admin-jerarquia/](../specs/api-admin-jerarquia/)** - Continuar proyecto actual
+3. **[PLAN_IMPLEMENTACION.md](roadmap/PLAN_IMPLEMENTACION.md)** - Planificar nuevo sprint
+
+---
+
+**Última actualización:** 14 de Noviembre, 2025  
+**Mantenedores:** Ver CLAUDE.md para contacto
+
+---
+
+_Este documento refleja la arquitectura actual de repositorios separados. Para historia del proyecto, ver docs/historico/_

@@ -2,6 +2,23 @@
 
 Este documento proporciona contexto esencial para Claude Code sobre el proyecto EduGo.
 
+---
+
+## ⚠️ ANTES DE INICIAR CUALQUIER TAREA
+
+### 📍 Leer SIEMPRE Primero
+
+**[docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)** - Documento pivote que contiene:
+- ✅ Proyectos completados con detalles
+- 🔄 Proyectos en progreso con % avance y próximos pasos
+- ⬜ Proyectos pendientes del plan original
+- 🗺️ Navegación rápida a documentación relevante
+- 📈 Métricas globales acumuladas
+
+**Este documento es el punto de entrada para ubicarte rápidamente en el estado actual del proyecto.**
+
+---
+
 ## 🎯 Propósito del Repositorio
 
 Este es un **repositorio de documentación y análisis**, NO contiene código de aplicación.
@@ -28,25 +45,39 @@ Este es un **repositorio de documentación y análisis**, NO contiene código de
 
 ```
 Analisys/
-├── docs/                      # Documentación técnica completa
+├── docs/
+│   ├── ESTADO_PROYECTO.md     # ⭐⭐⭐ DOCUMENTO PIVOTE - LEER PRIMERO
+│   ├── DEVELOPMENT.md         # Guía de desarrollo actualizada
+│   │
+│   ├── specs/                 # Especificaciones de proyectos
+│   │   ├── api-admin-jerarquia/        # 🔄 En progreso (44%)
+│   │   └── shared-testcontainers/      # ✅ Completado (100%)
+│   │
+│   ├── analisis/              # Análisis técnico
+│   ├── roadmap/               # Planes de trabajo
 │   ├── diagramas/             # Arquitectura, BD, flujos
-│   └── historias_usuario/     # User stories por módulo
-├── edugo-dev-environment/     # Copia local del entorno Docker
+│   ├── historias_usuario/     # User stories por módulo
+│   └── historico/             # Documentación histórica
+│
 ├── scripts/                   # Herramientas de automatización
-│   ├── gitlab-runner-*.sh     # GitLab Runner local
-│   ├── push-dual.sh           # Push a GitHub + GitLab
-│   └── secrets/               # SOPS para secretos
-├── *.md                       # Documentación del proceso
-└── README.md                  # Documentación principal
+│   ├── gitlab-runner-*.sh
+│   ├── push-dual.sh
+│   └── secrets/
+│
+├── FLUJOS_CRITICOS.md
+├── VARIABLES_ENTORNO.md
+├── CLAUDE.md                  # Este archivo
+└── README.md
 ```
 
-### Archivos Importantes
+### Archivos Clave para Claude
 
-- **REPOS_DEFINITIVOS.md** - Lista de repos creados y proceso de separación
-- **ESTADO_REPOS_GITHUB.md** - Estado actual de publicación en GitHub
-- **FLUJOS_CRITICOS.md** - Flujos principales del sistema EduGo
-- **VARIABLES_ENTORNO.md** - Variables de entorno de cada proyecto
-- **docs/MIGRATION_GUIDE.md** - Guía de migraciones de base de datos
+- **[docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)** - ⭐ Punto de entrada, estado actual
+- **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** - Guía de desarrollo
+- **[specs/api-admin-jerarquia/RULES.md](specs/api-admin-jerarquia/RULES.md)** - Reglas del proyecto en progreso
+- **[docs/roadmap/PLAN_IMPLEMENTACION.md](docs/roadmap/PLAN_IMPLEMENTACION.md)** - Plan maestro
+- **[FLUJOS_CRITICOS.md](FLUJOS_CRITICOS.md)** - Flujos del sistema
+- **[VARIABLES_ENTORNO.md](VARIABLES_ENTORNO.md)** - Variables de entorno
 
 ## 🚫 Lo Que YA NO Está Aquí
 
@@ -169,38 +200,73 @@ docker-compose -f docker/docker-compose.yml logs -f
 2. Implementar pipelines completos
 3. Configurar ambientes de staging/producción
 
-## ⚠️ IMPORTANTE: Leer RULES.md SIEMPRE
+## 🎓 Para Claude Code en Futuras Sesiones
 
-**ANTES DE INICIAR CUALQUIER TAREA, LEER:**
-- `specs/api-admin-jerarquia/RULES.md` - Reglas del proyecto (workflow, git, PR, CI/CD)
+### Workflow de Inicio de Sesión
 
-Este archivo contiene:
+1. **SIEMPRE leer primero:** [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)
+   - Revisar proyectos completados
+   - Identificar proyectos en progreso
+   - Ver próximos pasos recomendados
+
+2. **Si continúas un proyecto existente:**
+   - Ir a `specs/<nombre-proyecto>/`
+   - Leer `RULES.md` (reglas específicas del proyecto)
+   - Revisar `TASKS.md` o `TASKS_UPDATED.md` (plan detallado)
+   - Consultar `LOGS.md` (última sesión)
+   - Continuar desde el punto indicado
+
+3. **Si inicias un proyecto nuevo:**
+   - Consultar [docs/roadmap/PLAN_IMPLEMENTACION.md](docs/roadmap/PLAN_IMPLEMENTACION.md)
+   - Crear carpeta `specs/<nombre-proyecto>/`
+   - Seguir estructura de `specs/api-admin-jerarquia/` como ejemplo
+   - Crear: README.md, RULES.md, TASKS.md, LOGS.md, etc.
+
+### Si el Usuario Pregunta por Código de Aplicación
+
+- ✅ Indicar que el código está en repos externos (EduGoGroup)
+- ✅ Rutas locales: `/Users/jhoanmedina/source/EduGo/repos-separados/`
+- ✅ Este repo solo tiene documentación y análisis
+- ✅ Sugerir clonar el repo específico si no está disponible
+
+### Si el Usuario Quiere Continuar un Proyecto
+
+1. Abrir [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)
+2. Buscar el proyecto en sección "🔄 Proyectos En Progreso"
+3. Seguir link a `specs/<proyecto>/`
+4. Leer RULES.md del proyecto
+5. Revisar TASKS.md para próxima fase
+6. Consultar LOGS.md para contexto de última sesión
+
+### Si el Usuario Quiere Iniciar Nuevo Proyecto
+
+1. Verificar en [docs/roadmap/PLAN_IMPLEMENTACION.md](docs/roadmap/PLAN_IMPLEMENTACION.md) la prioridad
+2. Crear estructura en `specs/<nuevo-proyecto>/`
+3. Copiar patrón de `specs/api-admin-jerarquia/`
+4. Actualizar [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md) agregando a "En Progreso"
+
+### Si el Usuario Quiere Agregar Documentación
+
+- ✅ Agregar a `docs/` según categoría (analisis/, diagramas/, historias_usuario/)
+- ✅ Actualizar [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md) si es relevante
+- ✅ Actualizar README.md si impacta navegación general
+- ✅ Mantener formato markdown consistente
+
+### Si el Usuario Menciona "source" o "shared" (carpetas)
+
+- ⚠️ Recordar que fueron eliminadas tras separación de repos
+- ✅ Código ahora en `/Users/jhoanmedina/source/EduGo/repos-separados/`
+- ✅ Repos individuales: edugo-api-*, edugo-worker, edugo-shared
+- ✅ Rama backup disponible: `backup/feature-fase1-pre-separacion`
+
+### Reglas Importantes de edugo-shared
+
+**CASO ESPECIAL:** edugo-shared requiere releases por módulos desde **dev** antes de usar en otros proyectos.
+
+Ver `specs/api-admin-jerarquia/RULES.md` para detalles completos sobre:
 - Gestión de Contexto y Logs
 - Workflow de Ramas y Pull Requests
 - Manejo de CI/CD y revisores automáticos
-- **CASO ESPECIAL:** edugo-shared requiere releases por módulos desde dev antes de usar en otros proyectos
-
-## 🎓 Para Claude Code en Futuras Sesiones
-
-### Si el usuario pregunta por código de aplicación:
-- Indicar que el código está en repos externos (EduGoGroup)
-- Sugerir clonar el repo específico
-- Este repo solo tiene documentación
-
-### Si el usuario quiere agregar documentación:
-- Agregar a `docs/` según categoría
-- Actualizar README.md si es necesario
-- Mantener formato markdown consistente
-
-### Si el usuario quiere modificar scripts:
-- Scripts en `scripts/` son herramientas auxiliares
-- Probar localmente antes de commitear
-- Documentar cambios en comentarios del script
-
-### Si el usuario menciona "source" o "shared":
-- Recordar que fueron eliminadas tras separación
-- Código ahora en repos: edugo-api-*, edugo-worker, edugo-shared
-- Rama backup disponible si se necesita referencia histórica
 
 ## 📞 Contacto y Recursos
 
@@ -211,5 +277,9 @@ Este archivo contiene:
 
 ---
 
-**Última actualización:** 11 de Noviembre, 2025
+**Última actualización:** 14 de Noviembre, 2025  
 **Generado con:** Claude Code
+
+---
+
+**Recuerda:** El documento [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md) es tu guía principal para navegar el proyecto.

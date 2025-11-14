@@ -1,7 +1,7 @@
 # Jerarquía Académica - EduGo API Administración
 
-**Estado:** 🔄 En progreso - FASE 1 completada  
-**Última actualización:** 12 de Noviembre, 2025
+**Estado:** 🔄 En progreso - FASE 1 completada, FASE 2 próxima  
+**Última actualización:** 14 de Noviembre, 2025
 
 ## 📊 Resumen del Proyecto
 
@@ -122,3 +122,5 @@ specs/api-admin-jerarquia/
 
 **Última sesión:** 12 de Noviembre, 2025 19:45  
 **Próxima acción:** FASE 2 - Schema de Base de Datos
+
+**💡 Para ver el contexto completo del proyecto:** [docs/ESTADO_PROYECTO.md](../../docs/ESTADO_PROYECTO.md)
