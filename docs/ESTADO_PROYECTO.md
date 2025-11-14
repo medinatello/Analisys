@@ -15,19 +15,19 @@ Este repositorio es el **centro de documentación y análisis** del ecosistema E
 En Noviembre 2025 se creó un [Plan de Implementación](roadmap/PLAN_IMPLEMENTACION.md) para completar funcionalidades faltantes en 5 proyectos:
 
 ```
-Progreso Global del Plan:  22%  ████░░░░░░░░░░░░░░░░
+Progreso Global del Plan:  33%  ██████░░░░░░░░░░░░
 ```
 
 | Proyecto | Prioridad | Estado | Progreso |
 |----------|-----------|--------|----------|
 | **shared-testcontainers** | 🟣 Fuera de plan | ✅ Completado | 100% |
-| **api-administracion** | 🔴 P0 | 🔄 En progreso | 44% |
-| **api-mobile** | 🔴 P0 | ⬜ Pendiente | 0% |
+| **api-administracion (jerarquía)** | 🔴 P0 | ✅ Completado | 100% |
+| **dev-environment** | 🟡 P1 | ✅ Completado | 100% |
+| **api-mobile (evaluaciones)** | 🔴 P0 | ⬜ Pendiente | 0% |
 | **worker** | 🟡 P1 | ⬜ Pendiente | 0% |
 | **shared** | 🟢 P2 | ⬜ Pendiente | 0% |
-| **dev-environment** | 🟡 P1 | ✅ Completado | 100% |
 
-**Nota:** Se completaron 2 proyectos no incluidos en el plan original (testcontainers y dev-environment).
+**Nota:** Se completaron 3 proyectos: 1 del plan original (api-administracion) + 2 adicionales (testcontainers y dev-environment).
 
 ---
 
@@ -98,68 +98,81 @@ Actualización completa del entorno de desarrollo con Docker Compose profiles, s
 
 ---
 
-## 🔄 PROYECTOS EN PROGRESO
+## ✅ PROYECTOS COMPLETADOS (continuación)
 
-### api-administracion - Jerarquía Académica 🔄
+### 3. api-administracion - Jerarquía Académica ✅
 
-**Estado:** FASE 1 completada (4/9 fases)  
-**Progreso:** 44.4%  
+**Fecha finalización:** 12 de Noviembre, 2025 22:58  
+**Epic:** Modernización + Jerarquía Académica  
 **Documentación:** [specs/api-admin-jerarquia/](../specs/api-admin-jerarquia/)
 
+#### Resumen
+Implementación completa de sistema de jerarquía académica con Clean Architecture, schema de BD, dominio, services, API REST y CI/CD.
+
+#### Resultados
+- ✅ **7 Fases completadas** (FASE 0.1-0.3, FASE 1-7)
+- ✅ **Schema BD:** 3 tablas (school, academic_unit, unit_membership) + seeds
+- ✅ **Dominio:** 3 entities, 8 value objects, 3 repositories
+- ✅ **API REST:** 15+ endpoints con handlers, DTOs, services
+- ✅ **Testing:** Suite completa unitaria + integración con >80% coverage
+- ✅ **CI/CD:** GitHub Actions workflows completos
+- ✅ **Release:** v0.2.0 publicado
+
 ```
-Progreso: ████████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 44.4%
+Progreso: ████████████████████████████████████████████████████████ 100%
 
 ✅ FASE 0.1: Refactorizar Bootstrap Genérico (shared)
 ✅ FASE 0.2: Migrar api-mobile a shared/bootstrap
 ✅ FASE 0.3: Migrar edugo-worker a shared/bootstrap  
 ✅ FASE 1:   Modernizar arquitectura api-administracion
-⏳ FASE 2:   Schema BD jerarquía (PRÓXIMA)
-⬜ FASE 3:   Dominio jerarquía
-⬜ FASE 4:   Services jerarquía
-⬜ FASE 5:   API REST jerarquía
-⬜ FASE 6:   Testing completo
-⬜ FASE 7:   CI/CD
+✅ FASE 2:   Schema BD jerarquía
+✅ FASE 3:   Dominio jerarquía
+✅ FASE 4:   Services jerarquía
+✅ FASE 5:   API REST jerarquía
+✅ FASE 6:   Testing completo
+✅ FASE 7:   CI/CD
 ```
 
-#### Fases Completadas
+#### Fases Completadas (Todas)
 
-**FASE 0.1 - Refactorizar Bootstrap Genérico** ✅
-- Duración: 2.5 horas
-- PR: shared#11 merged
-- Resultado: 2,667 LOC creadas, 28 tests, releases config/v0.4.0, lifecycle/v0.4.0, bootstrap/v0.1.0
+**FASE 0.1-0.3 - Bootstrap Compartido** ✅
+- shared#11, api-mobile#42, worker#9 merged
+- 2,667 LOC creadas en shared, -937 LOC en mobile
 
-**FASE 0.2 - Migrar api-mobile** ✅
-- Duración: 9 horas
-- PR: api-mobile#42 merged
-- Resultado: -937 LOC (42.4% reducción), sin breaking changes
+**FASE 1 - Modernización** ✅  
+- api-admin#12, #13 merged
+- Clean Architecture implementada
 
-**FASE 0.3 - Migrar edugo-worker** ✅
-- Duración: 45 minutos
-- PR: worker#9 merged
-- Resultado: main.go reducido 25%
+**FASE 2 - Schema BD** ✅
+- api-admin#15 merged
+- 3 tablas + constraints + seeds
 
-**FASE 1 - Modernizar api-administracion** ✅
-- Duración: 2 horas
-- PRs: api-admin#12, #13 merged
-- Resultado: Bootstrap integrado, config mejorado, Clean Architecture implementada
+**FASE 3 - Dominio** ✅
+- api-admin#16 merged
+- 3 entities, 8 value objects, interfaces
 
-#### Próximo Paso: FASE 2
+**FASE 4 - Services** ✅
+- api-admin#17 merged
+- Services + DTOs + Repositories implementados
 
-**Objetivo:** Crear schema de base de datos para jerarquía académica  
-**Duración estimada:** 2 días  
-**Tareas:**
-1. Crear migrations para tablas (school, academic_unit, unit_membership)
-2. Implementar constraints y relaciones
-3. Crear seeds de datos de prueba
-4. Tests de schema
+**FASE 5 - API REST** ✅
+- api-admin#18 merged
+- 15+ endpoints REST funcionales
 
-**Para continuar:** Ver [TASKS_UPDATED.md](../specs/api-admin-jerarquia/TASKS_UPDATED.md)
+**FASE 6 - Testing** ✅
+- api-admin#19 merged
+- Suite completa >80% coverage
 
-#### Métricas del Proyecto
-- **PRs Mergeados:** 4
-- **LOC Totales:** ~+2,500 (shared) / -800 (apis)
-- **Tests Creados:** 28+ (shared) + 8 (mobile) + setup (admin)
-- **Tiempo Invertido:** ~15 horas
+**FASE 7 - CI/CD** ✅
+- api-admin#20 merged
+- GitHub Actions workflows completos
+
+#### Métricas Finales del Proyecto
+- **PRs Mergeados:** 10 (shared: 1, mobile: 1, worker: 1, admin: 7)
+- **LOC Totales:** ~+5,000 (shared+admin) / -1,000 (mobile+worker)
+- **Tests Creados:** 50+ tests (unitarios + integración)
+- **Tiempo Invertido:** ~25 horas
+- **Release:** v0.2.0
 
 #### Documentación Completa
 - **[README](../specs/api-admin-jerarquia/README.md)** - Estado general
@@ -260,29 +273,29 @@ Migrar utilidades comunes de api-mobile a shared para evitar duplicación.
 |-------------|---------------|----------|--------|
 | **edugo-shared** | 2 | 6 (bootstrap + testing) | ✅ Actualizado |
 | **edugo-api-mobile** | 2 | - | ✅ Actualizado |
-| **edugo-api-administracion** | 2 | - | 🔄 En progreso |
+| **edugo-api-administracion** | 9 | v0.2.0 | ✅ Completado |
 | **edugo-worker** | 2 | - | ✅ Actualizado |
 | **edugo-dev-environment** | 2 | - | ✅ Actualizado |
 
-**Total PRs:** 10 mergeados
+**Total PRs:** 17 mergeados
 
 ### Código
 
 | Métrica | Valor |
 |---------|-------|
-| **LOC Agregadas** | +5,167 (shared: +2,667 testing, +2,500 bootstrap) |
-| **LOC Eliminadas** | -1,800 (duplicación eliminada) |
-| **Neto** | +3,367 LOC |
-| **Tests Creados** | 40+ |
+| **LOC Agregadas** | +10,167 (shared: +2,667 testing, +2,500 bootstrap, admin: +5,000) |
+| **LOC Eliminadas** | -2,800 (duplicación eliminada) |
+| **Neto** | +7,367 LOC |
+| **Tests Creados** | 90+ |
 
 ### Tiempo Invertido
 
 | Proyecto | Horas |
 |----------|-------|
 | **shared-testcontainers** | ~20h |
-| **api-admin-jerarquia (Fase 0-1)** | ~15h |
+| **api-admin-jerarquia** | ~25h (todas las fases) |
 | **dev-environment** | ~8h |
-| **Total** | **~43 horas** |
+| **Total** | **~53 horas** |
 
 ---
 
@@ -309,18 +322,29 @@ Migrar utilidades comunes de api-mobile a shared para evitar duplicación.
 
 ## 🎯 PRÓXIMOS PASOS RECOMENDADOS
 
-### Corto Plazo (1-2 semanas)
-1. **Continuar api-admin-jerarquia:** Completar FASE 2 (Schema BD)
-2. **Iniciar api-mobile evaluaciones:** Sprint Mobile-1 en paralelo
+### Proyecto Prioritario: api-mobile (Sistema de Evaluaciones)
 
-### Mediano Plazo (1 mes)
-1. Completar api-admin-jerarquia (todas las fases)
-2. Completar api-mobile evaluaciones
-3. Iniciar auditoría de worker
+**Prioridad:** 🔴 P0 (CRÍTICA)  
+**Estado:** ⬜ Pendiente  
+**Duración estimada:** 4 semanas
 
-### Largo Plazo (2-3 meses)
-1. Completar todos los proyectos del plan original
-2. Alcanzar 75% de completitud global (objetivo Q1 2026)
+#### Sprint Mobile-1: Sistema de Evaluaciones (2 semanas)
+- Schema BD: tablas assessment, attempt, answer
+- Integración PostgreSQL + MongoDB
+- Endpoints REST para quizzes y calificación
+- Tests completos
+
+Ver plan detallado: [docs/roadmap/PLAN_IMPLEMENTACION.md](roadmap/PLAN_IMPLEMENTACION.md#proyecto-2-edugo-api-mobile)
+
+### Alternativa: Auditoría del Worker
+
+**Prioridad:** 🟡 P1  
+**Estado:** ⬜ Pendiente  
+**Duración estimada:** 1 semana
+
+Verificar si el worker procesa PDFs con OpenAI y guarda en MongoDB.
+
+Ver análisis existente: [docs/analisis/VERIFICACION_WORKER.md](analisis/VERIFICACION_WORKER.md)
 
 ---
 

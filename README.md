@@ -9,18 +9,18 @@
 
 ### 🎯 **[Ver Estado Completo →](docs/ESTADO_PROYECTO.md)**
 
-**Progreso Global:** 22% del plan de implementación completado
+**Progreso Global:** 33% del plan de implementación completado
 
 | Proyecto | Estado | Progreso |
 |----------|--------|----------|
 | **shared-testcontainers** | ✅ Completado | 100% |
-| **api-administracion (jerarquía)** | 🔄 En progreso | 44% |
+| **api-administracion (jerarquía)** | ✅ Completado | 100% |
 | **dev-environment** | ✅ Completado | 100% |
 | **api-mobile (evaluaciones)** | ⬜ Pendiente | 0% |
 | **worker** | ⬜ Pendiente | 0% |
 
-**Última sesión:** 13 de Noviembre, 2025  
-**Próximo paso:** FASE 2 - Schema BD para jerarquía académica
+**Última sesión:** 14 de Noviembre, 2025  
+**Próximo paso:** Iniciar api-mobile (Sistema de Evaluaciones) - Prioridad P0
 
 📖 **Para continuar trabajando:** Leer [docs/ESTADO_PROYECTO.md](docs/ESTADO_PROYECTO.md)
 
