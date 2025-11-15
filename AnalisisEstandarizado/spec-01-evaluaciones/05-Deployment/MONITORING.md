@@ -176,7 +176,7 @@ logger.Error("Failed to save attempt",
 
 **Importar dashboard:**
 ```bash
-# Dashboard ID en Grafana.com: TBD
+# Dashboard ID en Grafana.com: 15398 (ejemplo: Go Application Dashboard)
 # O crear manual con queries:
 rate(http_requests_total[5m])
 histogram_quantile(0.95, http_request_duration_seconds)
