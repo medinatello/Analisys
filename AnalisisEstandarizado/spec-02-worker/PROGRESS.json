@@ -1,0 +1,25 @@
+{
+  "project": "spec-02-worker",
+  "project_name": "Worker - Procesamiento IA de Materiales",
+  "version": "1.0.0",
+  "total_sprints": 6,
+  "total_files": 46,
+  "files_completed": 46,
+  "files_remaining": 0,
+  "current_phase": "Completed",
+  "sprint_status": {
+    "Sprint-01": "completed",
+    "Sprint-02": "completed",
+    "Sprint-03": "completed",
+    "Sprint-04": "completed",
+    "Sprint-05": "completed",
+    "Sprint-06": "completed"
+  },
+  "completion_percentage": 100,
+  "metadata": {
+    "repository": "edugo-worker",
+    "technology_stack": "Go 1.21+, RabbitMQ, OpenAI, MongoDB, S3",
+    "architecture": "Event-Driven Consumer",
+    "priority": "P1 - HIGH"
+  }
+}
