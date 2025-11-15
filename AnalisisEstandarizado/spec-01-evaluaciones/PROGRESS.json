@@ -1,0 +1,60 @@
+{
+  "project": "spec-01-evaluaciones",
+  "project_name": "Sistema de Evaluaciones - EduGo",
+  "version": "1.0.0",
+  "total_sprints": 6,
+  "total_files": 50,
+  "files_completed": 17,
+  "files_remaining": 33,
+  "current_phase": "Fase-1-Sprint02",
+  "current_sprint": "Sprint-02",
+  "current_task": "TASK-1.1",
+  "completed_sprints": ["Sprint-01"],
+  "completed_files": [
+    "01-Requirements/PRD.md",
+    "01-Requirements/FUNCTIONAL_SPECS.md",
+    "01-Requirements/TECHNICAL_SPECS.md",
+    "01-Requirements/ACCEPTANCE_CRITERIA.md",
+    "02-Design/ARCHITECTURE.md",
+    "02-Design/DATA_MODEL.md",
+    "02-Design/API_CONTRACTS.md",
+    "02-Design/SECURITY_DESIGN.md",
+    "03-Sprints/Sprint-01-Schema-BD/README.md",
+    "03-Sprints/Sprint-01-Schema-BD/TASKS.md",
+    "03-Sprints/Sprint-01-Schema-BD/DEPENDENCIES.md",
+    "03-Sprints/Sprint-01-Schema-BD/QUESTIONS.md",
+    "03-Sprints/Sprint-01-Schema-BD/VALIDATION.md"
+  ],
+  "sprint_status": {
+    "Sprint-01": "completed",
+    "Sprint-02": "in_progress",
+    "Sprint-03": "pending",
+    "Sprint-04": "pending",
+    "Sprint-05": "pending",
+    "Sprint-06": "pending"
+  },
+  "phase_status": {
+    "Fase-0-Preparacion": "completed",
+    "Fase-1-Sprint02": "in_progress",
+    "Fase-2-Sprint03": "pending",
+    "Fase-3-Sprint04": "pending",
+    "Fase-4-Sprint05": "pending",
+    "Fase-5-Sprint06": "pending",
+    "Fase-6-Testing": "pending",
+    "Fase-7-Deployment": "pending",
+    "Fase-8-Tracking": "pending",
+    "Fase-9-Validation": "pending"
+  },
+  "execution_mode": "controlled",
+  "ai_executor": "claude-3.5-sonnet",
+  "session_start": "2025-11-14T12:00:00Z",
+  "last_update": "2025-11-14T12:15:00Z",
+  "estimated_completion": "2025-11-14T18:00:00Z",
+  "validation_results": {},
+  "metadata": {
+    "repository": "edugo-api-mobile",
+    "technology_stack": "Go 1.21+, Gin, GORM, PostgreSQL, MongoDB",
+    "architecture": "Clean Architecture",
+    "priority": "P0 - CRITICAL"
+  }
+}
