@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "total_sprints": 6,
   "total_files": 50,
-  "files_completed": 22,
-  "files_remaining": 33,
-  "current_phase": "Fase-2-Sprint03",
-  "current_sprint": "Sprint-03",
+  "files_completed": 27,
+  "files_remaining": 23,
+  "current_phase": "Fase-3-Sprint04",
+  "current_sprint": "Sprint-04",
   "current_task": "TASK-1.1",
   "completed_sprints": [
     "Sprint-01"
@@ -30,12 +30,17 @@
     "03-Sprints/Sprint-02-Dominio/TASKS.md",
     "03-Sprints/Sprint-02-Dominio/DEPENDENCIES.md",
     "03-Sprints/Sprint-02-Dominio/QUESTIONS.md",
-    "03-Sprints/Sprint-02-Dominio/VALIDATION.md"
+    "03-Sprints/Sprint-02-Dominio/VALIDATION.md",
+    "03-Sprints/Sprint-03-Repositorios/README.md",
+    "03-Sprints/Sprint-03-Repositorios/TASKS.md",
+    "03-Sprints/Sprint-03-Repositorios/DEPENDENCIES.md",
+    "03-Sprints/Sprint-03-Repositorios/QUESTIONS.md",
+    "03-Sprints/Sprint-03-Repositorios/VALIDATION.md"
   ],
   "sprint_status": {
     "Sprint-01": "completed",
     "Sprint-02": "completed",
-    "Sprint-03": "pending",
+    "Sprint-03": "completed",
     "Sprint-04": "pending",
     "Sprint-05": "pending",
     "Sprint-06": "pending"
@@ -43,7 +48,7 @@
   "phase_status": {
     "Fase-0-Preparacion": "completed",
     "Fase-1-Sprint02": "completed",
-    "Fase-2-Sprint03": "pending",
+    "Fase-2-Sprint03": "completed",
     "Fase-3-Sprint04": "pending",
     "Fase-4-Sprint05": "pending",
     "Fase-5-Sprint06": "pending",
