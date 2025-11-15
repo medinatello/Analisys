@@ -1,0 +1,158 @@
+{
+  "project": "EduGo Ecosystem",
+  "version": "1.0.0",
+  "created_at": "2025-11-14T10:00:00Z",
+  "last_updated": "2025-11-14T10:00:00Z",
+  "execution_mode": "unattended",
+  "ai_executor": null,
+
+  "global_progress": {
+    "total_specs": 8,
+    "completed_specs": 0,
+    "in_progress_specs": 0,
+    "pending_specs": 8,
+    "completion_percentage": 0
+  },
+
+  "specifications": {
+    "Spec-01-Sistema-Evaluaciones": {
+      "status": "pending",
+      "priority": "CRITICAL",
+      "estimated_days": 15,
+      "actual_days": 0,
+      "started_at": null,
+      "completed_at": null,
+      "current_project": null,
+      "current_task": null,
+
+      "projects": {
+        "01-shared": {
+          "status": "pending",
+          "total_tasks": 10,
+          "completed_tasks": 0,
+          "current_task": null,
+          "branch": "feature/evaluation-module",
+          "version_target": "v1.3.0",
+          "published": false
+        },
+        "02-api-mobile": {
+          "status": "blocked",
+          "dependency": "01-shared",
+          "total_tasks": 8,
+          "completed_tasks": 0,
+          "current_task": null,
+          "branch": "feature/evaluation-endpoints"
+        },
+        "03-api-administracion": {
+          "status": "blocked",
+          "dependency": "01-shared",
+          "total_tasks": 7,
+          "completed_tasks": 0,
+          "current_task": null,
+          "branch": "feature/evaluation-management"
+        },
+        "04-worker": {
+          "status": "blocked",
+          "dependency": "02-api-mobile,03-api-administracion",
+          "total_tasks": 8,
+          "completed_tasks": 0,
+          "current_task": null,
+          "branch": "feature/evaluation-processor"
+        },
+        "05-dev-environment": {
+          "status": "blocked",
+          "dependency": "04-worker",
+          "total_tasks": 5,
+          "completed_tasks": 0,
+          "current_task": null,
+          "branch": "feature/evaluation-support"
+        }
+      }
+    },
+
+    "Spec-02-Procesamiento-IA": {
+      "status": "pending",
+      "priority": "HIGH",
+      "estimated_days": 11,
+      "projects": {}
+    },
+
+    "Spec-03-Sistema-Notificaciones": {
+      "status": "pending",
+      "priority": "MEDIUM",
+      "estimated_days": 9,
+      "projects": {}
+    },
+
+    "Spec-04-Analytics-Dashboard": {
+      "status": "pending",
+      "priority": "MEDIUM",
+      "estimated_days": 14,
+      "projects": {}
+    },
+
+    "Spec-05-Optimizacion-Performance": {
+      "status": "pending",
+      "priority": "LOW",
+      "estimated_days": 10,
+      "projects": {}
+    },
+
+    "Spec-06-Integracion-Cross-API": {
+      "status": "pending",
+      "priority": "MEDIUM",
+      "estimated_days": 7,
+      "projects": {}
+    },
+
+    "Spec-07-Migracion-Datos": {
+      "status": "pending",
+      "priority": "LOW",
+      "estimated_days": 10,
+      "projects": {}
+    },
+
+    "Spec-08-Auditoria-Logs": {
+      "status": "pending",
+      "priority": "LOW",
+      "estimated_days": 5,
+      "projects": {}
+    }
+  },
+
+  "execution_log": [],
+
+  "failed_tasks": [],
+
+  "skipped_tasks": [],
+
+  "validation_results": {},
+
+  "commits": [],
+
+  "pull_requests": [],
+
+  "configuration": {
+    "auto_commit": true,
+    "auto_pr": true,
+    "run_tests": true,
+    "min_coverage": 85,
+    "max_retries": 3,
+    "timeout_minutes": 30,
+    "working_directories": {
+      "shared": "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-shared",
+      "api-mobile": "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-api-mobile",
+      "api-administracion": "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-api-administracion",
+      "worker": "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-worker",
+      "dev-environment": "/Users/jhoanmedina/source/EduGo/repos-separados/edugo-dev-environment"
+    }
+  },
+
+  "next_action": {
+    "spec": "Spec-01-Sistema-Evaluaciones",
+    "project": "01-shared",
+    "task": "TASK-001",
+    "description": "Create evaluation module structure",
+    "command": "cd /Users/jhoanmedina/source/EduGo/repos-separados/edugo-shared && git checkout -b feature/evaluation-module"
+  }
+}

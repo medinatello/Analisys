@@ -1,0 +1,209 @@
+{
+  "project": "sistema-evaluaciones",
+  "version": "1.0.0",
+  "status": "not_started",
+  "start_date": null,
+  "end_date": null,
+  "last_update": "2025-11-14T18:00:00Z",
+  "global_progress": {
+    "percentage": 0,
+    "phase": "planning",
+    "current_repository": null,
+    "blocker": null
+  },
+  "repositories": {
+    "edugo-shared": {
+      "status": "pending",
+      "branch": "feature/evaluaciones-shared-tipos",
+      "progress": 0,
+      "tasks": {
+        "total": 12,
+        "completed": 0,
+        "in_progress": 0,
+        "pending": 12
+      },
+      "days": {
+        "day1": {
+          "status": "pending",
+          "tasks": ["TASK-001", "TASK-002", "TASK-003", "TASK-004"],
+          "completed": []
+        },
+        "day2": {
+          "status": "pending",
+          "tasks": ["TASK-005", "TASK-006", "TASK-007", "TASK-008"],
+          "completed": []
+        },
+        "day3": {
+          "status": "pending",
+          "tasks": ["TASK-009", "TASK-010", "TASK-011", "TASK-012"],
+          "completed": []
+        }
+      },
+      "pull_requests": [],
+      "release": {
+        "version": "v0.7.0",
+        "status": "pending",
+        "tag": null,
+        "published_at": null
+      },
+      "metrics": {
+        "test_coverage": null,
+        "lines_of_code": null,
+        "ci_status": null
+      }
+    },
+    "edugo-dev-environment": {
+      "status": "pending",
+      "branch": "feature/evaluaciones-db-schema",
+      "progress": 0,
+      "tasks": {
+        "total": 5,
+        "completed": 0,
+        "in_progress": 0,
+        "pending": 5
+      },
+      "pull_requests": [],
+      "metrics": {
+        "scripts_added": 0,
+        "tables_created": 0
+      }
+    },
+    "edugo-api-mobile": {
+      "status": "pending",
+      "branch": "feature/evaluaciones-mobile-core",
+      "progress": 0,
+      "tasks": {
+        "total": 25,
+        "completed": 0,
+        "in_progress": 0,
+        "pending": 25
+      },
+      "dependencies": {
+        "edugo-shared": "v0.7.0",
+        "status": "waiting"
+      },
+      "phases": {
+        "core": {
+          "status": "pending",
+          "days": "4-13"
+        },
+        "integration": {
+          "status": "pending",
+          "days": "14-15"
+        }
+      },
+      "pull_requests": [],
+      "endpoints": {
+        "total": 5,
+        "implemented": 0,
+        "tested": 0
+      },
+      "metrics": {
+        "test_coverage": null,
+        "api_endpoints": 0,
+        "integration_tests": 0
+      }
+    },
+    "edugo-api-administracion": {
+      "status": "pending",
+      "branch": "feature/evaluaciones-admin-reportes",
+      "progress": 0,
+      "tasks": {
+        "total": 12,
+        "completed": 0,
+        "in_progress": 0,
+        "pending": 12
+      },
+      "dependencies": {
+        "edugo-shared": "v0.7.0",
+        "status": "waiting"
+      },
+      "pull_requests": [],
+      "endpoints": {
+        "total": 3,
+        "implemented": 0,
+        "tested": 0
+      },
+      "metrics": {
+        "test_coverage": null,
+        "report_queries": 0
+      }
+    }
+  },
+  "checkpoints": {
+    "checkpoint1": {
+      "date": "Day 3",
+      "description": "shared v0.7.0 released",
+      "status": "pending",
+      "criteria": [
+        "shared v0.7.0 available",
+        "dev-environment schema merged",
+        "All repos can go get the module"
+      ]
+    },
+    "checkpoint2": {
+      "date": "Day 10",
+      "description": "api-mobile core complete",
+      "status": "pending",
+      "criteria": [
+        "Domain complete",
+        "Services complete",
+        "Coverage >85%"
+      ]
+    },
+    "checkpoint3": {
+      "date": "Day 13",
+      "description": "api-mobile endpoints working",
+      "status": "pending",
+      "criteria": [
+        "Endpoints functional",
+        "PostgreSQL integration tested",
+        "E2E tests passing"
+      ]
+    },
+    "checkpoint4": {
+      "date": "Day 15",
+      "description": "Complete system",
+      "status": "pending",
+      "criteria": [
+        "E2E system working",
+        "Admin reports available",
+        "All PRs merged"
+      ]
+    }
+  },
+  "risks": {
+    "identified": [
+      {
+        "id": "RISK-001",
+        "description": "shared v0.7.0 dependency blocking 2 repos",
+        "severity": "high",
+        "mitigation": "Parallel development with mocks if needed"
+      },
+      {
+        "id": "RISK-002",
+        "description": "MongoDB-PostgreSQL integration complexity",
+        "severity": "medium",
+        "mitigation": "Early PoC, clear interfaces"
+      }
+    ],
+    "materialized": []
+  },
+  "timeline": {
+    "estimated_days": 15,
+    "actual_days": null,
+    "start_date": null,
+    "end_date": null,
+    "daily_log": {}
+  },
+  "team": {
+    "developers": [],
+    "reviewers": [],
+    "qa": []
+  },
+  "notes": [
+    "Generated by Claude Code analysis",
+    "Following PROMPT_ANALISIS_MULTI_REPO.md methodology",
+    "Critical path: shared -> api-mobile -> completion"
+  ]
+}
