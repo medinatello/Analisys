@@ -141,18 +141,30 @@ cat TASKS.md
 
 Este proyecto **NECESITA** de otros componentes del ecosistema:
 
-### 1. edugo-shared (Biblioteca Go)
-**Versión requerida:** v1.3.0+  
+### 1. edugo-infrastructure v0.1.1 (NUEVO)
+**Versión requerida:** v0.1.1  
+**Qué usar:**
+- `database/migrations/` - Migraciones SQL (materials, assessment, progress)
+- `schemas/events/` - JSON Schemas (material.uploaded, evaluation.submitted)
+- `docker/docker-compose.yml` - Servicios Docker (PostgreSQL, MongoDB, RabbitMQ)
+
+**Estado:** ✅ COMPLETADO (96%)
+
+### 2. edugo-shared v0.7.0 (FROZEN)
+**Versión requerida:** v0.7.0 (FROZEN hasta post-MVP)  
+**❌ NO USAR:** v1.3.0+ (no existen)
+
 **Módulos usados:**
-- `pkg/config` - Configuración multi-ambiente
-- `pkg/database` - Conexiones PostgreSQL/MongoDB
-- `pkg/auth` - JWT y autenticación
-- `pkg/logger` - Logging estructurado
-- `pkg/messaging` - RabbitMQ (opcional para evaluaciones)
+- `config` - Configuración multi-ambiente
+- `database` - Conexiones PostgreSQL/MongoDB
+- `auth` - JWT y autenticación
+- `logger` - Logging estructurado
+- `messaging/rabbit` - RabbitMQ con DLQ (NUEVO en v0.7.0)
+- `evaluation` - Modelos de evaluación (NUEVO en v0.7.0)
 
-**Estado:** ⚠️ Debe estar publicado ANTES de implementar este proyecto
+**Estado:** ✅ COMPLETADO - 12 módulos publicados, ~75% coverage
 
-### 2. PostgreSQL 15+
+### 3. PostgreSQL 15+
 **Uso:** Base de datos principal (intentos, usuarios, materiales)  
 **Tablas previas requeridas:**
 - `users` (autenticación)
@@ -160,18 +172,18 @@ Este proyecto **NECESITA** de otros componentes del ecosistema:
 
 **Tablas nuevas:** `assessment`, `assessment_attempt`, `assessment_attempt_answer`
 
-### 3. MongoDB 7.0+
+### 4. MongoDB 7.0+
 **Uso:** Almacenamiento de preguntas generadas por IA  
 **Colección:** `material_assessment`  
 **Escritor:** edugo-worker (proceso separado)  
 **Lector:** edugo-api-mobile (este proyecto)
 
-### 4. RabbitMQ 3.12+ (Opcional para evaluaciones MVP)
+### 5. RabbitMQ 3.12+ (Opcional para evaluaciones MVP)
 **Uso:** Comunicación asíncrona (publicar eventos)  
 **Eventos publicados:**
 - `evaluation.submitted` → Worker procesa y genera analytics
 
-### 5. edugo-worker (Proceso Separado)
+### 6. edugo-worker (Proceso Separado)
 **Responsabilidad:** Generar preguntas de evaluación con IA  
 **Flujo:** Material PDF → Worker (OpenAI) → MongoDB (`material_assessment`)  
 **Estado:** ✅ Debe estar funcionando para tener preguntas disponibles

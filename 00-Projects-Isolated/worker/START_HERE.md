@@ -147,17 +147,59 @@ cat TASKS.md
 
 Este proyecto **NECESITA** de otros componentes del ecosistema:
 
-### 1. edugo-shared (Biblioteca Go)
-**Versión requerida:** v1.3.0+  
+### 1. edugo-infrastructure v0.1.1 (NUEVO)
+**Versión requerida:** v0.1.1  
+**Qué usar:**
+- `schemas/events/material.uploaded.json` - Validar eventos que consume
+- `schemas/events/assessment.generated.json` - Validar eventos que publica
+- `schemas/events/summary.completed.json` - Validar eventos que publica
+
+**Estado:** ✅ COMPLETADO (96%)
+
+**Integración:**
+```go
+import "github.com/EduGoGroup/edugo-infrastructure/schemas"
+
+// Validar evento recibido antes de procesar
+func ConsumeMaterialEvent(msg []byte) error {
+    if err := schemas.Validate("material.uploaded", msg); err != nil {
+        logger.Error("Invalid event received", err)
+        return err // Rechazar mensaje
+    }
+    // Procesar evento válido...
+}
+
+// Validar evento antes de publicar
+func PublishAssessmentEvent(assessment Assessment) error {
+    event := buildEvent(assessment)
+    
+    if err := schemas.Validate("assessment.generated", event); err != nil {
+        return fmt.Errorf("invalid event: %w", err)
+    }
+    
+    return publisher.Publish("assessment-events", "assessment.generated", event)
+}
+```
+
+### 2. edugo-shared v0.7.0 (FROZEN)
+**Versión requerida:** v0.7.0 (FROZEN hasta post-MVP)  
+**❌ NO USAR:** v1.3.0+ (no existen)
+
 **Módulos usados:**
-- `pkg/config` - Configuración multi-ambiente
-- `pkg/database` - Conexiones PostgreSQL/MongoDB
-- `pkg/logger` - Logging estructurado
-- `pkg/messaging` - RabbitMQ consumer/publisher
+- `config` - Configuración multi-ambiente
+- `database/postgres` - Conexiones PostgreSQL
+- `database/mongodb` - Conexiones MongoDB
+- `logger` - Logging estructurado
+- `messaging/rabbit` - RabbitMQ consumer/publisher con DLQ (NUEVO en v0.7.0)
+- `evaluation` - Modelos de evaluación (NUEVO en v0.7.0)
 
-**Estado:** ⚠️ Debe estar publicado ANTES de implementar este proyecto
+**Estado:** ✅ COMPLETADO - 12 módulos publicados
 
-### 2. RabbitMQ 3.12+
+**Novedades en v0.7.0:**
+- **messaging/rabbit con DLQ:** Dead Letter Queue automático para retry
+- **evaluation module:** Modelos compartidos con api-mobile
+
+### 3. RabbitMQ 3.12+
 **Uso:** Message broker principal  
 **Exchanges:**
 - `material-events` (topic exchange)
@@ -168,14 +210,14 @@ Este proyecto **NECESITA** de otros componentes del ecosistema:
 
 **Flujo:** API publica → Worker consume → Procesa → Publica resultado
 
-### 3. PostgreSQL 15+
+### 4. PostgreSQL 15+
 **Uso:** Actualizar estado de procesamiento  
 **Tablas requeridas:**
 - `materials` (modificar campo `processing_status`)
 
 **Cambios:** Agregar columna `processing_completed_at` (timestamp)
 
-### 4. MongoDB 7.0+
+### 5. MongoDB 7.0+
 **Uso:** Almacenamiento de resúmenes y quizzes generados  
 **Colecciones:**
 - `material_summary` (resúmenes de textos)
@@ -183,14 +225,41 @@ Este proyecto **NECESITA** de otros componentes del ecosistema:
 
 **Índices:** `material_id`, `created_at`
 
-### 5. OpenAI API
-**Versión:** gpt-4-turbo o gpt-3.5-turbo  
-**Uso:** Generación de resúmenes y preguntas  
-**Cuota:** Estimada 100-200 requests/día en producción
+### 6. OpenAI API
+**Modelo recomendado:** gpt-4-turbo-preview  
+**Alternativa:** gpt-3.5-turbo (más barato, menor calidad)
 
-**Costos:** ~$0.03-0.05 por material procesado
+**Uso:** Generación de resúmenes y preguntas
 
-### 6. AWS S3 (Almacenamiento de PDFs)
+**⚠️ COSTOS ESTIMADOS POR MATERIAL:**
+
+| Componente | Tokens | Costo gpt-4-turbo | Costo gpt-3.5-turbo |
+|------------|--------|-------------------|---------------------|
+| Extracción PDF | ~5,000 (input) | $0.050 | $0.0025 |
+| Generación resumen | ~2,000 (output) | $0.060 | $0.003 |
+| Generación quiz (10 preguntas) | ~3,000 (output) | $0.090 | $0.0045 |
+| **Total por material** | ~10,000 | **~$0.20** | **~$0.01** |
+
+**Proyección mensual:**
+- 100 materiales/mes → $20 (gpt-4) o $1 (gpt-3.5)
+- 500 materiales/mes → $100 (gpt-4) o $5 (gpt-3.5)
+- 1,000 materiales/mes → $200 (gpt-4) o $10 (gpt-3.5)
+
+**Rate Limits:**
+- gpt-4-turbo: 500 RPM (requests per minute)
+- gpt-3.5-turbo: 3,500 RPM
+
+**SLA OpenAI:**
+- Uptime: 99.9%
+- P95 latency: ~18 segundos (gpt-4)
+- P95 latency: ~5 segundos (gpt-3.5)
+
+**Recomendación:**
+- **Desarrollo/Testing:** gpt-3.5-turbo (barato)
+- **Producción:** gpt-4-turbo (mejor calidad)
+- **Implementar:** Caché de resultados para evitar regenerar
+
+### 7. AWS S3 (Almacenamiento de PDFs)
 **Bucket:** `edugo-materials` (o similar)  
 **Uso:** Descargar PDFs originales para procesamiento  
 **Permisos:** ReadOnly

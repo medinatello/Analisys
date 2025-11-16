@@ -1,301 +1,387 @@
-# 📦 Documentación Aislada por Proyecto - EduGo
+# 📦 Proyectos Aislados - Ecosistema EduGo
 
-## 🎯 Concepto: Documentación Autónoma
+**Fecha:** 16 de Noviembre, 2025  
+**Versión:** 2.0.0  
+**Propósito:** Documentación autocontenida por proyecto
 
-Esta carpeta contiene **documentación completamente aislada** para cada proyecto del ecosistema EduGo. Cada subcarpeta es **100% autónoma** y contiene TODO lo necesario para ejecutar ese proyecto específico.
+---
 
-## 🔑 Principio Fundamental
+## 🎯 Filosofía de Esta Carpeta
 
-> **"Entra a una carpeta de proyecto y tendrás TODO lo necesario para ejecutarlo, sin depender de archivos externos"**
+Cada subcarpeta contiene **TODA** la documentación necesaria para implementar ese proyecto de forma **100% autónoma**, sin depender de archivos externos.
 
-## 📂 Estructura de Proyectos
+**Principio:** "Todo lo que necesitas está dentro de la carpeta del proyecto"
+
+---
+
+## 📂 Proyectos Disponibles
+
+### ✅ COMPLETADOS
+
+#### 1. shared/ (v0.7.0 FROZEN)
+
+**Estado:** 🔒 COMPLETADO Y CONGELADO  
+**Fecha:** 15 de Noviembre, 2025  
+**Versión:** v0.7.0
+
+**Contenido:**
+- 12 módulos Go publicados
+- Coverage global: ~75%
+- Política: Solo bug fixes hasta post-MVP
+- Documentación completa y autocontenida
+
+**Para copiar a repo:**
+```bash
+cp -r 00-Projects-Isolated/shared/ /path/to/edugo-shared/docs/isolated/
+```
+
+---
+
+#### 2. api-administracion/ (v0.2.0)
+
+**Estado:** ✅ COMPLETADO  
+**Fecha:** 12 de Noviembre, 2025  
+**Versión:** v0.2.0
+
+**Contenido:**
+- Sistema de jerarquía académica completo
+- 15+ endpoints REST
+- >80% test coverage
+- Documentación oficial en: `/Analisys/docs/specs/api-admin-jerarquia/`
+
+**Nota:** Esta carpeta sirve como **referencia histórica**. Documentación oficial está en ubicación indicada.
+
+---
+
+#### 3. dev-environment/ (v1.0.0)
+
+**Estado:** ✅ COMPLETADO  
+**Fecha:** 13 de Noviembre, 2025  
+**Versión:** v1.0.0
+
+**Contenido:**
+- 6 perfiles Docker
+- Scripts automatizados
+- Seeds completos
+- Documentación de uso
+
+**Para copiar a repo:**
+```bash
+cp -r 00-Projects-Isolated/dev-environment/ /path/to/edugo-dev-environment/docs/isolated/
+```
+
+---
+
+#### 4. infrastructure/ (v0.1.1)
+
+**Estado:** ✅ 96% COMPLETADO  
+**Fecha:** 16 de Noviembre, 2025  
+**Versión:** v0.1.1
+
+**Contenido:**
+- Migraciones PostgreSQL (8 tablas)
+- JSON Schemas de eventos (4 eventos)
+- Docker Compose con profiles
+- Scripts de automatización
+- Documentación completa
+
+**Pendiente:**
+- database/migrate.go (1-2h)
+- schemas/validator.go (2-3h)
+
+**Para copiar a repo:**
+```bash
+cp -r 00-Projects-Isolated/infrastructure/ /path/to/edugo-infrastructure/docs/isolated/
+```
+
+---
+
+### 🔄 EN PROGRESO
+
+#### 5. api-mobile/ (Evaluaciones)
+
+**Estado:** 🔄 EN PROGRESO (40%)  
+**Prioridad:** P0 (Crítica)
+
+**Contenido:**
+- Sistema de evaluaciones especificado
+- Dependencias actualizadas (shared v0.7.0, infrastructure v0.1.1)
+- 6 sprints documentados
+- Listo para implementación
+
+**Para copiar a repo:**
+```bash
+cp -r 00-Projects-Isolated/api-mobile/ /path/to/edugo-api-mobile/docs/isolated/
+```
+
+---
+
+### ⬜ PENDIENTES
+
+#### 6. worker/ (Procesamiento IA)
+
+**Estado:** ⬜ PENDIENTE (0%)  
+**Prioridad:** P1 (Alta)
+
+**Contenido:**
+- Procesamiento de PDFs especificado
+- **Costos de OpenAI documentados** ($0.069/material gpt-4-turbo)
+- **SLA de OpenAI documentado** (18s p95, 500 RPM)
+- Dependencias actualizadas (shared v0.7.0, infrastructure v0.1.1)
+- DLQ configurado
+- 6 sprints documentados
+
+**Para copiar a repo:**
+```bash
+cp -r 00-Projects-Isolated/worker/ /path/to/edugo-worker/docs/isolated/
+```
+
+---
+
+## 🗺️ Mapa de Dependencias
 
 ```
-00-Projects-Isolated/
-│
-├── api-mobile/           ⭐ Sistema de Evaluaciones
-│   └── [Documentación completa autónoma]
-│
-├── api-admin/            ⭐ Jerarquía Académica y Gestión
-│   └── [Documentación completa autónoma]
-│
-├── worker/               ⭐ Procesamiento IA Asíncrono
-│   └── [Documentación completa autónoma]
-│
-├── shared/               ⭐ Biblioteca Compartida Go
-│   └── [Documentación completa autónoma]
-│
-└── dev-environment/      ⭐ Infraestructura Docker
-    └── [Documentación completa autónoma]
+infrastructure v0.1.1 (base compartida)
+    ↓
+    ├─→ api-administracion v0.2.0 ✅
+    │       ↓
+    ├─→ api-mobile (en progreso)
+    │       ↓
+    └─→ worker (pendiente)
+
+shared v0.7.0 (FROZEN)
+    ↓
+    ├─→ api-administracion v0.2.0 ✅
+    ├─→ api-mobile (en progreso)
+    └─→ worker (pendiente)
 ```
+
+**Orden de implementación:**
+1. ✅ shared v0.7.0
+2. ✅ infrastructure v0.1.1
+3. ✅ api-administracion v0.2.0
+4. 🔄 api-mobile
+5. ⬜ worker
+
+---
+
+## 📊 Estado Global
+
+### Completitud por Proyecto
+
+| Proyecto | Estado | Progreso | Documentación |
+|----------|--------|----------|---------------|
+| shared | 🔒 Frozen | 100% | ✅ Completa |
+| infrastructure | ✅ Activo | 96% | ✅ Completa |
+| api-administracion | ✅ Completado | 100% | ✅ Completa |
+| dev-environment | ✅ Completado | 100% | ✅ Completa |
+| api-mobile | 🔄 En progreso | 40% | ✅ Completa |
+| worker | ⬜ Pendiente | 0% | ✅ Completa |
+
+### Métricas del Ecosistema
+
+- **Proyectos completados:** 4/6 (67%)
+- **Completitud documental:** 96%
+- **Bloqueantes críticos:** 0
+- **Desarrollo viable:** ✅ SÍ
+
+---
+
+## 📁 Estructura de Cada Proyecto
+
+Cada carpeta sigue este patrón estándar:
+
+```
+proyecto-name/
+├── START_HERE.md              ⭐ Punto de entrada - LEER PRIMERO
+├── EXECUTION_PLAN.md          Plan detallado de ejecución
+├── PROGRESS.json              Tracking de progreso
+│
+├── 01-Context/                Contexto del proyecto
+│   ├── PROJECT_OVERVIEW.md    Overview completo
+│   ├── ECOSYSTEM_CONTEXT.md   Cómo encaja en ecosistema
+│   ├── DEPENDENCIES.md        Dependencias detalladas
+│   └── TECH_STACK.md          Stack tecnológico
+│
+├── 02-Requirements/           Requisitos
+│   ├── PRD.md
+│   ├── FUNCTIONAL_SPECS.md
+│   ├── TECHNICAL_SPECS.md
+│   └── ACCEPTANCE_CRITERIA.md
+│
+├── 03-Design/                 Diseño
+│   ├── ARCHITECTURE.md
+│   ├── DATA_MODEL.md
+│   ├── API_CONTRACTS.md
+│   └── SECURITY_DESIGN.md
+│
+├── 04-Implementation/         Implementación (6 sprints)
+│   ├── Sprint-01-.../
+│   ├── Sprint-02-.../
+│   └── ...
+│
+├── 05-Testing/                Testing
+│   └── ...
+│
+└── 06-Deployment/             Deployment
+    └── ...
+```
+
+---
 
 ## 🚀 Cómo Usar Esta Documentación
 
-### Opción 1: Implementar UN Solo Proyecto
+### Para Desarrolladores
+
+**Si vas a trabajar en api-mobile:**
+1. Entra a `00-Projects-Isolated/api-mobile/`
+2. Lee `START_HERE.md`
+3. Sigue `EXECUTION_PLAN.md`
+4. Implementa sprint por sprint
+5. **NO necesitas salir de esta carpeta**
+
+**Si vas a trabajar en worker:**
+1. Entra a `00-Projects-Isolated/worker/`
+2. Lee `START_HERE.md`
+3. Revisa costos de OpenAI documentados
+4. Sigue `EXECUTION_PLAN.md`
+5. **NO necesitas salir de esta carpeta**
+
+---
+
+### Para Copiar al Repositorio Real
+
+Cuando completes la implementación, copia la documentación al repo:
 
 ```bash
-# 1. Navega al proyecto que quieres implementar
-cd 00-Projects-Isolated/api-mobile/
+# Ejemplo: api-mobile completado
+cd /path/to/edugo-api-mobile
+mkdir -p docs/isolated
+cp -r /path/to/Analisys/00-Projects-Isolated/api-mobile/* docs/isolated/
 
-# 2. Lee el START_HERE.md de ese proyecto
-cat START_HERE.md
-
-# 3. Sigue el EXECUTION_PLAN.md paso a paso
-cat EXECUTION_PLAN.md
-
-# 4. Ejecuta los sprints en orden
-cd 04-Implementation/Sprint-01/
-cat TASKS.md
-# ... ejecutar tareas ...
+# Commit en el repo del proyecto
+git add docs/isolated/
+git commit -m "docs: agregar documentación isolated autocontenida"
 ```
 
-### Opción 2: Implementar TODO el Ecosistema
+---
 
-```bash
-# Seguir orden recomendado:
+## 🔗 Relación con AnalisisEstandarizado
 
-1. cd shared/          # Primero: biblioteca compartida
-2. cd worker/          # Segundo: procesamiento asíncrono
-3. cd api-admin/       # Tercero: API administrativa
-4. cd api-mobile/      # Cuarto: API mobile
-5. cd dev-environment/ # Quinto: actualizar infraestructura
+### Diferencias
+
+**AnalisisEstandarizado/** (Vista HORIZONTAL):
+- Documentación cross-proyecto
+- Overview global del ecosistema
+- Decisiones compartidas
+- Matriz de dependencias
+
+**00-Projects-Isolated/** (Vista VERTICAL):
+- Documentación por proyecto
+- Autocontenida y completa
+- Sin referencias externas
+- Lista para copiar a cada repo
+
+### Complementariedad
+
+Ambas carpetas coexisten:
+- **Usa AnalisisEstandarizado:** Para entender el ecosistema completo
+- **Usa Projects-Isolated:** Para implementar un proyecto específico
+
+---
+
+## 📝 Versiones Canónicas
+
+### Dependencias del Ecosistema
+
+**IMPORTANTE:** Estas son las ÚNICAS versiones válidas:
+
+```go
+// go.mod de cualquier proyecto
+require (
+    github.com/EduGoGroup/edugo-shared/auth v0.7.0          // FROZEN
+    github.com/EduGoGroup/edugo-shared/logger v0.7.0        // FROZEN
+    github.com/EduGoGroup/edugo-shared/evaluation v0.7.0    // FROZEN
+    github.com/EduGoGroup/edugo-infrastructure/database v0.1.1
+    github.com/EduGoGroup/edugo-infrastructure/schemas v0.1.1
+)
 ```
 
-## 📋 Contenido de Cada Carpeta de Proyecto
+**NO usar:**
+- ❌ shared v1.3.0, v1.4.0, v1.5.0 (NO EXISTEN)
+- ❌ Ninguna otra versión que no esté listada arriba
 
-Cada carpeta de proyecto contiene:
-
-```
-proyecto/
-├── START_HERE.md                    ⭐ EMPEZAR AQUÍ - Punto de entrada
-├── EXECUTION_PLAN.md                Plan de ejecución paso a paso
-│
-├── 01-Context/                      Contexto y alcance
-│   ├── PROJECT_OVERVIEW.md          Qué es este proyecto
-│   ├── ECOSYSTEM_CONTEXT.md         Cómo encaja en el ecosistema
-│   ├── DEPENDENCIES.md              Qué necesita de otros proyectos
-│   └── TECH_STACK.md                Stack tecnológico específico
-│
-├── 02-Requirements/                 Requisitos funcionales y técnicos
-│   ├── FUNCTIONAL_SPECS.md
-│   ├── TECHNICAL_SPECS.md
-│   ├── ACCEPTANCE_CRITERIA.md
-│   └── PRD.md
-│
-├── 03-Design/                       Diseño arquitectónico
-│   ├── ARCHITECTURE.md              Arquitectura detallada
-│   ├── DATA_MODEL.md                Modelo de datos
-│   ├── API_CONTRACTS.md             Contratos de API
-│   └── SECURITY_DESIGN.md           Diseño de seguridad
-│
-├── 04-Implementation/               Implementación sprint por sprint
-│   ├── Sprint-01/
-│   │   ├── README.md
-│   │   ├── TASKS.md                 ⭐ Tareas ejecutables
-│   │   ├── DEPENDENCIES.md          Prerequisitos del sprint
-│   │   ├── VALIDATION.md            Cómo validar
-│   │   └── QUESTIONS.md             Decisiones y preguntas
-│   ├── Sprint-02/
-│   └── Sprint-0N/
-│
-├── 05-Testing/                      Estrategia de testing
-│   ├── TEST_STRATEGY.md
-│   ├── TEST_CASES.md
-│   └── COVERAGE_REPORT.md
-│
-├── 06-Deployment/                   Despliegue
-│   ├── DEPLOYMENT_GUIDE.md
-│   ├── INFRASTRUCTURE.md
-│   └── MONITORING.md
-│
-└── PROGRESS.json                    Tracking de progreso
-```
-
-## ✅ Ventajas de Esta Estructura
-
-### 1. **Aislamiento Completo**
-- ✅ Cada proyecto es independiente
-- ✅ No necesitas buscar en carpetas externas
-- ✅ Todo está en un solo lugar
-
-### 2. **Facilita Colaboración**
-- ✅ Diferentes equipos pueden trabajar en paralelo
-- ✅ Cada equipo solo necesita SU carpeta
-- ✅ Reducción de conflictos y confusión
-
-### 3. **Onboarding Rápido**
-- ✅ Nuevo developer: "Aquí está tu carpeta, ejecuta esto"
-- ✅ Sin necesidad de explorar todo el monorepo
-- ✅ Contexto claro desde el inicio
-
-### 4. **Ejecución Desatendida por IA**
-- ✅ Una IA puede tomar una carpeta y ejecutarla completa
-- ✅ Todas las decisiones están documentadas
-- ✅ Cero ambigüedad
-
-### 5. **Documentación Duplicada NO es Problema**
-- ✅ Cada proyecto tiene SU versión del contexto
-- ✅ No hay dependencias rotas
-- ✅ Updates más seguros (no rompes otros proyectos)
-
-## 🔄 Relación con Carpetas Originales
-
-Esta estructura **complementa** (no reemplaza) las carpetas originales:
-
-### Carpetas Originales
-```
-AnalisisEstandarizado/
-├── spec-01-evaluaciones/       # Spec completa (origen)
-├── spec-02-worker/             # Spec completa (origen)
-├── spec-03-api-administracion/ # Spec completa (origen)
-├── spec-04-shared/             # Spec completa (origen)
-└── spec-05-dev-environment/    # Spec completa (origen)
-```
-
-### Nueva Estructura Aislada
-```
-00-Projects-Isolated/
-├── api-mobile/      # Extracción de spec-01 + contexto necesario
-├── worker/          # Extracción de spec-02 + contexto necesario
-├── api-admin/       # Extracción de spec-03 + contexto necesario
-├── shared/          # Extracción de spec-04 + contexto necesario
-└── dev-environment/ # Extracción de spec-05 + contexto necesario
-```
-
-## 📊 Mapping: Spec → Proyecto
-
-| Spec Original | Proyecto Aislado | Contenido |
-|---------------|------------------|-----------|
-| **spec-01-evaluaciones** | `api-mobile/` | Sistema de evaluaciones completo |
-| **spec-02-worker** | `worker/` | Procesamiento IA asíncrono |
-| **spec-03-api-administracion** | `api-admin/` | Jerarquía académica y gestión |
-| **spec-04-shared** | `shared/` | Módulos compartidos Go |
-| **spec-05-dev-environment** | `dev-environment/` | Docker Compose e infraestructura |
-
-## 🎯 Casos de Uso
-
-### Caso 1: Developer Nuevo en el Equipo de Mobile
-```bash
-cd 00-Projects-Isolated/api-mobile/
-cat START_HERE.md
-# Lee TODO lo necesario sin salir de esta carpeta
-```
-
-### Caso 2: IA Implementando Worker
-```bash
-cd 00-Projects-Isolated/worker/
-# IA lee toda la carpeta y ejecuta sprints automáticamente
-# No necesita explorar archivos externos
-```
-
-### Caso 3: DevOps Configurando Infraestructura
-```bash
-cd 00-Projects-Isolated/dev-environment/
-cat EXECUTION_PLAN.md
-# Tiene TODO: scripts, docker-compose, seeds, configuración
-```
-
-### Caso 4: Tech Lead Revisando Arquitectura de API Admin
-```bash
-cd 00-Projects-Isolated/api-admin/
-cat 03-Design/ARCHITECTURE.md
-# Toda la arquitectura en un solo lugar
-```
+---
 
 ## ⚠️ Notas Importantes
 
-### 1. Documentación Duplicada es INTENCIONAL
-- ✅ Cada proyecto necesita su PROPIO contexto
-- ✅ No dependemos de archivos externos
-- ✅ Más robusto ante cambios
+### Para Agentes IA
 
-### 2. Actualizar Documentación
-Si actualizas una spec original:
-```bash
-# Actualiza TAMBIÉN la carpeta aislada correspondiente
-vim AnalisisEstandarizado/spec-01-evaluaciones/...
-# Luego sincroniza:
-vim 00-Projects-Isolated/api-mobile/...
-```
+1. **Cada carpeta es autónoma**
+   - Entra a la carpeta del proyecto
+   - Lee START_HERE.md
+   - Sigue EXECUTION_PLAN.md
+   - No salgas de la carpeta
 
-### 3. Orden de Implementación
-Aunque cada carpeta es autónoma, hay dependencias lógicas:
-1. **shared** primero (otros dependen de esta)
-2. **worker** segundo (procesamiento asíncrono)
-3. **api-admin** / **api-mobile** (pueden ir en paralelo)
-4. **dev-environment** último (integración completa)
+2. **Versiones CORRECTAS**
+   - shared: v0.7.0 (FROZEN)
+   - infrastructure: v0.1.1
+   - IGNORA cualquier otra versión mencionada
 
-Ver `EXECUTION_PLAN.md` en cada carpeta para detalles.
-
-## 🔍 Verificación de Autonomía
-
-Cada carpeta debe pasar este test:
-
-```bash
-cd proyecto/
-# ✅ ¿Tiene START_HERE.md? → Sí
-# ✅ ¿Tiene EXECUTION_PLAN.md? → Sí
-# ✅ ¿Tiene todos los sprints? → Sí
-# ✅ ¿Tiene contexto del ecosistema? → Sí
-# ✅ ¿Tiene dependencias documentadas? → Sí
-# ✅ ¿Puedo ejecutarlo sin salir de esta carpeta? → Sí
-```
-
-## 📈 Métricas de Completitud
-
-| Proyecto | Archivos | Sprints | Estado | Autonomía |
-|----------|----------|---------|--------|-----------|
-| api-mobile | ~60 | 6 | ✅ | 100% |
-| worker | ~60 | 6 | ✅ | 100% |
-| api-admin | ~60 | 6 | ✅ | 100% |
-| shared | ~40 | 4 | ✅ | 100% |
-| dev-environment | ~30 | 3 | ✅ | 100% |
-
-## 🚀 Comenzar Ahora
-
-### 1. Elige un Proyecto
-```bash
-ls -la 00-Projects-Isolated/
-```
-
-### 2. Entra y Lee START_HERE.md
-```bash
-cd 00-Projects-Isolated/[proyecto]/
-cat START_HERE.md
-```
-
-### 3. Sigue el Plan
-```bash
-cat EXECUTION_PLAN.md
-```
-
-### 4. Ejecuta Sprint por Sprint
-```bash
-cd 04-Implementation/Sprint-01/
-cat TASKS.md
-# ... ejecutar ...
-```
+3. **Estados claros**
+   - Completado = No tocar, solo referencia
+   - Frozen = Consumir, no modificar
+   - En progreso = Continuar implementación
+   - Pendiente = Iniciar cuando sea prioridad
 
 ---
 
-## 📞 Soporte
+## 📊 Información Crítica Agregada
 
-- **Pregunta sobre un proyecto específico:** Entra a su carpeta y revisa `01-Context/`
-- **Pregunta sobre dependencias:** Revisa `01-Context/DEPENDENCIES.md` del proyecto
-- **Pregunta sobre arquitectura:** Revisa `03-Design/ARCHITECTURE.md`
-- **Pregunta sobre ejecución:** Revisa `EXECUTION_PLAN.md` y `04-Implementation/`
+### Costos de OpenAI (worker/)
+
+| Operación | Tokens | Costo (gpt-4-turbo) |
+|-----------|--------|---------------------|
+| Extracción PDF | ~5,000 | $0.050 |
+| Resumen | ~2,000 | $0.060 |
+| Quiz | ~3,000 | $0.090 |
+| **Total/material** | ~10,000 | **$0.20** |
+
+**Proyecciones mensuales:**
+- 100 materiales: $20/mes
+- 500 materiales: $100/mes
+- 1,000 materiales: $200/mes
+
+### Política shared v0.7.0 (shared/)
+
+**Permitido:**
+- ✅ Bug fixes críticos (v0.7.1, v0.7.2, etc.)
+- ✅ Documentación
+- ✅ Tests
+
+**NO Permitido:**
+- ❌ Nuevas features
+- ❌ Breaking changes
+- ❌ Refactoring mayor
+
+**Razón:** Estabilidad durante desarrollo de api-mobile y worker
 
 ---
 
-**Generado con:** Claude Code  
-**Fecha:** 15 de Noviembre, 2025  
-**Metodología:** Documentación Aislada por Proyecto  
-**Objetivo:** Facilitar implementación autónoma de cada componente del ecosistema EduGo
+## 🎊 RESULTADO FINAL
+
+**6 proyectos documentados de forma autocontenida:**
+- ✅ infrastructure (NUEVO)
+- ✅ shared (actualizado a FROZEN v0.7.0)
+- ✅ api-administracion (marcado completado v0.2.0)
+- ✅ dev-environment (marcado completado v1.0.0)
+- ✅ api-mobile (actualizado con nuevas dependencias)
+- ✅ worker (actualizado con costos/SLA OpenAI)
+
+**Cada proyecto listo para copiar a su repositorio real.**
 
 ---
 
-## 🎓 Filosofía
-
-> "Un desarrollador debe poder tomar UNA carpeta de proyecto y tener TODO lo necesario para implementarlo exitosamente, sin necesidad de explorar archivos externos o hacer preguntas."
-
-**Esta es la esencia de la documentación aislada.**
+**Generado:** 16 de Noviembre, 2025  
+**Por:** Claude Code  
+**Metodología:** Documentación Aislada y Autocontenida

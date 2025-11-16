@@ -27,11 +27,96 @@
 
 ## Dependencias Críticas
 
-### 1. SHARED v1.3.0+
+### 0. edugo-infrastructure v0.1.1 (NUEVO)
+
+**¿Qué es?** Infraestructura compartida (migraciones BD, schemas eventos, Docker Compose)
+
+**⚠️ VERSIÓN CORRECTA:** v0.1.1  
+**Estado:** ✅ COMPLETADO (96%)
+
+**Qué usa api-mobile:**
+
+#### Migraciones de Base de Datos
+```bash
+# infrastructure/database/migrations/
+003_create_materials.up.sql      # Tabla materials
+004_create_assessment.up.sql     # Tablas assessment, attempt, answer
+006_create_progress.up.sql       # Tabla student_progress
+008_add_indexes.up.sql           # Índices de performance
+```
+
+#### JSON Schemas de Eventos
+```bash
+# infrastructure/schemas/events/
+material.uploaded.json           # Validar eventos que publica api-mobile
+evaluation.submitted.json        # Validar eventos que publica api-mobile
+```
+
+#### Referencia a docker-compose
+```bash
+# infrastructure/docker/docker-compose.yml
+# Puede usar directamente o copiar a dev-environment
+```
+
+**Integración:**
+```go
+// Validar eventos antes de publicar a RabbitMQ
+import "github.com/EduGoGroup/edugo-infrastructure/schemas"
+
+func PublishMaterialEvent(material Material) error {
+    event := buildEvent(material)
+    
+    // Validar contra schema (cuando validator.go esté implementado)
+    if err := schemas.Validate("material.uploaded", event); err != nil {
+        return fmt.Errorf("invalid event: %w", err)
+    }
+    
+    return publisher.Publish("material-events", "material.uploaded", event)
+}
+```
+
+---
+
+### 1. edugo-shared v0.7.0
 
 **¿Qué es?** Librería Go compartida con utilidades reutilizables
 
-**Módulos de SHARED que API Mobile necesita:**
+**⚠️ VERSIÓN CORRECTA:** v0.7.0 (FROZEN hasta post-MVP)  
+**❌ NO USAR:** v1.3.0, v1.4.0, v1.5.0 (no existen)
+
+**Módulos de shared v0.7.0 que API Mobile necesita:**
+
+#### NUEVO: evaluation Module (v0.7.0)
+```go
+// NUEVO en shared v0.7.0
+import "github.com/EduGoGroup/edugo-shared/evaluation"
+
+// Modelos de evaluación compartidos
+type Assessment struct {
+    ID          string
+    MaterialID  int64
+    Questions   []Question
+    TotalPoints int
+}
+
+type Question struct {
+    ID      string
+    Text    string
+    Type    QuestionType // MultipleChoice, TrueFalse, ShortAnswer
+    Options []Option
+    Points  int
+}
+
+// Usar en api-mobile
+assessment := evaluation.Assessment{
+    MaterialID: 42,
+    Questions: []evaluation.Question{...},
+}
+```
+
+**Beneficio:** Consistencia entre api-mobile y worker en modelos de evaluación
+
+---
 
 #### a) Logger Module
 ```go
