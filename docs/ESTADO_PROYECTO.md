@@ -1,7 +1,8 @@
 # 📊 Estado Actual del Proyecto EduGo
 
-**Última actualización:** 14 de Noviembre, 2025  
-**Repositorio:** Analisys (Documentación y gestión)
+**Última actualización:** 16 de Noviembre, 2025  
+**Repositorio:** Analisys (Documentación y gestión)  
+**Estado:** ✅ Todos los bloqueantes cross-proyecto RESUELTOS
 
 ---
 
@@ -15,19 +16,21 @@ Este repositorio es el **centro de documentación y análisis** del ecosistema E
 En Noviembre 2025 se creó un [Plan de Implementación](roadmap/PLAN_IMPLEMENTACION.md) para completar funcionalidades faltantes en 5 proyectos:
 
 ```
-Progreso Global del Plan:  33%  ██████░░░░░░░░░░░░
+Progreso Global del Plan:  50%  █████████████░░░░░░░
 ```
 
 | Proyecto | Prioridad | Estado | Progreso |
 |----------|-----------|--------|----------|
 | **shared-testcontainers** | 🟣 Fuera de plan | ✅ Completado | 100% |
+| **shared v0.7.0 FROZEN** | 🟣 Crítico | ✅ Completado | 100% |
+| **infrastructure** | 🟣 Crítico cross-proyecto | ✅ Completado | 100% |
 | **api-administracion (jerarquía)** | 🔴 P0 | ✅ Completado | 100% |
 | **dev-environment** | 🟡 P1 | ✅ Completado | 100% |
 | **api-mobile (evaluaciones)** | 🔴 P0 | ⬜ Pendiente | 0% |
 | **worker** | 🟡 P1 | ⬜ Pendiente | 0% |
-| **shared** | 🟢 P2 | ⬜ Pendiente | 0% |
+| **shared (post-MVP)** | 🟢 P2 | ⬜ Pendiente | 0% |
 
-**Nota:** Se completaron 3 proyectos: 1 del plan original (api-administracion) + 2 adicionales (testcontainers y dev-environment).
+**Nota:** Se completaron 5 proyectos críticos, desbloqueando desarrollo de api-mobile y worker.
 
 ---
 
@@ -68,7 +71,117 @@ Creación de módulo `shared/testing` reutilizable con testcontainers para Postg
 
 ---
 
-### 2. dev-environment - Perfiles y Seeds ✅
+### 2. edugo-shared v0.7.0 - Biblioteca Congelada ✅
+
+**Fecha finalización:** 15 de Noviembre, 2025  
+**Epic:** Consolidación y Congelamiento de Shared  
+**Documentación:** `/repos-separados/edugo-shared/`
+
+#### Resumen
+Consolidación completa de edugo-shared con 12 módulos, creación del módulo evaluation, implementación de DLQ en messaging/rabbit, y congelamiento en v0.7.0 hasta post-MVP.
+
+#### Resultados
+- ✅ **Versión congelada:** v0.7.0 (12 módulos)
+- ✅ **Módulo nuevo:** evaluation (100% coverage)
+- ✅ **Feature nueva:** Dead Letter Queue en messaging/rabbit
+- ✅ **Coverage mejorado:** ~60% → ~75% global
+- ✅ **Tests:** 0 failing en todos los módulos
+- ✅ **Documentación:** CHANGELOG.md, FROZEN.md, PLAN/ completo
+
+#### Módulos en v0.7.0
+
+| Módulo | Coverage | Descripción |
+|--------|----------|-------------|
+| auth | 87.3% | JWT Authentication |
+| logger | 95.8% | Logging con Zap |
+| common | >94% | Errors, Types, Validator |
+| config | 82.9% | Configuration loader |
+| bootstrap | 31.9% | Dependency injection |
+| lifecycle | 91.8% | Application lifecycle |
+| middleware/gin | 98.5% | Gin middleware |
+| messaging/rabbit | 3.2% | RabbitMQ + DLQ |
+| database/postgres | 58.8% | PostgreSQL utilities |
+| database/mongodb | 54.5% | MongoDB utilities |
+| testing | 59.0% | Testing utilities |
+| evaluation | 100% | Assessment models |
+
+#### Política de Congelamiento
+- 🔒 **NO nuevas features** hasta post-MVP
+- ✅ **Solo bug fixes críticos** (v0.7.1, v0.7.2, etc.)
+- ✅ **Documentación** siempre permitida
+
+#### Documentación
+- **[FROZEN.md](../../repos-separados/edugo-shared/FROZEN.md)** - Política de congelamiento
+- **[CHANGELOG.md](../../repos-separados/edugo-shared/CHANGELOG.md)** - Historial completo
+- **[PLAN/](../../repos-separados/edugo-shared/PLAN/)** - Plan de trabajo ejecutado
+
+---
+
+### 3. edugo-infrastructure - Infraestructura Compartida ✅
+
+**Fecha finalización:** 16 de Noviembre, 2025  
+**Epic:** Centralización de Infraestructura  
+**Repositorio:** https://github.com/EduGoGroup/edugo-infrastructure  
+**Documentación:** `/repos-separados/edugo-infrastructure/`
+
+#### Resumen
+Creación desde cero de repositorio que centraliza migraciones de BD, Docker Compose, JSON Schemas de eventos y scripts de desarrollo.
+
+#### Resultados
+- ✅ **Repositorio creado:** edugo-infrastructure v0.1.1
+- ✅ **3 módulos Go:** database, docker, schemas
+- ✅ **8 migraciones SQL:** users, schools, materials, assessment, etc.
+- ✅ **4 JSON Schemas:** validación de eventos RabbitMQ
+- ✅ **Docker Compose:** con 4 perfiles (core, messaging, cache, tools)
+- ✅ **CI/CD completo:** 3 workflows funcionando
+- ✅ **PRs mergeados:** 4 PRs con CI pasando
+- ✅ **Releases:** v0.1.0, v0.1.1 publicados
+
+#### Módulos Implementados
+
+**database/ (v0.1.1)**
+- 8 migraciones PostgreSQL (UP + DOWN)
+- CLI migrate.go (comandos: up, down, status, create)
+- TABLE_OWNERSHIP.md (ownership claro)
+
+**docker/ (v0.1.1)**
+- docker-compose.yml con profiles
+- Servicios: PostgreSQL, MongoDB, RabbitMQ, Redis, PgAdmin, Mongo Express
+- Healthchecks y networking configurado
+
+**schemas/ (v0.1.1)**
+- 4 JSON Schemas de eventos (material.uploaded, assessment.generated, etc.)
+- validator.go (validación automática)
+- Tests con ejemplos de uso
+
+#### Problemas Resueltos
+
+Este proyecto resolvió **4 problemas críticos** del análisis consolidado:
+- ✅ **P0-2:** Ownership de tablas compartidas
+- ✅ **P0-3:** Contratos de eventos RabbitMQ
+- ✅ **P0-4:** docker-compose.yml no existía
+- ✅ **P1-1:** Sincronización PostgreSQL ↔ MongoDB
+
+#### Impacto
+- **Completitud:** 88% → 96% (+8%)
+- **Proyectos desbloqueados:** 4/5 → 5/5 (100%)
+- **Setup de desarrollo:** 1-2 horas → 5 minutos
+
+#### Documentación
+- **[README.md](../../repos-separados/edugo-infrastructure/README.md)** - Documentación principal
+- **[EVENT_CONTRACTS.md](../../repos-separados/edugo-infrastructure/EVENT_CONTRACTS.md)** - Contratos de eventos
+- **[INTEGRATION_GUIDE.md](../../repos-separados/edugo-infrastructure/INTEGRATION_GUIDE.md)** - Guía de integración
+- **[TABLE_OWNERSHIP.md](../../repos-separados/edugo-infrastructure/database/TABLE_OWNERSHIP.md)** - Ownership de tablas
+
+#### Uso
+```bash
+cd edugo-infrastructure
+make dev-setup  # Setup completo en 5 minutos
+```
+
+---
+
+### 4. dev-environment - Perfiles y Seeds ✅
 
 **Fecha finalización:** 13 de Noviembre, 2025  
 **Repositorio:** edugo-dev-environment  
