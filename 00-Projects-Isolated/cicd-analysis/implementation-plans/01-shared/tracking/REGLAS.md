@@ -44,12 +44,12 @@
 #### Paso 1.1: Análisis Pre-Sprint
 ```bash
 # Leer y entender el sprint
-cat docs/cicd/SPRINT-X-TASKS.md
+cat ../sprints/SPRINT-X-TASKS.md
 
 # Leer documentación del proyecto
-cat README.md
-cat docs/cicd/README.md
-cat docs/cicd/INDEX.md
+cat ../README.md
+cat ../docs/QUICK-START.md
+cat ../INDEX.md
 ```
 
 #### Paso 1.2: Preparación de Rama
@@ -62,13 +62,13 @@ git pull origin dev
 git checkout -b sprint-X-$(date +%Y-%m-%d)
 
 # Registrar inicio
-echo "Sprint X iniciado: $(date)" >> .sprint-tracking/logs/SPRINT-X-LOG.md
+echo "Sprint X iniciado: $(date)" >> logs/SPRINT-X-LOG.md
 ```
 
 #### Paso 1.3: Ejecución Tarea por Tarea
 **Por cada tarea:**
 
-1. Leer la tarea en `docs/cicd/SPRINT-X-TASKS.md`
+1. Leer la tarea en `../sprints/SPRINT-X-TASKS.md`
 2. Marcar como "🔄 En progreso" en `SPRINT-STATUS.md`
 3. Ejecutar la tarea
 4. **SI** requiere dependencia externa (Docker, BD, etc.):
@@ -104,7 +104,7 @@ echo "Sprint X iniciado: $(date)" >> .sprint-tracking/logs/SPRINT-X-LOG.md
 
 #### Paso 1.5: Cierre de Fase 1
 ```markdown
-# Crear archivo .sprint-tracking/FASE-1-COMPLETE.md
+# Crear archivo ./FASE-1-COMPLETE.md
 - Lista de tareas completadas
 - Lista de tareas con stubs (para Fase 2)
 - Comentarios para Fase 2
@@ -120,13 +120,13 @@ echo "Sprint X iniciado: $(date)" >> .sprint-tracking/logs/SPRINT-X-LOG.md
 #### Paso 2.1: Análisis de Stubs
 ```bash
 # Leer documentación de Fase 1
-cat .sprint-tracking/FASE-1-COMPLETE.md
+cat ./FASE-1-COMPLETE.md
 
 # Listar todos los stubs
-grep -r "✅ (stub)" .sprint-tracking/SPRINT-STATUS.md
+grep -r "✅ (stub)" ./SPRINT-STATUS.md
 
 # Leer cada decisión de bloqueo
-ls .sprint-tracking/decisions/TASK-*-BLOCKED.md
+ls ./decisions/TASK-*-BLOCKED.md
 ```
 
 #### Paso 2.2: Verificar Disponibilidad de Recursos
@@ -206,7 +206,7 @@ docker-compose ps rabbitmq
 
 #### Paso 2.6: Cierre de Fase 2
 ```markdown
-# Crear archivo .sprint-tracking/FASE-2-COMPLETE.md
+# Crear archivo ./FASE-2-COMPLETE.md
 - Stubs resueltos: [X/Y]
 - Stubs permanentes: [lista con razón]
 - Errores encontrados: [X]
@@ -225,24 +225,24 @@ docker-compose ps rabbitmq
 ```bash
 # Compilación
 go build ./...
-echo "Build status: $?" >> .sprint-tracking/FASE-3-VALIDATION.md
+echo "Build status: $?" >> ./FASE-3-VALIDATION.md
 
 # Tests unitarios
 go test ./... -v
-echo "Unit tests status: $?" >> .sprint-tracking/FASE-3-VALIDATION.md
+echo "Unit tests status: $?" >> ./FASE-3-VALIDATION.md
 
 # Tests de integración (si existen)
 go test ./... -tags=integration -v
-echo "Integration tests status: $?" >> .sprint-tracking/FASE-3-VALIDATION.md
+echo "Integration tests status: $?" >> ./FASE-3-VALIDATION.md
 
 # Linter
 golangci-lint run ./...
-echo "Lint status: $?" >> .sprint-tracking/FASE-3-VALIDATION.md
+echo "Lint status: $?" >> ./FASE-3-VALIDATION.md
 
 # Coverage
 go test ./... -coverprofile=coverage.out
 go tool cover -func=coverage.out
-echo "Coverage: $(go tool cover -func=coverage.out | grep total | awk '{print $3}')" >> .sprint-tracking/FASE-3-VALIDATION.md
+echo "Coverage: $(go tool cover -func=coverage.out | grep total | awk '{print $3}')" >> ./FASE-3-VALIDATION.md
 ```
 
 **SI algo falla:**
@@ -260,7 +260,7 @@ gh pr create \
   --base dev \
   --head sprint-X-$(date +%Y-%m-%d) \
   --title "Sprint X: [Título del sprint]" \
-  --body "$(cat .sprint-tracking/PR-DESCRIPTION.md)"
+  --body "$(cat ./PR-DESCRIPTION.md)"
 ```
 
 #### Paso 3.3: Monitorear CI/CD (Máximo 5 minutos)
@@ -295,7 +295,7 @@ done
 #### Paso 3.4: Revisar Comentarios de Copilot
 ```bash
 # Obtener comentarios del PR
-gh pr view --comments > .sprint-tracking/reviews/COPILOT-COMMENTS.md
+gh pr view --comments > ./reviews/COPILOT-COMMENTS.md
 
 # Analizar comentarios
 # Clasificar en:
@@ -314,13 +314,13 @@ gh pr view --comments > .sprint-tracking/reviews/COPILOT-COMMENTS.md
 
 2. **TRADUCCIONES (español → inglés):**
    - ❌ **DESCARTAR** (no resolver)
-   - Documentar en `.sprint-tracking/reviews/DISCARDED-COMMENTS.md`
+   - Documentar en `./reviews/DISCARDED-COMMENTS.md`
 
 3. **MEJORAS:**
    - Estimar puntos Fibonacci (1, 2, 3, 5, 8, 13...)
    - **SI** <= 3 puntos: Resolver inmediatamente
    - **SI** > 3 puntos:
-     - Documentar en `.sprint-tracking/decisions/MEJORA-FUTURA.md`
+     - Documentar en `./decisions/MEJORA-FUTURA.md`
      - **DETENER**
      - Informar al usuario con opciones:
        - a) Resolver ahora (ampliar sprint)
@@ -328,7 +328,7 @@ gh pr view --comments > .sprint-tracking/reviews/COPILOT-COMMENTS.md
        - c) Ignorar
 
 4. **NO PROCEDE:**
-   - Documentar en `.sprint-tracking/reviews/DISCARDED-COMMENTS.md`
+   - Documentar en `./reviews/DISCARDED-COMMENTS.md`
    - **SI** consideras relevante: Informar al usuario y DETENER
    - **SI** NO es relevante: Informar al usuario pero CONTINUAR
 
@@ -390,7 +390,7 @@ gh pr create \
   --base main \
   --head dev \
   --title "Release: Sprint X - [Título]" \
-  --body "$(cat .sprint-tracking/RELEASE-NOTES.md)"
+  --body "$(cat ./RELEASE-NOTES.md)"
 
 # Repetir proceso de monitoreo (Paso 3.3)
 # Repetir revisión de comentarios (Paso 3.4)
@@ -417,7 +417,7 @@ git push origin $NEW_VERSION
 # Crear release en GitHub
 gh release create $NEW_VERSION \
   --title "Release $NEW_VERSION" \
-  --notes "$(cat .sprint-tracking/RELEASE-NOTES.md)"
+  --notes "$(cat ./RELEASE-NOTES.md)"
 ```
 
 #### Paso 3.9: Sincronización Final
@@ -452,7 +452,7 @@ echo "✅ Sprint X completado exitosamente"
 
 #### Paso 3.10: Cierre de Sprint
 ```markdown
-# Crear archivo .sprint-tracking/SPRINT-X-COMPLETE.md
+# Crear archivo ./SPRINT-X-COMPLETE.md
 - Fecha inicio: [YYYY-MM-DD]
 - Fecha fin: [YYYY-MM-DD]
 - Duración: [X horas/días]
@@ -471,7 +471,7 @@ echo "✅ Sprint X completado exitosamente"
 ## 📁 Estructura de Archivos de Seguimiento
 
 ```
-.sprint-tracking/
+./
 ├── REGLAS.md                         ← Este archivo
 ├── SPRINT-STATUS.md                  ← Estado actual de tareas
 ├── FASE-1-COMPLETE.md               ← Cierre de Fase 1
