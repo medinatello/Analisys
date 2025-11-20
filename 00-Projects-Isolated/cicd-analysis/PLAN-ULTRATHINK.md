@@ -10,76 +10,179 @@
 
 ### Grafo de Dependencias del Ecosistema
 
+**IMPORTANTE:** Este diagrama muestra dependencias **de código Go (go get)** Y **de infraestructura/runtime**.
+
 ```
+FUNDAMENTOS (SECUENCIAL - OBLIGATORIO)
+═══════════════════════════════════════
+
 ┌─────────────────────┐
-│  edugo-shared       │ ← BASE (no depende de nadie)
+│  edugo-shared       │ ← Código compartido (logger, db, auth, etc.)
 │  (Tipo B)           │
 └──────────┬──────────┘
            │ go get
-           ├───────────────────────────────┐
-           │                               │
-           ▼                               ▼
-┌──────────────────┐          ┌──────────────────┐
-│ edugo-            │          │ edugo-api-       │
-│ infrastructure    │          │ mobile           │
-│ (Tipo B)          │          │ (Tipo A)         │
-└─────────┬─────────┘          └────────┬─────────┘
-          │ go get                       │
-          └──────────┬───────────────────┘
-                     │
-                     ▼
-          ┌──────────────────────┐
-          │ edugo-api-           │
-          │ administracion       │
-          │ (Tipo A)             │
-          └──────────┬───────────┘
-                     │
-                     ▼
-          ┌──────────────────────┐
-          │ edugo-worker         │
-          │ (Tipo A)             │
-          └──────────────────────┘
+           │
+           ▼
+┌─────────────────────┐
+│ edugo-infrastructure│ ← Esquema BD, migraciones, contratos RabbitMQ
+│ (Tipo B)            │   + Helpers de testing
+└──────────┬──────────┘
+           │
+           │ TODAS las aplicaciones dependen de infrastructure:
+           │ • Migraciones PostgreSQL (esquema BD)
+           │ • Migraciones MongoDB
+           │ • Contratos de eventos RabbitMQ
+           │ • Helpers de testing (postgres/testing)
+           │
+           ├─────────────┬─────────────┬─────────────┐
+           │             │             │             │
+           ▼             ▼             ▼             ▼
+    ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+    │api-mobile│  │api-admin │  │  worker  │  │ dev-env  │
+    │ (Tipo A) │  │ (Tipo A) │  │ (Tipo A) │  │ (Tipo C) │
+    └──────────┘  └──────────┘  └──────────┘  └──────────┘
 
-┌──────────────────────┐
-│ edugo-dev-           │ ← INDEPENDIENTE (utilidad)
-│ environment          │
-│ (Tipo C)             │
-└──────────────────────┘
+    ↑ ESTOS 4 PUEDEN IR EN PARALELO (no dependen entre sí)
 ```
+
+### ⚠️ Clarificación Crítica sobre infrastructure
+
+**edugo-infrastructure NO es solo código Go**, contiene:
+
+1. **🐘 postgres/** - Migraciones de PostgreSQL (esquema completo de BD)
+2. **🍃 mongodb/** - Migraciones de MongoDB
+3. **📨 messaging/** - Schemas y validación de eventos RabbitMQ
+4. **🧪 postgres/testing** - Helpers para tests de integración
+5. **🐳 docker/** - Docker Compose con perfiles
+6. **🛠️ scripts/** - Scripts de automatización
+
+**¿Por qué las APIs dependen de infrastructure?**
+
+- ✅ **Esquema de BD sincronizado** - Todos usan las mismas migraciones
+- ✅ **Contratos de eventos validados** - RabbitMQ con schemas consistentes
+- ✅ **Tests de integración funcionales** - Imports de `postgres/testing`
+- ✅ **Sin discrepancias** - Todo el ecosistema con misma estructura
+
+**Implementar APIs ANTES de infrastructure causaría:**
+- ❌ Migraciones desactualizadas
+- ❌ Tests de integración rotos
+- ❌ Contratos de eventos inconsistentes
+- ❌ **DISCREPANCIA entre proyectos**
 
 ### Orden de Implementación Óptimo
 
-**Por Dependencias:**
-1. **edugo-shared** (base - otros dependen de él)
-2. **edugo-infrastructure** (base - otros lo usan)
-3. **edugo-api-mobile** (consume shared + infra)
-4. **edugo-api-administracion** (consume shared + infra)
-5. **edugo-worker** (consume shared + infra)
-6. **edugo-dev-environment** (independiente - último)
+**⚠️ CRÍTICO: Respetar este orden para evitar discrepancias**
+
+**Fase 1 - FUNDAMENTOS (SECUENCIAL):**
+1. **edugo-shared** → Código compartido (logger, db, auth)
+2. **edugo-infrastructure** → Esquema BD + contratos + testing
+   
+   ✅ **Validación obligatoria antes de continuar:**
+   - Migraciones PostgreSQL aplicadas correctamente
+   - Migraciones MongoDB aplicadas correctamente
+   - Schemas de RabbitMQ validados
+   - Tests de `postgres/testing` pasando
+
+**Fase 2 - APLICACIONES (PARALELO - 4 proyectos simultáneos):**
+3. **edugo-api-mobile** (consume shared + infrastructure)
+4. **edugo-api-administracion** (consume shared + infrastructure)
+5. **edugo-worker** (consume shared + infrastructure)
+6. **edugo-dev-environment** (independiente pero útil tenerlo actualizado)
 
 ---
 
 ## 📅 División por Sprints
 
-### Sprint 1: Fundamentos y Base (Semana 1)
-**Objetivo:** Estabilizar y preparar librerías base  
+### Sprint 1: Fundamentos y Base (Semana 1) - SECUENCIAL
+**Objetivo:** Estabilizar y preparar librerías base e infraestructura  
 **Proyectos:** shared, infrastructure  
-**Duración:** 5 días
+**Duración:** 5 días  
+**Modo:** **SECUENCIAL** (uno después del otro)
 
-### Sprint 2: APIs Principales (Semana 2)
+**Orden de ejecución:**
+1. **Día 1-2:** edugo-shared (Sprint 1)
+2. **Día 3-5:** edugo-infrastructure (Sprint 1)
+
+**✅ Criterios de validación antes de continuar:**
+- [ ] edugo-shared: Tests pasando + release creado
+- [ ] edugo-infrastructure: Migraciones PostgreSQL/MongoDB aplicadas
+- [ ] edugo-infrastructure: Schemas RabbitMQ validados
+- [ ] edugo-infrastructure: Tests de `postgres/testing` pasando
+
+---
+
+### Sprint 2: APIs Principales (Semana 2) - PARALELO
 **Objetivo:** Migrar APIs con workflows optimizados  
 **Proyectos:** api-mobile, api-administracion  
-**Duración:** 5 días
+**Duración:** 5 días  
+**Modo:** **PARALELO** (ambos proyectos simultáneamente)
 
-### Sprint 3: Worker y Utilidades (Semana 3)
+**Pre-requisito:** ✅ Sprint 1 completado y validado
+
+---
+
+### Sprint 3: Worker y Utilidades (Semana 3) - PARALELO
 **Objetivo:** Completar ecosistema  
 **Proyectos:** worker, dev-environment  
-**Duración:** 3 días
+**Duración:** 3 días  
+**Modo:** **PARALELO** (ambos proyectos simultáneamente)
+
+**Pre-requisito:** ✅ Sprint 1 completado y validado
+
+**Nota:** Este sprint puede ejecutarse en paralelo con Sprint 2 si se desea máxima velocidad.
+
+---
 
 ### Sprint 4: Cross-Project - Workflows Reusables (Semana 4)
-**Objetivo:** Centralizar y eliminar duplicación  
-**Proyectos:** TODOS (usando infrastructure como base)  
+**Objetivo:** Centralizar y eliminar duplicación usando workflows reusables  
+**Proyectos:** TODOS (usando infrastructure como base para workflows compartidos)  
 **Duración:** 5 días
+
+**Pre-requisito:** ✅ Sprints 1, 2 y 3 completados
+
+---
+
+## 🚀 Estrategia de Implementación Recomendada
+
+### Opción 1: Máxima Velocidad (3-4 días)
+
+```
+DÍA 1-2: FASE 1 - Fundamentos (Secuencial)
+├─ shared (Sprint 1)
+└─ infrastructure (Sprint 1)
+   └─ ✅ Validar: Migraciones + Schemas + Tests
+
+DÍA 3-4: FASE 2 - Aplicaciones (4 en PARALELO)
+├─ api-mobile (Sprint 2)
+├─ api-administracion (Sprint 2)
+├─ worker (Sprint 3)
+└─ dev-environment (Sprint 3)
+   └─ ✅ Todos arrancan simultáneamente (máximo paralelismo)
+
+SEMANA 4: FASE 3 - Workflows Reusables
+└─ Todos los proyectos (Sprint 4)
+```
+
+### Opción 2: Controlada (5-6 días)
+
+```
+DÍA 1-2: FASE 1 - Fundamentos (Secuencial)
+├─ shared (Sprint 1)
+└─ infrastructure (Sprint 1)
+
+DÍA 3-4: FASE 2 - APIs (2 en PARALELO)
+├─ api-mobile (Sprint 2)
+└─ api-administracion (Sprint 2)
+
+DÍA 5-6: FASE 3 - Worker y Utilidades (2 en PARALELO)
+├─ worker (Sprint 3)
+└─ dev-environment (Sprint 3)
+
+SEMANA 4: FASE 4 - Workflows Reusables
+└─ Todos los proyectos (Sprint 4)
+```
+
+**Recomendación:** Usar **Opción 1** para máxima eficiencia, ya que todos los proyectos de aplicación son independientes entre sí (solo dependen de shared + infrastructure).
 
 ---
 
