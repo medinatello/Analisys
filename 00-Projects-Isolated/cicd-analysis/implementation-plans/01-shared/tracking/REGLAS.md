@@ -4,6 +4,13 @@
 **Fecha:** 20 de Noviembre, 2025  
 **Propósito:** Reglas y procedimientos para ejecutar sprints de manera consistente y controlada
 
+⚠️ **UBICACIÓN DE ESTE ARCHIVO:**
+```
+📍 Ruta: docs/cicd/tracking/REGLAS.md
+📍 Carpeta base: docs/cicd/
+📍 Todas las rutas son relativas a: docs/cicd/
+```
+
 ---
 
 ## 🎯 Principios Fundamentales
@@ -33,6 +40,20 @@
 ### 5. Documentación de Errores
 - ✅ Cada error que toma >10 min resolver se documenta en `errors/ERROR-YYYY-MM-DD-HH-MM.md`
 - ✅ Incluir: síntoma, causa raíz, intentos de solución, solución final
+
+### 6. Sistema de Migajas (Breadcrumbs)
+- ✅ **Actualizar migajas después de CADA tarea completada**
+- ✅ Actualizar `SPRINT-STATUS.md` en tiempo real
+- ✅ Actualizar indicadores de fase cuando cambies de fase
+- ✅ "No sirve decir que debes seguir si te comes el pan en el camino"
+
+**Migajas a mantener:**
+- Sprint activo
+- Fase actual (1, 2, o 3)
+- Progreso de la fase (X/Y tareas)
+- Próxima tarea pendiente
+- Tareas con stub (para Fase 2)
+- Timestamp de última actualización
 
 ---
 
@@ -465,6 +486,156 @@ echo "✅ Sprint X completado exitosamente"
 - Release creado: [vX.Y.Z] o [N/A]
 - Comentarios Copilot: [X críticos, Y mejoras, Z descartados]
 ```
+
+---
+
+## 🍞 Sistema de Migajas: Actualización en Tiempo Real
+
+### Concepto
+"No sirve decir que debes seguir si te comes el pan en el camino"
+
+Las migajas son marcadores que Claude/programador deja después de CADA acción para saber exactamente dónde está.
+
+### Migajas Obligatorias
+
+#### 1. Al Completar una Tarea
+**Archivo:** `SPRINT-STATUS.md`
+
+```markdown
+- Tarea X.Y: ✅ [Nombre de tarea] (20 Nov 18:30)
+```
+
+Si usó stub:
+```markdown
+- Tarea X.Y: ✅ (stub) [Nombre] (20 Nov 18:30) → MongoDB no disponible
+```
+
+#### 2. Al Cambiar de Fase
+**Archivo:** `SPRINT-STATUS.md`
+
+Agregar al final de cada fase:
+```markdown
+### Fase 1: Implementación
+Estado: ✅ COMPLETADA (20 Nov 19:00)
+- Tareas: 15/15
+- Con stub: 2
+- Tiempo total: 8 horas
+```
+
+Actualizar fase nueva:
+```markdown
+### Fase 2: Resolución de Stubs
+Estado: 🔄 EN PROGRESO (20 Nov 19:05)
+- Tareas: 0/2
+- Iniciada: 20 Nov 19:05
+```
+
+#### 3. Al Terminar Sesión
+**Archivo:** `logs/SESSION-YYYYMMDD-HHMM.md`
+
+```markdown
+# Sesión: 20 Nov 2025, 15:00-18:30
+
+## Sprint Activo
+- Sprint: SPRINT-1
+- Fase: Fase 1 - Implementación
+
+## Tareas Completadas Esta Sesión
+- Tarea 2.3: Validar coverage (45 min)
+- Tarea 2.4: Documentar workflows (30 min)
+- Tarea 2.5: Revisar documentación (20 min)
+
+## Migajas Dejadas
+- Próxima tarea: 3.1 - Pre-commit hooks
+- Fase actual: Fase 1 (progreso: 53%)
+- Branch: feature/sprint-1-20251120
+- Último commit: feat(sprint-1): completar tarea 2.5
+
+## Decisiones
+- Ninguna
+
+## Errores
+- Ninguno
+
+## Notas para Próxima Sesión
+- Continuar con Tarea 3.1
+- Pre-commit hooks requiere ~60-90 min
+- No hay bloqueadores conocidos
+```
+
+#### 4. Al Encontrar Bloqueo
+**Archivo:** `decisions/TASK-X.Y-BLOCKED.md`
+
+```markdown
+# Decisión: Tarea X.Y Bloqueada
+
+**Fecha:** 20 Nov 2025, 18:45  
+**Tarea:** X.Y - [Nombre]  
+**Razón:** MongoDB no está corriendo
+
+## Contexto
+[Explicar por qué se necesita MongoDB]
+
+## Decisión
+Usar stub con mgo-mock para continuar.
+
+## Implementación del Stub
+\`\`\`go
+// Código del stub
+\`\`\`
+
+## Para Fase 2
+- Verificar MongoDB corriendo
+- Reemplazar stub con conexión real
+- Tests de integración
+
+## Migaja
+- Marcada como: ✅ (stub)
+- Pendiente para Fase 2
+```
+
+### Validación de Migajas
+
+#### Al Iniciar Sesión, Claude DEBE verificar:
+
+```bash
+# 1. ¿Cuál es el sprint activo?
+grep "Sprint activo" SPRINT-STATUS.md
+
+# 2. ¿En qué fase estoy?
+grep "Fase.*EN PROGRESO\|EN CURSO" SPRINT-STATUS.md
+
+# 3. ¿Cuál es la próxima tarea?
+grep "⏳\|🔄" SPRINT-STATUS.md | head -1
+
+# 4. ¿Hay logs de sesión anterior?
+ls -lt logs/ | head -1
+
+# 5. ¿Hay bloqueadores?
+ls -1 decisions/TASK-*-BLOCKED.md 2>/dev/null
+```
+
+#### Si las migajas están desactualizadas o confusas:
+
+1. **Revisar último commit:**
+   ```bash
+   git log -1 --oneline
+   ```
+
+2. **Revisar última sesión:**
+   ```bash
+   cat logs/SESSION-*.md | tail -50
+   ```
+
+3. **Reconstruir estado:**
+   - Contar tareas ✅ en SPRINT-STATUS.md
+   - Verificar branch activo
+   - Preguntar al usuario si hay dudas
+
+4. **Actualizar migajas:**
+   - Marcar estado actual en SPRINT-STATUS.md
+   - Crear log de reconstrucción
+   - Continuar
 
 ---
 

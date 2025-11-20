@@ -3,8 +3,17 @@
 **Proyecto:** edugo-shared  
 **Tipo:** Librería Go Modular (Tipo B)  
 **Fecha:** 19 de Noviembre, 2025  
-**Versión:** 1.0  
+**Versión:** 2.0  
 **Estado:** Listo para Ejecución
+
+⚠️ **UBICACIÓN DE ESTE DOCUMENTO:**
+```
+📍 Ruta: docs/cicd/README.md (dentro del repo edugo-shared)
+📍 Carpeta base: docs/cicd/
+📍 Todas las rutas son relativas a: docs/cicd/
+⚠️ NO confundir con: /edugo-shared/README.md (README principal del proyecto)
+⚠️ NO uses archivos fuera de docs/cicd/ (pueden ser versiones viejas)
+```
 
 ---
 

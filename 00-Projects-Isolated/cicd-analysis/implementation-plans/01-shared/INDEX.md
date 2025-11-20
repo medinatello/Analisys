@@ -2,18 +2,30 @@
 
 **🎯 Punto de Entrada Principal**
 
+⚠️ **UBICACIÓN DE ESTE ARCHIVO:**
+```
+📍 Ruta: docs/cicd/INDEX.md (dentro del repo edugo-shared)
+📍 Todas las rutas son relativas a: docs/cicd/
+⚠️ NO uses archivos fuera de docs/cicd/ (pueden ser viejos)
+```
+
 ---
 
 ## 🗺️ Navegación Rápida
 
-### Para Empezar
-1. **[QUICK-START.md](./docs/QUICK-START.md)** ⭐ - Lee esto primero (5-10 min)
-2. **[README.md](./README.md)** - Contexto completo del proyecto (15-20 min)
-3. **[RESUMEN.md](./docs/RESUMEN.md)** - Estadísticas y overview (10-15 min)
+### ⭐ Para Ejecutar Sprints (RECOMENDADO)
+1. **[PROMPTS.md](./PROMPTS.md)** ⭐⭐⭐ - Prompts estándar para Fase 1, 2, 3 (NUEVO)
+2. **[tracking/SPRINT-STATUS.md](./tracking/SPRINT-STATUS.md)** - Estado actual del sprint
+3. **[START-HERE.md](./START-HERE.md)** - Punto de entrada rápido
 
-### Para Implementar
-4. **[SPRINT-1-TASKS.md](./sprints/SPRINT-1-TASKS.md)** ⭐⭐⭐ - Plan detallado Sprint 1 (3,084 líneas)
-5. **[SPRINT-4-TASKS.md](./sprints/SPRINT-4-TASKS.md)** - Plan detallado Sprint 4 (870 líneas)
+### Para Entender el Contexto
+4. **[QUICK-START.md](./docs/QUICK-START.md)** - Guía rápida (5-10 min)
+5. **[README.md](./README.md)** - Contexto completo del proyecto (15-20 min)
+6. **[RESUMEN.md](./docs/RESUMEN.md)** - Estadísticas y overview (10-15 min)
+
+### Planes de Sprint Disponibles
+7. **[SPRINT-1-TASKS.md](./sprints/SPRINT-1-TASKS.md)** - Fundamentos (3,084 líneas)
+8. **[SPRINT-4-TASKS.md](./sprints/SPRINT-4-TASKS.md)** - Workflows Reusables (870 líneas)
 
 ---
 
@@ -44,18 +56,22 @@ Total Estimado: 38-47 horas de implementación
 
 ## 🚀 Quick Actions
 
-### Acción 1: Comenzar Sprint 1 AHORA
+### ⭐ Acción 1: Ejecutar Sprint (USA PROMPTS.MD)
 ```bash
-open sprints/SPRINT-1-TASKS.md
-# Ir a línea ~50: Tarea 1.1
-# Seguir instrucciones paso a paso
+# 1. Ver qué sprint está activo
+cat tracking/SPRINT-STATUS.md | head -20
+
+# 2. Abrir PROMPTS.md
+open PROMPTS.md
+
+# 3. Copiar el prompt de Fase 1/2/3 según corresponda
+# 4. Reemplazar X con el número de sprint
+# 5. Pegar en Claude
 ```
 
-### Acción 2: Ver Solo los Scripts
+### Acción 2: Ver Estado Actual
 ```bash
-# Buscar "```bash" en sprints/SPRINT-1-TASKS.md
-# Copiar y ejecutar scripts
-# ~40 scripts listos para usar
+cat tracking/SPRINT-STATUS.md
 ```
 
 ### Acción 3: Modo Lectura (Entender sin Ejecutar)
